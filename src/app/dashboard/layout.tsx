@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold md:text-base">
-            <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
+            <Image src="https://placehold.co/24x24.png" data-ai-hint="logo" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
             <span className="font-headline text-primary">AidSync</span>
           </Link>
           <Link href="/dashboard/analytics" className="text-foreground transition-colors hover:text-foreground/80">
