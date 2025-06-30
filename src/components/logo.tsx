@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 export function Logo({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('relative h-6 w-6', className)} {...props}>
+    <div className={cn('relative h-8 w-8', className)} {...props}>
       <Image
         src="/logo.svg"
         alt="AidSync Logo"

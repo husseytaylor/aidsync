@@ -146,7 +146,7 @@ export function ChatAssistant() {
           onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
-          <Logo className="w-8 h-8" />
+          <Logo className="w-10 h-10" />
         </Button>
       </div>
 
@@ -157,7 +157,7 @@ export function ChatAssistant() {
         <Card className="h-[70vh] flex flex-col shadow-2xl bg-secondary">
           <CardHeader className="flex flex-row items-center justify-between border-b bg-primary">
             <div className="flex items-center gap-3">
-              <Logo className="w-6 h-6" />
+              <Logo className="w-8 h-8" />
               <CardTitle className="font-headline text-lg text-secondary">AidSync AI Assistant</CardTitle>
             </div>
             <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary hover:bg-primary/80">

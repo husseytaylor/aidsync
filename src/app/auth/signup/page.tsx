@@ -12,7 +12,7 @@ export default function SignupPage({ searchParams }: { searchParams: { message: 
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
           <Link href="/" className="flex justify-center items-center space-x-2 mb-4">
-            <Logo className="w-10 h-10" />
+            <Logo className="w-12 h-12" />
             <span className="font-bold font-headline text-2xl text-primary">AidSync</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Sign Up</CardTitle>

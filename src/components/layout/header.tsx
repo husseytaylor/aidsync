@@ -23,7 +23,7 @@ export async function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
-            <Logo className="w-6 h-6" />
+            <Logo className="w-8 h-8" />
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
         </div>
@@ -70,7 +70,7 @@ export async function Header() {
             <SheetContent side="right">
               <div className="flex flex-col space-y-4 pt-6">
                 <Link href="/" className="flex items-center space-x-2 mb-4">
-                  <Logo className="w-6 h-6" />
+                  <Logo className="w-8 h-8" />
                   <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                 </Link>
                 {navLinks.map((link) => (
