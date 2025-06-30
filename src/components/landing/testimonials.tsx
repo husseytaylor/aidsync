@@ -23,7 +23,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <AnimatedSection id="testimonials" className="bg-secondary">
+    <AnimatedSection id="testimonials">
       <div className="container py-24 sm:py-32">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">From Overwhelmed to Automated</h2>
@@ -35,7 +35,7 @@ export function Testimonials() {
           {testimonials.map((testimonial) => (
             <Card key={testimonial.name}>
               <CardContent className="pt-6">
-                <blockquote className="text-lg italic text-foreground">
+                <blockquote className="text-lg italic text-card-foreground">
                   “{testimonial.quote}”
                 </blockquote>
                 <div className="mt-6 flex items-center gap-4">
@@ -44,7 +44,7 @@ export function Testimonials() {
                     <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">{testimonial.name}</p>
+                    <p className="font-semibold text-card-foreground">{testimonial.name}</p>
                     <p className="text-sm text-muted-foreground">{testimonial.title}</p>
                   </div>
                 </div>
