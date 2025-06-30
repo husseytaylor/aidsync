@@ -23,7 +23,7 @@ export async function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
+            <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} />
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
         </div>
@@ -70,7 +70,7 @@ export async function Header() {
             <SheetContent side="right">
               <div className="flex flex-col space-y-4 pt-6">
                 <Link href="/" className="flex items-center space-x-2 mb-4">
-                  <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
+                  <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} />
                   <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                 </Link>
                 {navLinks.map((link) => (
