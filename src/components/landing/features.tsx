@@ -1,22 +1,22 @@
-import { Zap, Users, ShieldCheck } from 'lucide-react';
+import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { AnimatedSection } from '../animated-section';
 
 const features = [
   {
-    icon: <Zap className="h-8 w-8 text-primary" />,
-    title: 'AI-Powered Logistics',
-    description: 'Optimize your supply chain with predictive analytics and automated resource dispatch.',
+    icon: <Bot className="h-8 w-8 text-primary" />,
+    title: 'Branded AI Agents',
+    description: 'Deploy 24/7 web chat and voice assistants trained on your business data to answer questions and qualify leads.',
   },
   {
-    icon: <Users className="h-8 w-8 text-primary" />,
-    title: 'Collaborative Platform',
-    description: 'Connect with partners, share real-time data, and coordinate efforts seamlessly.',
+    icon: <Globe className="h-8 w-8 text-primary" />,
+    title: 'Custom Client-Facing Website',
+    description: 'A professionally designed, mobile-responsive website with your branding, hosted on your custom domain.',
   },
   {
-    icon: <ShieldCheck className="h-8 w-8 text-primary" />,
-    title: 'Secure & Reliable',
-    description: 'Built on enterprise-grade infrastructure to ensure your data is always safe and accessible.',
+    icon: <BarChart3 className="h-8 w-8 text-primary" />,
+    title: 'Analytics & Optimization',
+    description: 'Access a full dashboard to track quotes, calls, and agent usage, with continuous backend improvements.',
   },
 ];
 
@@ -24,9 +24,9 @@ export function Features() {
   return (
     <AnimatedSection id="features" className="container py-24 sm:py-32">
        <div className="max-w-2xl mx-auto text-center">
-         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything You Need to Scale Your Impact</h2>
+         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
          <p className="mt-4 text-lg text-muted-foreground">
-           AidSync provides a comprehensive suite of tools designed for the unique challenges of non-profits and humanitarian organizations.
+           AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
          </p>
        </div>
       <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

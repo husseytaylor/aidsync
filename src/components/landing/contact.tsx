@@ -5,10 +5,9 @@ export function Contact() {
   return (
     <AnimatedSection id="contact" className="container py-24 sm:py-32">
       <div className="max-w-2xl mx-auto text-center">
-         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Schedule a Discovery Call</h2>
+         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Ready to Automate Your Business?</h2>
          <p className="mt-4 text-lg text-muted-foreground">
-           Let's discuss how AidSync can be tailored to your organization's specific needs.
-           Pick a time that works for you.
+           Book a free discovery call to learn how AidSync can build a custom AI-powered system tailored to your exact needs.
          </p>
       </div>
       <div className="mt-16">

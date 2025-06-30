@@ -7,21 +7,21 @@ import { AnimatedSection } from '../animated-section';
 export function Hero() {
   return (
     <AnimatedSection className="container pt-16 md:pt-24 lg:pt-32">
-      <div className="grid lg:grid-cols-2 gap-8 items-center">
+      <div className="grid lg:grid-cols-2 gap-12 items-center">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6">
-            Intelligent Automation for a Better World
+            White-Labeled AI Automation for Growing Businesses
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground mb-8">
-            AidSync harnesses the power of AI to streamline operations, optimize resource allocation, and amplify the impact of humanitarian organizations.
+            AidSync delivers custom-built automation systems including branded websites, AI agents, and internal dashboards to replace manual quoting, onboarding, and support.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg">
-              <Link href="/auth/signup">Get Started Free</Link>
+              <Link href="#pricing">View Pricing</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="#contact">
-                Schedule a Demo <ArrowRight className="ml-2 h-5 w-5" />
+                Book a Discovery Call <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -32,7 +32,7 @@ export function Hero() {
             alt="AidSync Platform Screenshot" 
             fill
             className="object-cover"
-            data-ai-hint="humanitarian aid technology"
+            data-ai-hint="business dashboard analytics"
             priority
             />
         </div>

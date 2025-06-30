@@ -4,20 +4,20 @@ import { AnimatedSection } from '../animated-section';
 
 const testimonials = [
   {
-    name: 'Dr. Elena Vance',
-    title: 'Director of Global Operations, Hope Foundation',
-    avatar: 'EV',
+    name: 'Jenna Riley',
+    title: 'Founder, Riley Consulting Group',
+    avatar: 'JR',
     image: 'https://placehold.co/100x100.png',
     dataAiHint: "woman portrait",
-    quote: "AidSync revolutionized how we manage disaster relief. The AI-driven insights have been a game-changer, allowing us to deliver aid faster and more efficiently than ever before."
+    quote: "The AI agent has saved me at least 10 hours a week by handling initial client questions and booking discovery calls for me. It's like having the perfect assistant 24/7."
   },
   {
-    name: 'Samuel Chen',
-    title: 'Logistics Coordinator, World-Wide Aid',
-    avatar: 'SC',
+    name: 'Marcus Thorne',
+    title: 'Owner, Thorne Creative Agency',
+    avatar: 'MT',
     image: 'https://placehold.co/100x100.png',
     dataAiHint: "man portrait",
-    quote: "The platform is incredibly intuitive. We onboarded our entire field team in under a week. The real-time collaboration features have drastically improved our on-the-ground coordination."
+    quote: "Our client onboarding is smoother than ever. The system automates document collection and answers repetitive questions, letting my team focus on high-value creative work."
   }
 ]
 
@@ -26,9 +26,9 @@ export function Testimonials() {
     <AnimatedSection id="testimonials" className="bg-secondary">
       <div className="container py-24 sm:py-32">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Trusted by Leaders in Humanitarian Aid</h2>
+          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">From Overwhelmed to Automated</h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            See how organizations are leveraging AidSync to make a difference.
+            See how businesses are using AidSync to reclaim their time and scale their operations.
           </p>
         </div>
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
