@@ -8,7 +8,7 @@ import { Logo } from "@/components/logo";
 
 export default function LoginPage({ searchParams }: { searchParams: { message: string } }) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-secondary">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
             <Link href="/" className="flex justify-center items-center space-x-2 mb-4">
