@@ -54,11 +54,11 @@ export function Hero() {
         </div>
         <motion.div variants={imageVariants} className="relative aspect-video rounded-xl shadow-2xl overflow-hidden">
           <Image
-            src="https://placehold.co/1200x800.png"
-            alt="AidSync Platform Screenshot"
+            src="/hero-image.png"
+            alt="A digital, grid-like hand connecting with a human hand, symbolizing the partnership between AI and humanity."
             fill
             className="object-cover"
-            data-ai-hint="business dashboard analytics"
+            data-ai-hint="AI connection"
             priority
           />
         </motion.div>
