@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image';
 import { Bot, Send, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
+import { Logo } from '../logo';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -29,7 +29,7 @@ export function ChatAssistant() {
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const restrictedPaths = ['/auth', '/dashboard'];
+  const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
   if (restrictedPaths.some(path => pathname.startsWith(path))) {
     return null;
   }
@@ -146,7 +146,7 @@ export function ChatAssistant() {
           onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
-          <Image src="/logo.png" alt="AidSync Logo" width={32} height={32} />
+          <Logo className="w-8 h-8" />
         </Button>
       </div>
 
@@ -157,7 +157,7 @@ export function ChatAssistant() {
         <Card className="h-[70vh] flex flex-col shadow-2xl bg-secondary">
           <CardHeader className="flex flex-row items-center justify-between border-b bg-primary">
             <div className="flex items-center gap-3">
-              <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} />
+              <Logo className="w-6 h-6" />
               <CardTitle className="font-headline text-lg text-secondary">AidSync AI Assistant</CardTitle>
             </div>
             <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary hover:bg-primary/80">

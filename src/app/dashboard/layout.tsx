@@ -1,11 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { logout } from "../auth/actions";
+import { Logo } from "@/components/logo";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold md:text-base">
-            <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} />
+            <Logo className="w-6 h-6" />
             <span className="font-headline text-primary">AidSync</span>
           </Link>
           <Link href="/dashboard/analytics" className="text-foreground transition-colors hover:text-foreground/80">

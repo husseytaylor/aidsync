@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { signup } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/logo";
 
 export default function SignupPage({ searchParams }: { searchParams: { message: string } }) {
   return (
@@ -12,7 +12,7 @@ export default function SignupPage({ searchParams }: { searchParams: { message: 
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
           <Link href="/" className="flex justify-center items-center space-x-2 mb-4">
-            <Image src="/logo.png" alt="AidSync Logo" width={40} height={40} />
+            <Logo className="w-10 h-10" />
             <span className="font-bold font-headline text-2xl text-primary">AidSync</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Sign Up</CardTitle>
