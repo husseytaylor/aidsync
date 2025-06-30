@@ -1,52 +1,35 @@
 "use client";
 
-import { useRef, useEffect, useState, type ReactNode } from "react";
+import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
 interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
+  tag?: keyof typeof motion;
   delay?: number;
+  variants?: Variants;
 }
 
-export function AnimatedSection({ children, className, delay = 0 }: AnimatedSectionProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(false);
+const defaultVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.unobserve(element);
-        }
-      },
-      {
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+export function AnimatedSection({ children, className, tag = "div", delay = 0, variants = defaultVariants }: AnimatedSectionProps) {
+  const MotionComponent = motion[tag] || motion.div;
 
   return (
-    <section
-      ref={ref}
-      className={cn(
-        "transition-all duration-1000 ease-out",
-        isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
-        className
-      )}
-      style={{ transitionDelay: `${delay}ms` }}
+    <MotionComponent
+      variants={variants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.8, ease: "easeOut", delay: delay / 1000 }}
+      className={cn(className)}
     >
       {children}
-    </section>
+    </MotionComponent>
   );
 }

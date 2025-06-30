@@ -4,17 +4,21 @@ import { Toaster } from '@/components/ui/toaster';
 import { ChatAssistant } from '@/components/chat/chat-assistant';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'AidSync AI Platform',
   description: 'Intelligent Automation for Humanitarian Organizations.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -30,7 +34,7 @@ export default function RootLayout({
 
         {/* Content Wrapper: This establishes a new stacking context so content appears above the background. */}
         <div className="relative flex flex-col min-h-screen">
-          <Header />
+          <Header user={user} />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>

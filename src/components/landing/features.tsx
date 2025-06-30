@@ -22,7 +22,7 @@ const features = [
 
 export function Features() {
   return (
-    <AnimatedSection id="features" className="container py-24 sm:py-32">
+    <AnimatedSection id="features" tag="section" className="container py-24 sm:py-32">
        <div className="max-w-2xl mx-auto text-center">
          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
          <p className="mt-4 text-lg text-muted-foreground">
@@ -32,7 +32,7 @@ export function Features() {
       <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature, index) => (
           <AnimatedSection key={index} delay={index * 150}>
-            <Card className="h-full text-center hover:shadow-lg transition-shadow duration-300">
+            <Card className="h-full text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
               <CardHeader className="items-center">
                 <div className="bg-primary/10 p-4 rounded-full mb-4">
                   {feature.icon}

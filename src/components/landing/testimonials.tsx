@@ -23,7 +23,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <AnimatedSection id="testimonials">
+    <AnimatedSection id="testimonials" tag="section">
       <div className="container py-24 sm:py-32">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">From Overwhelmed to Automated</h2>
@@ -33,7 +33,7 @@ export function Testimonials() {
         </div>
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.name}>
+            <Card key={testimonial.name} className="transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <CardContent className="pt-6">
                 <blockquote className="text-lg italic text-card-foreground">
                   “{testimonial.quote}”

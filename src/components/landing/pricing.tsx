@@ -66,7 +66,7 @@ const tiers = [
 
 export function Pricing() {
   return (
-    <AnimatedSection id="pricing" className="container py-24 sm:py-32">
+    <AnimatedSection id="pricing" tag="section" className="container py-24 sm:py-32">
       <div className="max-w-2xl mx-auto text-center">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Pricing Plans</h2>
         <p className="mt-4 text-lg text-muted-foreground">
@@ -76,7 +76,7 @@ export function Pricing() {
       <div className="mt-16 grid gap-8 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
         {tiers.map((tier, index) => (
           <AnimatedSection key={index} delay={index * 150}>
-            <Card className={`flex flex-col h-full ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
+            <Card className={`flex flex-col h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
               <CardHeader>
                 <CardTitle className="font-headline">{tier.name}</CardTitle>
                 <CardDescription>{tier.description}</CardDescription>

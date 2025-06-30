@@ -30,7 +30,7 @@ const faqs = [
 
 export function Faq() {
   return (
-    <AnimatedSection id="faq" className="container py-24 sm:py-32">
+    <AnimatedSection id="faq" tag="section" className="container py-24 sm:py-32">
        <div className="max-w-2xl mx-auto text-center">
          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Frequently Asked Questions</h2>
          <p className="mt-4 text-lg text-muted-foreground">

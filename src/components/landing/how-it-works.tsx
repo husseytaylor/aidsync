@@ -27,7 +27,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <AnimatedSection id="how-it-works">
+    <AnimatedSection id="how-it-works" tag="section">
         <div className="container py-24 sm:py-32">
        <div className="max-w-2xl mx-auto text-center">
          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Your Automation Journey</h2>
@@ -38,7 +38,7 @@ export function HowItWorks() {
       <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => (
           <AnimatedSection key={index} delay={index * 150}>
-            <Card className="h-full text-center border-transparent shadow-none bg-transparent text-foreground">
+            <Card className="h-full text-center border-transparent shadow-none bg-transparent text-foreground hover:bg-card/5 transition-colors duration-300">
               <CardHeader className="items-center">
                 <div className="bg-primary/10 p-4 rounded-full mb-4">
                   {step.icon}
