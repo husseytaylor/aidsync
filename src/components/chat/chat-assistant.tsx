@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from 'react';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { Bot, Send, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { aiChatAssistant, type AIChatAssistantOutput } from '@/ai/flows/ai-chat-assistant';
 import { ChatMessage } from './chat-message';
 
 interface Message {
@@ -15,39 +16,122 @@ interface Message {
   content: string;
 }
 
+const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+
 export function ChatAssistant() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
+  const restrictedPaths = ['/auth', '/dashboard'];
+  if (restrictedPaths.some(path => pathname.startsWith(path))) {
+    return null;
+  }
+
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
+    if (isOpen && scrollAreaRef.current) {
+      setTimeout(() => {
+        if (scrollAreaRef.current) {
+         scrollAreaRef.current.scrollTo({
+            top: scrollAreaRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
+    }
+  }, [messages, isOpen]);
+  
+  const sendEvent = async (payload: object) => {
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error('Webhook event failed:', error);
+    }
+  };
+
+  const handleOpen = () => {
+    if (!sessionId) {
+      const newSessionId = crypto.randomUUID();
+      setSessionId(newSessionId);
+      setSessionStartTime(new Date());
+
+      sendEvent({
+        event: 'chat_opened',
+        session_id: newSessionId,
+        timestamp: new Date().toISOString(),
+      });
+
+      if (messages.length === 0) {
+        setMessages([
+          { role: 'assistant', content: 'Hi there! I’m AidSync’s AI Assistant — how can I help today?' }
+        ]);
+      }
+    }
+    setIsOpen(true);
+  };
+  
+  const handleClose = () => {
+    if (sessionId && sessionStartTime) {
+      const duration_seconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
+      sendEvent({
+        event: 'chat_closed',
+        session_id: sessionId,
+        timestamp: new Date().toISOString(),
+        message_count: messages.filter(m => m.role === 'user').length,
+        history: messages,
+        duration_seconds,
       });
     }
-  }, [messages]);
-  
+    setIsOpen(false);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isPending) return;
+    if (!input.trim() || isPending || !sessionId) return;
 
     const userMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
 
     startTransition(async () => {
       try {
-        const result: AIChatAssistantOutput = await aiChatAssistant({ message: input });
-        const assistantMessage: Message = { role: 'assistant', content: result.response };
-        setMessages((prev) => [...prev, assistantMessage]);
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'message',
+            session_id: sessionId,
+            sender: 'user',
+            message: currentInput,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+
+        if (!response.ok) throw new Error('Webhook request failed');
+        
+        const result = await response.json();
+        const assistantContent = result.response || result.message;
+
+        if (assistantContent) {
+          const assistantMessage: Message = { role: 'assistant', content: assistantContent };
+          setMessages((prev) => [...prev, assistantMessage]);
+        } else {
+          throw new Error('Empty or invalid response from webhook');
+        }
       } catch (error) {
         console.error('AI chat error:', error);
-        const errorMessage: Message = { role: 'assistant', content: "Sorry, I'm having trouble connecting. Please try again later." };
+        const errorMessage: Message = { role: 'assistant', content: "I’ll forward this to our team. Please email us or book a call using the link below." };
         setMessages((prev) => [...prev, errorMessage]);
       }
     });
@@ -58,11 +142,11 @@ export function ChatAssistant() {
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out", isOpen ? "scale-0" : "scale-100")}>
         <Button 
           size="icon"
-          className="rounded-full w-16 h-16 shadow-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-          onClick={() => setIsOpen(true)}
+          className="rounded-full w-16 h-16 shadow-lg bg-primary hover:bg-accent"
+          onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
-          <Bot className="w-8 h-8" />
+          <Image src="/logo.png" alt="AidSync Logo" width={32} height={32} />
         </Button>
       </div>
 
@@ -70,24 +154,23 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl">
-          <CardHeader className="flex flex-row items-center justify-between border-b">
+        <Card className="h-[70vh] flex flex-col shadow-2xl bg-secondary">
+          <CardHeader className="flex flex-row items-center justify-between border-b bg-primary">
             <div className="flex items-center gap-3">
-              <Bot className="w-6 h-6 text-primary" />
-              <CardTitle className="font-headline text-lg">AidSync AI Assistant</CardTitle>
+              <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} />
+              <CardTitle className="font-headline text-lg text-secondary">AidSync AI Assistant</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary hover:bg-primary/80">
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
           <CardContent className="flex-1 p-0">
             <ScrollArea className="h-full" ref={scrollAreaRef}>
               <div className="p-4 space-y-4">
-                <ChatMessage role="assistant" content="Hello! How can I help you with AidSync today?" />
                 {messages.map((msg, index) => (
                   <ChatMessage key={index} role={msg.role} content={msg.content} />
                 ))}
-                {isPending && <ChatMessage role="assistant" content={<Loader2 className="w-5 h-5 animate-spin" />} />}
+                {isPending && <ChatMessage role="assistant" content={<Loader2 className="w-5 h-5 animate-spin text-primary" />} />}
               </div>
             </ScrollArea>
           </CardContent>
