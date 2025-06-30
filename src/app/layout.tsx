@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className="font-body antialiased text-foreground">
         {/* Background Layers: These are fixed to the viewport and sit behind all other content. */}
         <div className="fixed inset-0 -z-10 bg-[url('/green-flow-texture.png')] bg-cover bg-center bg-no-repeat" />
-        <div className="fixed inset-0 -z-10 bg-[#1E5028]/40" />
+        <div className="fixed inset-0 -z-10 bg-[#0B3D2E]/40" />
 
         {/* Content Wrapper: This establishes a new stacking context so content appears above the background. */}
         <div className="relative flex flex-col min-h-screen">

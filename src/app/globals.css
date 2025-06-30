@@ -8,33 +8,33 @@ body {
 
 @layer base {
   :root {
-    --background: 129 48% 15%; /* Dark Green */
+    --background: 163 69% 14%; /* #0B3D2E - Primary Green */
     --foreground: 0 0% 98%; /* Almost White */
 
     --card: 40 10% 98%; /* Off-white for cards */
-    --card-foreground: 129 48% 15%; /* Dark Green */
+    --card-foreground: 163 69% 14%; /* Dark Green */
 
     --popover: 40 10% 98%; /* Off-white for popovers */
-    --popover-foreground: 129 48% 15%; /* Dark Green */
+    --popover-foreground: 163 69% 14%; /* Dark Green */
 
-    --primary: 158 87% 76%; /* Mint */
-    --primary-foreground: 129 48% 15%; /* Dark Green */
+    --primary: 102 70% 44%; /* #3FA419 - Accent Green */
+    --primary-foreground: 0 0% 98%; /* Almost White */
 
-    --secondary: 129 30% 25%; /* Darker secondary green */
+    --secondary: 163 50% 20%; /* Darker secondary green */
     --secondary-foreground: 0 0% 98%; /* Almost White */
 
-    --muted: 129 20% 30%; /* Muted dark green */
+    --muted: 163 40% 25%; /* Muted dark green */
     --muted-foreground: 0 0% 70%; /* Light Gray */
 
-    --accent: 158 87% 76%; /* Mint */
-    --accent-foreground: 129 48% 15%; /* Dark Green */
+    --accent: 174 100% 33%; /* #00A693 - Accent Turquoise */
+    --accent-foreground: 163 69% 14%; /* Dark Green */
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 129 30% 35%; /* Subtle green border */
+    --border: 163 50% 25%; /* Subtle green border */
     --input: 40 10% 98%; /* Off-white for inputs */
-    --ring: 158 87% 76%; /* Mint */
+    --ring: 102 70% 44%; /* Accent Green */
     
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
