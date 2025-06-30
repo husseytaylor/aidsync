@@ -1,8 +1,9 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Bot } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
 export async function Header() {
@@ -20,8 +21,8 @@ export async function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
-            <Bot className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg">AidSync</span>
+            <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
+            <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
         </div>
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
@@ -67,8 +68,8 @@ export async function Header() {
             <SheetContent side="right">
               <div className="flex flex-col space-y-4 pt-6">
                 <Link href="/" className="flex items-center space-x-2 mb-4">
-                  <Bot className="h-6 w-6 text-primary" />
-                  <span className="font-bold font-headline text-lg">AidSync</span>
+                  <Image src="/logo.png" alt="AidSync Logo" width={24} height={24} className="h-6 w-6" />
+                  <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                 </Link>
                 {navLinks.map((link) => (
                   <Link key={link.href} href={link.href} className="text-lg font-medium">

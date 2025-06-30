@@ -1,10 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { login } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bot } from "lucide-react";
 
 export default function LoginPage({ searchParams }: { searchParams: { message: string } }) {
   return (
@@ -12,8 +12,8 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
             <Link href="/" className="flex justify-center items-center space-x-2 mb-4">
-              <Bot className="h-8 w-8 text-primary" />
-              <span className="font-bold font-headline text-2xl">AidSync</span>
+              <Image src="/logo.png" alt="AidSync Logo" width={40} height={40} className="h-10 w-10" />
+              <span className="font-bold font-headline text-2xl text-primary">AidSync</span>
             </Link>
           <CardTitle className="text-2xl font-headline">Login</CardTitle>
           <CardDescription>Enter your email below to login to your account</CardDescription>

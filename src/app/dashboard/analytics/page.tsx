@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowUp, Users, Truck, AlertTriangle } from 'lucide-react';
 
 const kpiData = [
-    { title: "Active Missions", value: "12", change: "+2", icon: <Truck className="h-5 w-5 text-muted-foreground" />, color: "text-blue-500" },
-    { title: "Team Members", value: "245", change: "+15", icon: <Users className="h-5 w-5 text-muted-foreground" />, color: "text-green-500" },
-    { title: "Critical Alerts", value: "3", change: "+1", icon: <AlertTriangle className="h-5 w-5 text-muted-foreground" />, color: "text-red-500" },
+    { title: "Active Missions", value: "12", change: "+2", icon: <Truck className="h-5 w-5 text-muted-foreground" />, changeColor: "" },
+    { title: "Team Members", value: "245", change: "+15", icon: <Users className="h-5 w-5 text-muted-foreground" />, changeColor: "text-primary" },
+    { title: "Critical Alerts", value: "3", change: "+1", icon: <AlertTriangle className="h-5 w-5 text-muted-foreground" />, changeColor: "text-destructive" },
 ];
 
 const recentActivity = [
@@ -31,7 +31,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
               <p className="text-xs text-muted-foreground flex items-center">
-                <ArrowUp className={`h-4 w-4 mr-1 ${kpi.color}`} />
+                <ArrowUp className={`h-4 w-4 mr-1 ${kpi.changeColor}`} />
                 {kpi.change} from last week
               </p>
             </CardContent>
@@ -64,8 +64,6 @@ export default function AnalyticsPage() {
                         activity.status === "Completed" ? "secondary" : 
                         activity.status === "In Progress" ? "default" :
                         "outline"
-                    } className={
-                        activity.status === 'In Progress' ? 'bg-blue-500/20 text-blue-700 border-blue-500/30' : ''
                     }>
                       {activity.status}
                     </Badge>
