@@ -12,23 +12,23 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
+const landingNavLinks = [
+  { href: '#features', label: 'Features' },
+  { href: '#how-it-works', label: 'How It Works' },
+  { href: '#demo', label: 'Demo' },
+  { href: '#pricing', label: 'Pricing' },
+  { href: '#faq', label: 'FAQ' },
+];
+
+const mainNavLinks = [
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+
 export function Header({ user }: { user: User | null }) {
   const pathname = usePathname();
   const isLandingPage = pathname === '/';
   
-  const landingNavLinks = [
-    { href: '#features', label: 'Features' },
-    { href: '#how-it-works', label: 'How It Works' },
-    { href: '#demo', label: 'Demo' },
-    { href: '#pricing', label: 'Pricing' },
-    { href: '#faq', label: 'FAQ' },
-  ];
-  
-  const mainNavLinks = [
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-  ];
-
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -87,7 +87,7 @@ export function Header({ user }: { user: User | null }) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isMounted, pathname, isLandingPage, landingNavLinks]);
+  }, [isMounted, isLandingPage]);
   
   const buttonStyle = isMounted && isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
 
