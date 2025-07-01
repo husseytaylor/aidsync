@@ -1,58 +1,130 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import { AnimatedSection } from '../animated-section';
+"use client";
 
-const testimonials = [
-  {
-    name: 'Jenna Riley',
-    title: 'Founder, Riley Consulting Group',
-    avatar: 'JR',
-    image: 'https://placehold.co/100x100.png',
-    dataAiHint: "woman portrait",
-    quote: "The AI agent has saved me at least 10 hours a week by handling initial client questions and booking discovery calls for me. It's like having the perfect assistant 24/7."
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Phone, MessageSquare } from 'lucide-react';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
   },
-  {
-    name: 'Marcus Thorne',
-    title: 'Owner, Thorne Creative Agency',
-    avatar: 'MT',
-    image: 'https://placehold.co/100x100.png',
-    dataAiHint: "man portrait",
-    quote: "Our client onboarding is smoother than ever. The system automates document collection and answers repetitive questions, letting my team focus on high-value creative work."
-  }
-]
+};
+
+const imageVariants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: "easeOut" } 
+  },
+};
 
 export function Testimonials() {
+  const handleStartChat = () => {
+    // This custom event will be picked up by the ChatAssistant component
+    window.dispatchEvent(new CustomEvent('open-aidsync-chat'));
+  };
+
+  const handlePhoneCall = () => {
+    window.location.href = "tel:6624986621";
+  };
+  
   return (
-    <AnimatedSection id="testimonials" tag="section">
-      <div className="container py-24 sm:py-32">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">From Overwhelmed to Automated</h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            See how businesses are using AidSync to reclaim their time and scale their operations.
-          </p>
-        </div>
-        <div className="mt-16 grid gap-8 lg:grid-cols-2">
-          {testimonials.map((testimonial) => (
-            <Card key={testimonial.name} className="transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <CardContent className="pt-6">
-                <blockquote className="text-lg italic text-card-foreground">
-                  “{testimonial.quote}”
-                </blockquote>
-                <div className="mt-6 flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage src={testimonial.image} alt={testimonial.name} data-ai-hint={testimonial.dataAiHint} />
-                    <AvatarFallback>{testimonial.avatar}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-card-foreground">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+    <section id="demo" className="container py-24 sm:py-32">
+      <motion.div 
+        className="max-w-2xl mx-auto text-center mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Demo AidSync AI</h2>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Experience our AI firsthand. Interact with our chat and phone agents to see their capabilities in real-time.
+        </p>
+      </motion.div>
+
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        {/* Left Column (Image) */}
+        <motion.div variants={imageVariants} className="relative w-full max-w-lg mx-auto">
+          <Image
+            src="/node.png"
+            alt="Abstract network node visualization representing AI connections"
+            width={600}
+            height={400}
+            className="w-full h-auto object-contain rounded-xl shadow-2xl"
+            data-ai-hint="network node"
+          />
+        </motion.div>
+
+        {/* Right Column (Interactive Boxes) */}
+        <div className="flex flex-col gap-8">
+          {/* Chat Agent Box */}
+          <motion.div variants={cardVariants}>
+            <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="bg-accent/10 p-3 rounded-full">
+                    <MessageSquare className="w-6 h-6 text-accent" />
                   </div>
+                  <CardTitle className="font-headline text-2xl">Try Our Chat Agent</CardTitle>
                 </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  See how AidSync handles client support and quoting instantly. Engage with our AI to get your questions answered.
+                </CardDescription>
               </CardContent>
+              <CardFooter>
+                 <Button onClick={handleStartChat} className="w-full" variant="outline">Start Chat</Button>
+              </CardFooter>
             </Card>
-          ))}
+          </motion.div>
+
+          {/* Phone Agent Box */}
+          <motion.div variants={cardVariants}>
+             <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="bg-accent/10 p-3 rounded-full">
+                    <Phone className="w-6 h-6 text-accent" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl">Talk to the Phone Agent</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Call our AI assistant and hear how it handles real-time voice conversations and provides instant support.
+                </CardDescription>
+              </CardContent>
+              <CardFooter>
+                 <Button onClick={handlePhoneCall} className="w-full" variant="outline">Call Now</Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
         </div>
-      </div>
-    </AnimatedSection>
+      </motion.div>
+    </section>
   );
 }

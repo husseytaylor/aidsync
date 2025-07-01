@@ -26,26 +26,9 @@ export function ChatAssistant() {
   const [isPending, startTransition] = useTransition();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
-
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isOpen && scrollAreaRef.current) {
-      setTimeout(() => {
-        if (scrollAreaRef.current) {
-         scrollAreaRef.current.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: 'smooth',
-          });
-        }
-      }, 100);
-    }
-  }, [messages, isOpen]);
   
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
-  if (restrictedPaths.some(path => pathname.startsWith(path))) {
-    return null;
-  }
 
   const sendEvent = async (payload: object) => {
     try {
@@ -58,7 +41,7 @@ export function ChatAssistant() {
       console.error('Webhook event failed:', error);
     }
   };
-
+  
   const handleOpen = () => {
     if (!sessionId) {
       const newSessionId = crypto.randomUUID();
@@ -79,6 +62,30 @@ export function ChatAssistant() {
     }
     setIsOpen(true);
   };
+
+  // Event listener to open chat from other components
+  useEffect(() => {
+    const eventHandler = () => handleOpen();
+    window.addEventListener('open-aidsync-chat', eventHandler);
+    return () => window.removeEventListener('open-aidsync-chat', eventHandler);
+  });
+
+  useEffect(() => {
+    if (isOpen && scrollAreaRef.current) {
+      setTimeout(() => {
+        if (scrollAreaRef.current) {
+         scrollAreaRef.current.scrollTo({
+            top: scrollAreaRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
+    }
+  }, [messages, isOpen]);
+  
+  if (restrictedPaths.some(path => pathname.startsWith(path))) {
+    return null;
+  }
   
   const handleClose = () => {
     if (sessionId && sessionStartTime) {
