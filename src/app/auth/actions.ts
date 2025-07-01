@@ -33,6 +33,9 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.error("Login error:", error.message);
+    if (error.name === 'MissingSupabaseConfigError') {
+      return redirect(`/auth/login?message=Authentication is not configured. Please provide Supabase credentials in your .env file.`);
+    }
     return redirect(`/auth/login?message=${encodeURIComponent(error.message)}`);
   }
 
@@ -60,6 +63,9 @@ export async function signup(formData: FormData) {
 
   if (error) {
     console.error("Signup error:", error.message);
+    if (error.name === 'MissingSupabaseConfigError') {
+      return redirect(`/auth/signup?message=Authentication is not configured. Please provide Supabase credentials in your .env file.`);
+    }
     return redirect(`/auth/signup?message=${encodeURIComponent(error.message)}`);
   }
 

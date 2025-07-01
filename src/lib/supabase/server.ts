@@ -8,13 +8,14 @@ export function createClient() {
   if (!supabaseUrl || !supabaseKey || supabaseUrl === 'YOUR_SUPABASE_URL') {
     const errorMessage = "Supabase URL or Anon Key is missing. Please check your environment variables."
     console.warn(errorMessage);
+    const error = { message: errorMessage, name: 'MissingSupabaseConfigError' };
     return {
       auth: {
         getUser: async () => ({ data: { user: null }, error: null }),
-        signInWithPassword: async () => ({ error: { message: errorMessage } }),
-        signUp: async () => ({ error: { message: errorMessage } }),
+        signInWithPassword: async () => ({ data: { session: null, user: null }, error }),
+        signUp: async () => ({ data: { session: null, user: null }, error }),
         signOut: async () => ({ error: null }),
-        exchangeCodeForSession: async () => ({ error: { message: errorMessage } }),
+        exchangeCodeForSession: async () => ({ data: { session: null, user: null }, error }),
       },
     } as any;
   }
