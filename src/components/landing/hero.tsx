@@ -5,15 +5,13 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AnimatedSection } from '../animated-section';
 
 export function Hero() {
   return (
-    <motion.section
+    <AnimatedSection
+      tag="section"
       className="container pt-16 md:pt-24 lg:pt-32"
-      initial={{ opacity: 0, x: -40 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.3 }}
     >
       <div
         className="grid lg:grid-cols-2 gap-12 items-center"
@@ -36,7 +34,13 @@ export function Hero() {
             </Button>
           </div>
         </div>
-        <div className="relative aspect-video rounded-xl shadow-2xl overflow-hidden">
+        <motion.div
+          className="relative aspect-video rounded-xl shadow-2xl overflow-hidden"
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true }}
+        >
           <Image
             src="/head.png"
             alt="An abstract image of a head with circuitry, representing artificial intelligence."
@@ -45,8 +49,8 @@ export function Hero() {
             data-ai-hint="AI head"
             priority
           />
-        </div>
+        </motion.div>
       </div>
-    </motion.section>
+    </AnimatedSection>
   );
 }

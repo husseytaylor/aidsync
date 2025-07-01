@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AnimatedSection } from '../animated-section';
 
 const features = [
   {
@@ -24,13 +25,10 @@ const features = [
 
 export function Features() {
   return (
-    <motion.section 
+    <AnimatedSection
       id="features" 
       className="container py-24 sm:py-32 scroll-mt-20"
-      initial={{ opacity: 0, x: 40 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      viewport={{ once: true, amount: 0.3 }}
+      delay={300}
     >
       <div className="text-center mb-12">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
@@ -41,8 +39,12 @@ export function Features() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
-        <div
+        <motion.div
           className="relative w-full max-w-lg mx-auto"
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true }}
         >
           <Image
             src="/hand.png"
@@ -53,7 +55,7 @@ export function Features() {
             data-ai-hint="human AI partnership"
             priority
           />
-        </div>
+        </motion.div>
 
         {/* Right Column (Content) */}
         <div className="flex flex-col gap-6">
@@ -75,6 +77,6 @@ export function Features() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </AnimatedSection>
   );
 }

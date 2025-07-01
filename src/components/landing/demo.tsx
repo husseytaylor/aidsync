@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AnimatedSection } from '../animated-section';
 
 export function Demo() {
   const handleStartChat = () => {
@@ -17,13 +18,10 @@ export function Demo() {
   };
   
   return (
-    <motion.section 
+    <AnimatedSection
       id="demo" 
       className="container py-24 sm:py-32 scroll-mt-20"
-      initial={{ opacity: 0, x: -40 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      viewport={{ once: true, amount: 0.3 }}
+      delay={300}
     >
       <div 
         className="max-w-2xl mx-auto text-center mb-16"
@@ -38,7 +36,13 @@ export function Demo() {
         className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
       >
         {/* Left Column (Image) */}
-        <div className="relative w-full max-w-lg mx-auto">
+        <motion.div
+          className="relative w-full max-w-lg mx-auto"
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true }}
+        >
           <Image
             src="/node.png"
             alt="Abstract network node visualization representing AI connections"
@@ -47,7 +51,7 @@ export function Demo() {
             className="w-full h-auto object-contain rounded-xl shadow-2xl"
             data-ai-hint="network node"
           />
-        </div>
+        </motion.div>
 
         {/* Right Column (Interactive Boxes) */}
         <div className="flex flex-col gap-8">
@@ -96,6 +100,6 @@ export function Demo() {
           </div>
         </div>
       </div>
-    </motion.section>
+    </AnimatedSection>
   );
 }
