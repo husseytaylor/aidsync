@@ -8,28 +8,28 @@
   }
 
   :root {
-    --background: 163 69% 14%; /* #0B3D2E - Primary Green */
+    --background: 163 70% 10%; /* Very Dark Green */
     --foreground: 0 0% 98%; /* Almost White */
 
-    --card: 163 50% 20%; /* Darker secondary green for card base */
+    --card: 163 69% 14%; /* #0B3D2E - Dark Green */
     --card-foreground: 0 0% 98%; /* Almost White */
-    --card-start: 158 59% 13%; /* #0d3324 */
-    --card-end: 158 55% 17%; /* #124733 */
+    --card-start: 163 69% 14%; /* #0B3D2E */
+    --card-end: 163 69% 16%; /* Slightly lighter #0B3D2E */
 
-    --popover: 163 50% 15%; /* Darker popover for more depth */
+    --popover: 178 62% 20%; /* Dark Mint */
     --popover-foreground: 0 0% 98%; /* Almost White */
 
-    --primary: 101 65% 38%; /* #3fa419 - Grass Green */
+    --primary: 101 65% 38%; /* #3fa419 - Light Green */
     --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 163 50% 20%; /* Darker secondary green */
     --secondary-foreground: 0 0% 98%; /* Almost White */
 
-    --muted: 163 40% 25%; /* Muted dark green */
+    --muted: 178 62% 25%; /* Muted dark mint */
     --muted-foreground: 0 0% 70%; /* Light Gray */
 
-    --accent: 174 100% 33%; /* #00A693 - Accent Turquoise */
-    --accent-foreground: 0 0% 98%; /* Almost White */
+    --accent: 178 62% 54%; /* #48D1CC - Mint */
+    --accent-foreground: 163 69% 14%; /* #0B3D2E - Dark Green for contrast on mint */
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -46,8 +46,8 @@
     
     --radius: 0.75rem;
 
-    --light-turquoise: 173 70% 92%; /* #E0F7F4 */
-    --dark-turquoise: 179 96% 25%; /* #007C7C */
+    --light-turquoise: 178 62% 90%; /* #D9F5F4 - Light Mint */
+    --dark-turquoise: 163 69% 14%; /* #0B3D2E - Dark Green */
   }
 }
 

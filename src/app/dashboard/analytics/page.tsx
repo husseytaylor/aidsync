@@ -134,7 +134,7 @@ export default async function AnalyticsPage() {
     <div className="grid gap-8 lg:grid-cols-2 items-start">
       {/* Voice Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8" delay={100}>
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
               <Phone />
@@ -153,7 +153,7 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
@@ -175,7 +175,7 @@ export default async function AnalyticsPage() {
             </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
             <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -200,7 +200,7 @@ export default async function AnalyticsPage() {
 
       {/* Chat Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8" delay={200}>
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
               <MessageSquare />
@@ -223,7 +223,7 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
         
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
@@ -245,7 +245,7 @@ export default async function AnalyticsPage() {
             </CardContent>
         </Card>
         
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
             <CardDescription>Review dialogues from the latest sessions.</CardDescription>

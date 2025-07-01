@@ -83,7 +83,7 @@ export function N8nAnalytics() {
 
   if (error) {
     return (
-      <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm lg:col-span-2">
+      <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl font-headline text-destructive">
             <Workflow />
@@ -99,10 +99,10 @@ export function N8nAnalytics() {
   
   if (!data) return null;
   
-  const successRateColor = data.successRate >= 80 ? "text-accent" : "text-destructive";
+  const successRateColor = data.successRate >= 80 ? "text-primary" : "text-destructive";
 
   return (
-    <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm lg:col-span-2">
+    <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
           <Workflow />
@@ -170,7 +170,7 @@ export function N8nAnalytics() {
 
 function N8nAnalyticsSkeleton() {
     return (
-        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm lg:col-span-2">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
                     <Workflow />
