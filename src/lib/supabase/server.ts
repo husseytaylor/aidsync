@@ -5,17 +5,16 @@ export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    // Return a no-op client if Supabase is not configured.
-    // This allows the app to run without crashing.
-    console.warn("Supabase credentials not set. Auth features are disabled.");
+  if (!supabaseUrl || !supabaseKey || supabaseUrl === 'YOUR_SUPABASE_URL') {
+    const errorMessage = "Supabase URL or Anon Key is missing. Please check your environment variables."
+    console.warn(errorMessage);
     return {
       auth: {
         getUser: async () => ({ data: { user: null }, error: null }),
-        signInWithPassword: async () => ({ error: { message: 'Supabase not configured' } }),
-        signUp: async () => ({ error: { message: 'Supabase not configured' } }),
+        signInWithPassword: async () => ({ error: { message: errorMessage } }),
+        signUp: async () => ({ error: { message: errorMessage } }),
         signOut: async () => ({ error: null }),
-        exchangeCodeForSession: async () => ({ error: { message: 'Supabase not configured' } }),
+        exchangeCodeForSession: async () => ({ error: { message: errorMessage } }),
       },
     } as any;
   }

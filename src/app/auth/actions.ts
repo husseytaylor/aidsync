@@ -33,7 +33,7 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.error("Login error:", error.message);
-    return redirect("/auth/login?message=Could not authenticate user");
+    return redirect(`/auth/login?message=${encodeURIComponent(error.message)}`);
   }
 
   return redirect("/dashboard/analytics");
@@ -60,7 +60,7 @@ export async function signup(formData: FormData) {
 
   if (error) {
     console.error("Signup error:", error.message);
-    return redirect("/auth/signup?message=Could not authenticate user");
+    return redirect(`/auth/signup?message=${encodeURIComponent(error.message)}`);
   }
 
   return redirect("/auth/signup?message=Check email to continue sign in process");
