@@ -23,7 +23,7 @@ interface N8nInsights {
 export async function GET() {
   const N8N_API_KEY = process.env.N8N_API_KEY;
 
-  if (!N8N_API_KEY) {
+  if (!N8N_API_KEY || N8N_API_KEY.startsWith('__n8n_BLANK_VALUE')) {
     return NextResponse.json({ error: 'N8N_API_KEY is not configured.' }, { status: 500 });
   }
   
@@ -44,7 +44,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch execution data from n8n.', details: errorText }, { status: executionsResponse.status });
     }
 
-    const { data: executions } = await response.json() as { data: N8nExecution[] };
+    const { data: executions } = await executionsResponse.json() as { data: N8nExecution[] };
     
     if (!Array.isArray(executions)) {
       return NextResponse.json({ error: 'Invalid data format from n8n API.' }, { status: 500 });
