@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
   
   const validatedFields = loginSchema.safeParse(rawFormData);
   if (!validatedFields.success) {
-    return { error: 'Invalid fields!' };
+    return redirect("/auth/login?message=Invalid email or password.");
   }
   const { email, password } = validatedFields.data;
 
@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
 
   const validatedFields = signupSchema.safeParse(rawFormData);
   if (!validatedFields.success) {
-    return { error: 'Invalid fields!' };
+    return redirect("/auth/signup?message=Invalid email or password.");
   }
   const { email, password } = validatedFields.data;
 
