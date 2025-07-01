@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon } from 'lucide-react';
@@ -7,97 +6,82 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 
 async function getAnalyticsData() {
-  const supabase = createClient();
-
-  const { data: voiceData, error: voiceError } = await supabase
-    .from('VoiceAnalytics')
-    .select('*')
-    .order('started_at', { ascending: false });
-
-  const { data: chatData, error: chatError } = await supabase
-    .from('ChatAnalytics')
-    .select('*')
-    .order('started_at', { ascending: false });
-
-  if (voiceError || chatError) {
-    console.error("Error fetching analytics:", voiceError, chatError);
-    // Return empty state to prevent crash
-    return {
-      voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0 }, recent_calls: [] },
-      chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
-      voiceChartData: [],
-      chatChartData: [],
-    };
-  }
-
-  // Voice Analytics Summary
-  const total_calls = voiceData.length;
-  const total_voice_duration = voiceData.reduce((sum, call) => sum + call.duration, 0);
-  const average_voice_duration = total_calls > 0 ? total_voice_duration / total_calls : 0;
-
-  // Chat Analytics Summary
-  const total_sessions = chatData.length;
-  const total_chat_duration = chatData.reduce((sum, session) => sum + session.duration, 0);
-  const total_messages = chatData.reduce((sum, session) => sum + (session.message_count || 0), 0);
-  const average_chat_duration = total_sessions > 0 ? total_chat_duration / total_sessions : 0;
-  const average_message_count = total_sessions > 0 ? total_messages / total_sessions : 0;
-  
-  // Prepare chart data
-  const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
-    const countsByDay = data.reduce((acc, item) => {
-      const date = new Date(item.started_at).toISOString().split('T')[0];
-      acc[date] = (acc[date] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    return Object.entries(countsByDay)
-      .map(([date, count]) => ({
-        date,
-        [valueKey]: count,
-      }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(-30) // Get last 30 entries
-      .map(item => ({
-        ...item,
-        date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      }));
+  const defaultState = {
+    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0 }, recent_calls: [] },
+    chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
+    voiceChartData: [],
+    chatChartData: [],
   };
 
-  const voiceChartData = processDataForChart(voiceData, 'calls');
-  const chatChartData = processDataForChart(chatData, 'sessions');
+  try {
+    const response = await fetch("https://bridgeboost.app.n8n.cloud/webhook/38ed3752-371e-49dc-87e6-2a15b0be206f", { cache: 'no-store' });
 
-  // Parse dialogue from string to JSON
-  const parsedChatSessions = chatData.map(session => {
-    try {
-      return {
-        ...session,
-        dialogue: session.dialogue ? JSON.parse(session.dialogue) : [],
-      }
-    } catch (e) {
-      return { ...session, dialogue: [] }
+    if (!response.ok) {
+      console.error("Failed to fetch analytics from external webhook. Status:", response.status);
+      return defaultState;
     }
-  }).slice(0, 5); // Take recent 5 for display
 
+    const externalData = await response.json();
 
-  return {
-    voice_analytics: {
-      summary: {
-        total_calls,
-        average_duration_seconds: average_voice_duration,
+    const voice_analytics = externalData.voice_analytics || defaultState.voice_analytics;
+    const chat_analytics = externalData.chat_analytics || defaultState.chat_analytics;
+    
+    const parsedChatSessions = (chat_analytics.recent_sessions || []).map(session => {
+      try {
+        const dialogueData = session.dialogue && typeof session.dialogue === 'string' 
+          ? JSON.parse(session.dialogue) 
+          : (session.dialogue || []);
+        return {
+          ...session,
+          dialogue: Array.isArray(dialogueData) ? dialogueData : [],
+        }
+      } catch (e) {
+        console.error("Failed to parse chat dialogue:", e);
+        return { ...session, dialogue: [] }
+      }
+    }).slice(0, 5);
+      
+    const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
+        if (!data) return [];
+        const countsByDay = data.reduce((acc, item) => {
+          const date = new Date(item.started_at).toISOString().split('T')[0];
+          acc[date] = (acc[date] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        
+        return Object.entries(countsByDay)
+          .map(([date, count]) => ({
+            date,
+            [valueKey]: count,
+          }))
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .slice(-30)
+          .map(item => ({
+            ...item,
+            date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          }));
+    };
+
+    const voiceChartData = processDataForChart(voice_analytics.recent_calls, 'calls');
+    const chatChartData = processDataForChart(chat_analytics.recent_sessions, 'sessions');
+
+    return {
+      voice_analytics: {
+        ...voice_analytics,
+        recent_calls: (voice_analytics.recent_calls || []).slice(0, 5),
       },
-      recent_calls: voiceData.slice(0, 5), // Take recent 5 for display
-    },
-    chat_analytics: {
-      summary: {
-        total_sessions,
-        average_duration_seconds: average_chat_duration,
-        average_message_count,
+      chat_analytics: {
+        ...chat_analytics,
+        recent_sessions: parsedChatSessions,
       },
-      recent_sessions: parsedChatSessions,
-    },
-    voiceChartData,
-    chatChartData,
-  };
+      voiceChartData,
+      chatChartData,
+    };
+
+  } catch (error) {
+    console.error("Error fetching or processing analytics data:", error);
+    return defaultState;
+  }
 }
 
 const formatDuration = (totalSeconds: number) => {
@@ -116,7 +100,7 @@ const formatTimestamp = (timestamp: string) => {
 
 const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
     <div className="space-y-4 rounded-lg p-4 bg-black/20">
-      {dialogue.map((message, index) => (
+      {dialogue && dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
             <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0">
