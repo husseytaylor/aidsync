@@ -4,6 +4,7 @@ import { AnimatedSection } from '@/components/animated-section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Phone, MessageSquare, Mail } from 'lucide-react';
+import { ClientOnly } from '@/components/client-only';
 
 export default function ContactPage() {
   const handleStartChat = () => {
@@ -77,27 +78,29 @@ export default function ContactPage() {
             </AnimatedSection>
         </div>
 
-        <AnimatedSection delay={400} id="calendly">
-            <div className="text-center max-w-3xl mx-auto">
-                <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-white mb-4">
-                  Schedule a Discovery Call
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  Ready to build? Book a free discovery call to explore how AidSync can streamline your workflows.
-                </p>
-            </div>
+        <ClientOnly>
+          <AnimatedSection delay={400} id="calendly">
+              <div className="text-center max-w-3xl mx-auto">
+                  <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-white mb-4">
+                    Schedule a Discovery Call
+                  </h2>
+                  <p className="text-lg text-muted-foreground">
+                    Ready to build? Book a free discovery call to explore how AidSync can streamline your workflows.
+                  </p>
+              </div>
 
-            <div
-                className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-4 sm:p-8"
-            >
-                <iframe
-                src="https://calendly.com/cthussey2/new-meeting?primary_color=00ffd0"
-                className="w-full h-[800px] rounded-2xl border-none bg-transparent"
-                frameBorder="0"
-                scrolling="no"
-                ></iframe>
-            </div>
-        </AnimatedSection>
+              <div
+                  className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-4 sm:p-8"
+              >
+                  <iframe
+                  src="https://calendly.com/cthussey2/new-meeting?primary_color=00ffd0"
+                  className="w-full h-[800px] rounded-2xl border-none bg-transparent"
+                  frameBorder="0"
+                  scrolling="no"
+                  ></iframe>
+              </div>
+          </AnimatedSection>
+        </ClientOnly>
     </div>
   );
 }

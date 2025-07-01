@@ -5,6 +5,7 @@ import { ChatAssistant } from '@/components/chat/chat-assistant';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { createClient } from '@/lib/supabase/server';
+import { ClientOnly } from '@/components/client-only';
 
 export const metadata: Metadata = {
   title: 'AidSync AI Platform',
@@ -44,7 +45,9 @@ export default async function RootLayout({
           <Footer />
         </div>
         
-        <ChatAssistant />
+        <ClientOnly>
+          <ChatAssistant />
+        </ClientOnly>
         <Toaster />
       </body>
     </html>

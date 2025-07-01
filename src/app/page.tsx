@@ -4,16 +4,19 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { Pricing } from "@/components/landing/pricing";
 import { Demo } from "@/components/landing/demo";
 import { Faq } from "@/components/landing/faq";
+import { ClientOnly } from "@/components/client-only";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <Features />
-      <HowItWorks />
-      <Demo />
-      <Pricing />
-      <Faq />
+      <ClientOnly>
+        <Features />
+        <HowItWorks />
+        <Demo />
+        <Pricing />
+        <Faq />
+      </ClientOnly>
     </>
   );
 }
