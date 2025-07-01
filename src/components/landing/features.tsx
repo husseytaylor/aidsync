@@ -20,11 +20,6 @@ const features = [
   },
 ];
 
-const imageVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1 },
-};
-
 export function Features() {
   return (
     <section id="features" className="container py-24 sm:py-32">
@@ -37,19 +32,16 @@ export function Features() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
-        <AnimatedSection
-          tag="div"
-          variants={imageVariants}
-          className="relative rounded-xl shadow-2xl"
-        >
+        <div className="flex justify-center items-center w-full">
           <Image
             src="/hand.png"
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="object-contain rounded-xl"
+            className="rounded-xl w-full h-auto object-contain"
+            priority
           />
-        </AnimatedSection>
+        </div>
 
         {/* Right Column (Content) */}
         <div className="flex flex-col gap-6">
