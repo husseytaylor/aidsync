@@ -26,7 +26,14 @@ async function getAnalyticsData() {
         return defaultState;
     }
 
-    const rawData = JSON.parse(responseText);
+    let rawData;
+    try {
+      rawData = JSON.parse(responseText);
+    } catch (e) {
+      console.error("Failed to parse JSON from webhook. Response was:", responseText);
+      return defaultState;
+    }
+    
     const externalData = Array.isArray(rawData) ? rawData[0] : rawData;
     
     if (!externalData) {
