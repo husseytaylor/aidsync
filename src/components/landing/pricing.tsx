@@ -102,7 +102,7 @@ export function Pricing() {
             transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
             className="h-full"
           >
-            <Card className={`flex flex-col h-full transition-all duration-300 border-primary/30 ${tier.popular ? 'shadow-glow-primary' : ''} hover:shadow-glow-primary hover:-translate-y-2`}>
+            <Card className="flex flex-col h-full transition-all duration-300 border-primary/30 hover:shadow-glow-primary hover:-translate-y-2">
               <CardHeader className="p-6 lg:p-8">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"
@@ -113,7 +113,12 @@ export function Pricing() {
                 <CardDescription className="text-sm min-h-[40px] pt-2">{tier.description}</CardDescription>
                 <div className="pt-4">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-extrabold font-headline text-accent">{tier.setupFee}</span>
+                    <span 
+                      className="text-4xl font-extrabold font-headline text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"
+                      style={{ textShadow: "0 0 8px #00E6C280" }}
+                    >
+                      {tier.setupFee}
+                    </span>
                     {tier.setupFee !== 'Upon Request' && <span className="text-muted-foreground">Setup</span>}
                   </div>
                   {tier.monthlyFee !== 'Custom' && (
@@ -135,7 +140,7 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="p-6 lg:p-8 pt-0">
-                 <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
+                 <Button asChild className="w-full" variant="default">
                     <Link href="#contact">{tier.cta}</Link>
                  </Button>
               </CardFooter>
