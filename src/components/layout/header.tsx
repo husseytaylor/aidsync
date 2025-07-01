@@ -136,8 +136,8 @@ export function Header({ user }: { user: User | null }) {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-            {isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
-            {mainNavLinks.map((link) => renderNavLink(link))}
+            {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
+            {mainNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
         </nav>
         
         <div className="flex flex-1 items-center justify-end">
@@ -187,8 +187,8 @@ export function Header({ user }: { user: User | null }) {
                       <Logo className="w-8 h-8" />
                       <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                     </Link>
-                    {isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
-                    {mainNavLinks.map((link) => renderNavLink(link, true))}
+                    {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
+                    {mainNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
