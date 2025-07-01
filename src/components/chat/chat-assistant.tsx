@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
-import { aiChatAssistant } from '@/ai/flows/ai-chat-assistant';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -189,20 +188,39 @@ export function ChatAssistant() {
         setSessionId(crypto.randomUUID());
         setSessionStartTime(new Date());
       }
+
+      if (!AGENT_ANALYTICS_WEBHOOK_URL) {
+        console.error('AI chat error: Webhook URL is not configured.');
+        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. The chat webhook is not configured.", timestamp: new Date() };
+        setMessages((prev) => [...prev, errorMessage]);
+        return;
+      }
       
       try {
-        const result = await aiChatAssistant({ message: currentInput });
+        const response = await fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: currentInput }),
+        });
         
-        if (result.response) {
-          const assistantMessage: Message = { role: 'assistant', content: result.response, timestamp: new Date() };
-          setMessages((prev) => [...prev, assistantMessage]);
-        } else {
-          throw new Error('AI assistant returned an empty response.');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Webhook request failed with status ${response.status}: ${errorText}`);
         }
 
-      } catch (error) {
-        console.error('AI chat error:', error);
-        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later. Our team has been notified.", timestamp: new Date() };
+        const result = await response.json();
+        const assistantContent = result.response || result.message;
+
+        if (assistantContent) {
+          const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
+          setMessages((prev) => [...prev, assistantMessage]);
+        } else {
+          throw new Error('AI assistant returned an empty or invalid response.');
+        }
+
+      } catch (error: any) {
+        console.error('AI chat error:', error.message);
+        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
         setMessages((prev) => [...prev, errorMessage]);
       }
     });
