@@ -75,14 +75,20 @@ export default {
         'light-turquoise': '#E0F7F4',
         'dark-turquoise': '#007C7C',
       },
+      backgroundImage: {
+        'aidsync-gradient-green': 'linear-gradient(135deg, hsl(var(--primary)), #31990f)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 4px)',
         sm: 'calc(var(--radius) - 8px)',
+        xl: 'calc(var(--radius) + 4px)',
+        '2xl': 'calc(var(--radius) + 8px)',
       },
       boxShadow: {
         'glow-primary': '0 0 10px hsl(var(--primary) / 0.67)',
         'glow-accent': '0 0 15px hsl(var(--accent) / 0.8)',
+        'glow-accent-button': '0 0 12px hsl(var(--accent))',
       },
       keyframes: {
         'accordion-down': {
