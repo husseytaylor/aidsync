@@ -19,10 +19,10 @@ interface Message {
 const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
 
 const TypingIndicator = () => (
-  <div className="flex items-center space-x-1.5 p-2">
-    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse"></span>
+  <div className="flex items-center space-x-1.5 p-2 bg-white/10 rounded-full w-fit">
+    <span className="h-2 w-2 bg-white rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+    <span className="h-2 w-2 bg-white rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+    <span className="h-2 w-2 bg-white rounded-full animate-pulse"></span>
   </div>
 );
 
@@ -106,7 +106,7 @@ export function ChatAssistant() {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
     return () => window.removeEventListener('open-aidsync-chat', eventHandler);
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
@@ -192,9 +192,8 @@ export function ChatAssistant() {
         <Button 
           size="icon"
           className={cn(
-            "rounded-full w-16 h-16 shadow-lg bg-primary backdrop-blur-md border border-primary hover:bg-primary/90 hover:shadow-glow-accent transition-all duration-300",
-            isIdleAnimating && "animate-float-idle",
-            !isIdleAnimating && "animate-wiggle"
+            "rounded-full w-16 h-16 shadow-lg bg-aidsync-gradient-green text-white hover:shadow-glow-accent transition-all hover:scale-105 drop-shadow-lg",
+            isIdleAnimating && "animate-pulse-wiggle"
           )}
           onClick={handleOpen}
           aria-label="Open AI Assistant"
@@ -207,13 +206,13 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border border-accent/30 bg-secondary/80 backdrop-blur-sm transition-shadow duration-300 hover:shadow-glow-accent">
-          <CardHeader className="flex flex-row items-center justify-between border-b bg-secondary/80 backdrop-blur-sm">
+        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border-[1.5px] border-white/10 bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg transition-shadow duration-300 hover:shadow-glow-accent">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
               <CardTitle className="font-headline text-lg text-secondary-foreground">AidSync AI Assistant</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring">
+            <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary-foreground hover:bg-white/10 focus-visible:ring-ring">
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
@@ -227,7 +226,7 @@ export function ChatAssistant() {
               </div>
             </ScrollArea>
           </CardContent>
-          <CardFooter className="border-t pt-4">
+          <CardFooter className="border-t pt-4 border-white/10">
             <form onSubmit={handleSubmit} className="flex w-full items-center space-x-2">
               <Input
                 value={input}
@@ -235,7 +234,7 @@ export function ChatAssistant() {
                 placeholder="Ask a question..."
                 disabled={isPending}
                 autoFocus
-                className="bg-background/50 backdrop-blur-sm"
+                className="bg-black/20 backdrop-blur-sm border-white/20"
               />
               <Button type="submit" size="icon" disabled={isPending || !input.trim()}>
                 <Send className="h-4 w-4" />

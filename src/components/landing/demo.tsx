@@ -50,7 +50,7 @@ export function Demo() {
             alt="Abstract network node visualization representing AI connections"
             width={600}
             height={400}
-            className="w-full h-auto rounded-xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+            className="w-full h-auto rounded-2xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="network node"
             unoptimized
@@ -61,7 +61,7 @@ export function Demo() {
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
           <div>
-            <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <Card className="h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   <div className="bg-[#00ffd0]/10 p-3 rounded-full">
@@ -83,7 +83,7 @@ export function Demo() {
 
           {/* Phone Agent Box */}
           <div>
-             <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+             <Card className="h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   <div className="bg-[#00ffd0]/10 p-3 rounded-full">

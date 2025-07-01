@@ -3,27 +3,32 @@
 import Link from 'next/link';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
+import { Button } from '../ui/button';
+import { Calendar } from 'lucide-react';
 
 export function Footer() {
   return (
     <motion.footer 
-      className="w-full border-t border-white/10 bg-background/90 backdrop-blur-sm"
+      className="w-full border-t border-white/10 bg-black/20 backdrop-blur-md"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true }}
     >
-      <div className="container flex flex-col items-center justify-between gap-6 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-          <Link href="/" className="flex items-center space-x-2">
+      <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 items-center py-10 text-white/80 tracking-wide text-sm">
+        {/* Left Column */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <Link href="/" className="flex items-center space-x-2 mb-2">
             <Logo className="w-8 h-8" />
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
-          <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            © {new Date().getFullYear()} AidSync. All Rights Reserved.
+          <p className="text-sm leading-loose text-muted-foreground max-w-xs">
+            © {new Date().getFullYear()} AidSync. Intelligent Automation for Humanitarian Organizations.
           </p>
         </div>
-        <nav className="flex items-center gap-4 sm:gap-6 text-sm">
+
+        {/* Center Column */}
+        <nav className="flex items-center justify-center gap-4 sm:gap-6 text-sm">
           <Link href="/about" className="text-muted-foreground transition-colors hover:text-primary">
             About
           </Link>
@@ -34,6 +39,16 @@ export function Footer() {
             Privacy Policy
           </Link>
         </nav>
+
+        {/* Right Column */}
+        <div className="flex justify-center md:justify-end">
+            <Button asChild>
+                <Link href="/contact#calendly">
+                    <Calendar />
+                    Book a Call
+                </Link>
+            </Button>
+        </div>
       </div>
     </motion.footer>
   );

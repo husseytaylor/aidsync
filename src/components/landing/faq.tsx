@@ -47,7 +47,7 @@ export function Faq() {
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <div className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10 rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+      <div className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10 rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
          <div className="text-center mb-12">
            <h2 className="font-headline text-4xl font-extrabold">Frequently Asked Questions</h2>
            <p className="mt-4 text-lg text-muted-foreground">
@@ -59,7 +59,7 @@ export function Faq() {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="group/item bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 data-[state=open]:text-dark-turquoise hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise"
+              className="group/item bg-black/20 border border-accent/20 rounded-xl transition-all duration-300 data-[state=open]:text-dark-turquoise hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise"
             >
               <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline text-accent data-[state=open]:text-dark-turquoise">
                 <div className="flex items-center gap-4">

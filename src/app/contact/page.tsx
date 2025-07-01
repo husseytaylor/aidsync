@@ -28,7 +28,7 @@ export default function ContactPage() {
         
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
             <AnimatedSection tag="div" delay={100} className="h-full">
-                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
                     <CardHeader>
                         <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
                             <MessageSquare className="w-6 h-6 text-[#00ffd0]" />
@@ -44,7 +44,7 @@ export default function ContactPage() {
                 </Card>
             </AnimatedSection>
             <AnimatedSection tag="div" delay={200} className="h-full">
-                <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
                     <CardHeader>
                         <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
                             <Phone className="w-6 h-6 text-[#00ffd0]" />
@@ -60,7 +60,7 @@ export default function ContactPage() {
                 </Card>
             </AnimatedSection>
             <AnimatedSection tag="div" delay={300} className="h-full">
-                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
                     <CardHeader>
                          <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
                             <Mail className="w-6 h-6 text-[#00ffd0]" />
@@ -88,7 +88,7 @@ export default function ContactPage() {
             </div>
 
             <div
-                className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] p-4 sm:p-8"
+                className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 p-4 sm:p-8 shadow-xl"
             >
                 <iframe
                 src="https://calendly.com/cthussey2/new-meeting?primary_color=00ffd0"

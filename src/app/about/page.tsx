@@ -32,7 +32,7 @@ export default function AboutPage() {
                 src="https://placehold.co/1200x600.png"
                 alt="AidSync team working collaboratively in a modern office"
                 fill
-                className="rounded-xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+                className="rounded-2xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
                 style={{ backgroundColor: '#0c0c0c' }}
                 data-ai-hint="team collaboration"
                 unoptimized
@@ -42,7 +42,7 @@ export default function AboutPage() {
 
       <div className="grid md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto mb-24">
         <AnimatedSection tag="div" delay={300} className="h-full">
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                 <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <Rocket className="w-8 h-8 text-[#00ffd0]" />
                 </div>
@@ -51,7 +51,7 @@ export default function AboutPage() {
             </Card>
         </AnimatedSection>
         <AnimatedSection tag="div" delay={400} className="h-full">
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                 <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <Users className="w-8 h-8 text-[#00ffd0]" />
                 </div>
@@ -60,7 +60,7 @@ export default function AboutPage() {
             </Card>
         </AnimatedSection>
         <AnimatedSection tag="div" delay={500} className="h-full">
-             <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+             <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                  <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <ShieldCheck className="w-8 h-8 text-[#00ffd0]" />
                 </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
           <h2 className="font-headline text-3xl sm:text-4xl font-extrabold mb-12">Meet the Founder</h2>
         </div>
         <div className="max-w-2xl mx-auto">
-             <Card className="flex flex-col items-center text-center rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-8">
+             <Card className="flex flex-col items-center text-center rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-8">
                 <div className="relative w-32 h-32 mx-auto mb-6 rounded-full border-2 border-white/10 shadow-inner overflow-hidden">
                     <Image
                         src="https://placehold.co/128x128.png"

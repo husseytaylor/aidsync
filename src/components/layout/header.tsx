@@ -38,10 +38,10 @@ export function Header({ user }: { user: User | null }) {
       const offset = window.scrollY;
       const contactSection = document.getElementById('calendly');
       // Set a large number if contact section is not on the page
-      const contactTop = contactSection ? contactSection.getBoundingClientRect().top : Infinity;
+      const contactTop = contactSection ? contactSection.getBoundingClientRect().top + window.scrollY : Infinity;
 
       // Header should become opaque if scrolled more than 50px OR if the top of the contact section is near the top of the viewport
-      if (offset > 50 || contactTop < 100) {
+      if (offset > 50 || offset > contactTop - 100) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -92,14 +92,16 @@ export function Header({ user }: { user: User | null }) {
             const targetId = link.href.substring(1);
             const targetElement = document.getElementById(targetId);
             if(targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth' });
+                const yOffset = -70; // Header height
+                const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
             }
         }
     };
     
     const navLinkClasses = cn(
       "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
-      isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground',
+      'text-foreground/80 hover:text-accent',
       isLandingPage && activeLink === link.href.substring(1) && "text-accent after:scale-x-100",
       isMobile ? "block text-lg font-medium" : "text-sm font-medium"
     );
@@ -134,8 +136,8 @@ export function Header({ user }: { user: User | null }) {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-            {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
-            {mainNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
+            {isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
+            {mainNavLinks.map((link) => renderNavLink(link))}
         </nav>
         
         <div className="flex flex-1 items-center justify-end">
@@ -160,7 +162,7 @@ export function Header({ user }: { user: User | null }) {
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                     <Link href="/contact#calendly">
                         <Calendar />
-                        <span>Book a Call</span>
+                        <span>Discovery Call</span>
                     </Link>
                 </Button>
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
@@ -185,14 +187,14 @@ export function Header({ user }: { user: User | null }) {
                       <Logo className="w-8 h-8" />
                       <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                     </Link>
-                    {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
-                    {mainNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
+                    {isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
+                    {mainNavLinks.map((link) => renderNavLink(link, true))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
                       <>
                         <Button asChild className="w-full justify-center">
-                          <Link href="/dashboard/analytics" onClick={() => setIsSheetopen(false)}>Dashboard</Link>
+                          <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
                         </Button>
                         <form action={logout} className="w-full">
                            <Button className="w-full justify-center" variant="outline">Logout</Button>
@@ -209,7 +211,7 @@ export function Header({ user }: { user: User | null }) {
                          <Button asChild className="w-full justify-center">
                             <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
                                 <Calendar />
-                                <span>Book a Discovery Call</span>
+                                <span>Discovery Call</span>
                             </Link>
                         </Button>
                         <Button asChild className="w-full justify-center" variant="outline">

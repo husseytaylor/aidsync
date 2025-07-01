@@ -76,7 +76,7 @@ export default {
         'dark-turquoise': 'hsl(var(--dark-turquoise))',
       },
       backgroundImage: {
-        'aidsync-gradient-green': 'linear-gradient(135deg, hsl(var(--primary)), #31990f)',
+        'aidsync-gradient-green': 'linear-gradient(135deg, #3fa419, #00a86b)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -119,7 +119,15 @@ export default {
         floatPulse: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-4px)' },
-        }
+        },
+        pulseWiggle: {
+          '0%': { transform: 'rotate(0deg) scale(1)' },
+          '20%': { transform: 'rotate(3deg) scale(1.05)' },
+          '40%': { transform: 'rotate(-3deg) scale(1.05)' },
+          '60%': { transform: 'rotate(2deg)' },
+          '80%': { transform: 'rotate(-2deg)' },
+          '100%': { transform: 'rotate(0deg) scale(1)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -127,6 +135,7 @@ export default {
         wiggle: 'wiggle 0.6s ease-in-out 1.5s 1',
         'bounce-dot': 'bounce-dot 1.4s infinite ease-in-out both',
         'float-idle': 'floatPulse 2s ease-in-out infinite',
+        'pulse-wiggle': 'pulseWiggle 1.5s ease-in-out infinite',
       },
     },
   },

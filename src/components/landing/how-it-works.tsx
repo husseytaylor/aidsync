@@ -46,7 +46,7 @@ export function HowItWorks() {
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
         {steps.map((step, index) => (
           <div key={index} className="h-full">
-            <div className="h-full text-center md:text-left flex flex-col items-center md:items-start rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <div className="h-full text-center md:text-left flex flex-col items-center md:items-start rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4">
                 {step.icon}
               </div>

@@ -91,8 +91,8 @@ export function Pricing() {
             key={index}
             className="h-full"
           >
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
-              <CardHeader className="p-4 sm:p-6 min-h-[230px]">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/80 backdrop-blur-lg border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+              <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-white transition-colors duration-300"
                   style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }}
@@ -100,7 +100,7 @@ export function Pricing() {
                   {tier.name}
                 </CardTitle>
                 <CardDescription className="text-sm min-h-[40px] pt-2">{tier.description}</CardDescription>
-                <div className="pt-4">
+                <div className="pt-4 min-h-[100px]">
                   <div className="flex items-baseline gap-2">
                     <span 
                       className="text-4xl font-extrabold font-headline text-white transition-colors duration-300"
@@ -122,7 +122,7 @@ export function Pricing() {
                 <ul className="space-y-4">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-white mt-1 flex-shrink-0" />
+                      <Check className="w-5 h-5 text-white mt-1 flex-shrink-0" style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }} />
                       <span className="text-sm text-muted-foreground">{feature}</span>
                     </li>
                   ))}
