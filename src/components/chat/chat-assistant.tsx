@@ -43,6 +43,8 @@ export function ChatAssistant() {
     setIsMounted(true);
   }, []);
 
+  // This useEffect handles the wiggle animation for the chat button.
+  // It triggers every 35 seconds, but only if the chat window is closed.
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const wiggleInterval = setInterval(() => {
@@ -50,9 +52,9 @@ export function ChatAssistant() {
         setIsWiggling(true);
         timeout = setTimeout(() => {
           setIsWiggling(false);
-        }, 400); // Animation duration
+        }, 400); // Animation duration matches tailwind config
       }
-    }, 35000); // Wiggle every 35 seconds
+    }, 35000);
 
     return () => {
       clearInterval(wiggleInterval);
@@ -100,7 +102,7 @@ export function ChatAssistant() {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
     return () => window.removeEventListener('open-aidsync-chat', eventHandler);
-  }, [sessionId]);
+  }, [sessionId]); // Depends on sessionId to avoid re-registering
 
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
@@ -182,7 +184,10 @@ export function ChatAssistant() {
 
   return (
     <>
-      <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out transform-gpu will-change-transform", isOpen ? "scale-0" : "scale-100")}>
+      <div className={cn(
+          "fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out transform-gpu will-change-transform",
+          isOpen ? "scale-0" : "scale-100"
+        )}>
         <Button 
           size="icon"
           className={cn(
