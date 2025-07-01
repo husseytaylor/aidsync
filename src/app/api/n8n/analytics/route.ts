@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export const revalidate = 60;
 
 const N8N_API_KEY = process.env.N8N_API_KEY;
-const N8N_BASE_URL = 'https://bridgeboost.app.n8n.cloud/api/v1';
+const N8N_BASE_URL = process.env.N8N_BASE_URL;
 
 interface N8nExecution {
   id: string;
@@ -26,6 +26,10 @@ interface N8nInsights {
 export async function GET() {
   if (!N8N_API_KEY) {
     return NextResponse.json({ error: 'N8N_API_KEY is not configured.' }, { status: 500 });
+  }
+
+  if (!N8N_BASE_URL) {
+    return NextResponse.json({ error: 'N8N_BASE_URL is not configured.' }, { status: 500 });
   }
 
   const headers = {
