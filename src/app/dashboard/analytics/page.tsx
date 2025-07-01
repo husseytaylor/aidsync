@@ -1,3 +1,4 @@
+
 import { AnalyticsDashboardClient } from "@/components/dashboard/analytics-client";
 import { ClientOnly } from "@/components/client-only";
 import { N8nAnalytics } from "@/components/dashboard/n8n-analytics";
@@ -19,13 +20,21 @@ async function getAnalyticsData() {
       return defaultState;
     }
 
-    const externalData = await response.json();
+    const rawData = await response.json();
+    // The webhook might return an array with a single object.
+    const externalData = Array.isArray(rawData) ? rawData[0] : rawData;
+    
+    if (!externalData) {
+        console.error("Webhook data is empty or in an unexpected format.");
+        return defaultState;
+    }
 
     const voice_analytics = externalData.voice_analytics || defaultState.voice_analytics;
     const chat_analytics = externalData.chat_analytics || defaultState.chat_analytics;
     
     const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => {
       try {
+        // The dialogue can be a stringified JSON array.
         const dialogueData = session.dialogue && typeof session.dialogue === 'string' 
           ? JSON.parse(session.dialogue) 
           : (session.dialogue || []);
