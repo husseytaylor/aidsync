@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
+import { aiChatAssistant } from '@/ai/flows/ai-chat-assistant';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,7 +20,6 @@ interface Message {
   timestamp: Date;
 }
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_CHAT_WEBHOOK_URL;
 const AGENT_ANALYTICS_WEBHOOK_URL = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
 const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
@@ -71,22 +71,6 @@ export function ChatAssistant() {
   }, [isOpen]);
   
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
-
-  const sendEvent = async (payload: object) => {
-    if (!WEBHOOK_URL) {
-      console.error('Chat webhook URL not configured.');
-      return;
-    }
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (error) {
-      console.error('Webhook event failed:', error);
-    }
-  };
 
   const sendAgentAnalytics = async (history: Message[]) => {
     if (!AGENT_ANALYTICS_WEBHOOK_URL) {
@@ -194,60 +178,31 @@ export function ChatAssistant() {
     if (!input.trim() || isPending) return;
 
     const userMessage: Message = { role: 'user', content: input.trim(), timestamp: new Date() };
-    setMessages((prev) => [...prev, userMessage]);
     const currentInput = input;
+    
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
 
     startTransition(async () => {
-      let currentSessionId = sessionId;
-      
-      if (!currentSessionId) {
-        const newSessionId = crypto.randomUUID();
-        setSessionId(newSessionId);
+      // Start session if it's the first message
+      if (!sessionId) {
+        setSessionId(crypto.randomUUID());
         setSessionStartTime(new Date());
-        currentSessionId = newSessionId;
-        
-        await sendEvent({
-          event: 'chat_started',
-          session_id: newSessionId,
-          timestamp: new Date().toISOString(),
-        });
       }
       
-      if (!WEBHOOK_URL) {
-        console.error('Chat webhook URL not configured.');
-        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
-        setMessages((prev) => [...prev, errorMessage]);
-        return;
-      }
-
       try {
-        const response = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event: 'message',
-            session_id: currentSessionId,
-            sender: 'user',
-            message: currentInput,
-            timestamp: new Date().toISOString(),
-          }),
-        });
-
-        if (!response.ok) throw new Error('Webhook request failed');
+        const result = await aiChatAssistant({ message: currentInput });
         
-        const result = await response.json();
-        const assistantContent = result.response || result.message;
-
-        if (assistantContent) {
-          const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
+        if (result.response) {
+          const assistantMessage: Message = { role: 'assistant', content: result.response, timestamp: new Date() };
           setMessages((prev) => [...prev, assistantMessage]);
         } else {
-          throw new Error('Empty or invalid response from webhook');
+          throw new Error('AI assistant returned an empty response.');
         }
+
       } catch (error) {
         console.error('AI chat error:', error);
-        const errorMessage: Message = { role: 'assistant', content: "I’ll forward this to our team. Please email us or book a call using the link below.", timestamp: new Date() };
+        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later. Our team has been notified.", timestamp: new Date() };
         setMessages((prev) => [...prev, errorMessage]);
       }
     });
