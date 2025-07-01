@@ -36,33 +36,24 @@ export function ChatAssistant() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  const [isIdleAnimating, setIdleAnimating] = useState(false);
-  const idleTimeoutRef = useRef<NodeJS.Timeout>();
+  const [isWiggling, setIsWiggling] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    const startIdleAnimation = () => {
-      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-      idleTimeoutRef.current = setTimeout(() => {
-        if (!isOpen) {
-          setIdleAnimating(true);
-        }
-      }, 30000); // 30 seconds
-    };
-
-    if (isOpen) {
-      setIdleAnimating(false);
-      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-    } else {
-      startIdleAnimation();
-    }
+    const wiggleInterval = setInterval(() => {
+      if (!isOpen) {
+        setIsWiggling(true);
+        setTimeout(() => {
+          setIsWiggling(false);
+        }, 400); // Animation duration
+      }
+    }, 35000); // Wiggle every 35 seconds
 
     return () => {
-      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+      clearInterval(wiggleInterval);
     };
   }, [isOpen]);
   
@@ -193,7 +184,7 @@ export function ChatAssistant() {
           size="icon"
           className={cn(
             "rounded-full w-16 h-16 shadow-lg bg-gradient-to-br from-green-500 to-emerald-400 text-white transition-all hover:scale-110 drop-shadow-lg",
-            isIdleAnimating && "animate-pulse-wiggle"
+            isWiggling && "animate-wiggle"
           )}
           onClick={handleOpen}
           aria-label="Open AI Assistant"

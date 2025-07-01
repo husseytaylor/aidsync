@@ -1,6 +1,5 @@
 import { AnimatedSection } from '@/components/animated-section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FounderCard } from '@/components/founder-card';
 import { Users, Rocket, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 
@@ -63,12 +62,23 @@ export default function AboutPage() {
         </AnimatedSection>
       </div>
 
-      <AnimatedSection delay={600}>
+      <div className="animate-fadeInUp" style={{animationDelay: '600ms'}}>
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="font-headline text-3xl sm:text-4xl font-extrabold">Meet the Founder</h2>
         </div>
-        <FounderCard />
-      </AnimatedSection>
+        <div className="flex flex-col items-center text-center gap-4 max-w-lg mx-auto">
+          <img
+            src="/PP(Turquoise).png"
+            alt="Portrait of Taylor Hussey"
+            className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-2 border-white/10 shadow-lg object-cover hover:scale-105 transition-transform duration-300"
+          />
+          <h3 className="font-headline text-xl font-bold text-white">Taylor Hussey</h3>
+          <p className="text-sm text-muted-foreground italic">Founder, AidSync</p>
+          <p className="text-md text-white/90 leading-relaxed max-w-prose">
+            Taylor is a competitive bodybuilder, pre-law scholar, and automation specialist with a passion for helping businesses scale through intelligent systems. With a background in logic, branding, and AI architecture, he founded AidSync to merge high-performance mindset with world-class automation — empowering clients to work smarter, faster, and more confidently.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
