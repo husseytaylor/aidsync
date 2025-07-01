@@ -22,10 +22,10 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'max-w-xs md:max-w-sm rounded-2xl px-4 py-2 text-sm',
+          'relative max-w-xs md:max-w-sm rounded-xl px-4 py-2 text-sm shadow-lg',
           isUser
-            ? 'bg-primary text-primary-foreground rounded-br-lg'
-            : 'bg-accent text-accent-foreground rounded-bl-lg'
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-gradient-to-br from-[#28e0b0] to-[#1ac5a2] text-white message-trail'
         )}
       >
         {typeof content === 'string' ? <p className="whitespace-pre-wrap">{content}</p> : content}

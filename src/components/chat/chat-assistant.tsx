@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bot, Send, X, Loader2 } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -17,6 +17,14 @@ interface Message {
 }
 
 const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+
+const TypingIndicator = () => (
+  <div className="flex items-center space-x-1.5 p-2">
+    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot [animation-delay:-0.3s]"></span>
+    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot [animation-delay:-0.15s]"></span>
+    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot"></span>
+  </div>
+);
 
 export function ChatAssistant() {
   const pathname = usePathname();
@@ -149,7 +157,7 @@ export function ChatAssistant() {
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out", isOpen ? "scale-0" : "scale-100")}>
         <Button 
           size="icon"
-          className="rounded-full w-16 h-16 shadow-lg bg-primary/80 backdrop-blur-md border border-primary hover:bg-primary"
+          className="rounded-full w-16 h-16 shadow-lg bg-primary/80 backdrop-blur-md border border-primary hover:bg-primary animate-wiggle"
           onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
@@ -161,7 +169,7 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl">
+        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border border-primary/20">
           <CardHeader className="flex flex-row items-center justify-between border-b bg-secondary/80 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
@@ -177,7 +185,7 @@ export function ChatAssistant() {
                 {messages.map((msg, index) => (
                   <ChatMessage key={index} role={msg.role} content={msg.content} />
                 ))}
-                {isPending && <ChatMessage role="assistant" content={<Loader2 className="w-5 h-5 animate-spin text-primary" />} />}
+                {isPending && <ChatMessage role="assistant" content={<TypingIndicator />} />}
               </div>
             </ScrollArea>
           </CardContent>

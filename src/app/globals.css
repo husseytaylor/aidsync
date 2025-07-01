@@ -43,6 +43,9 @@
     --chart-5: 27 87% 67%;
     
     --radius: 0.75rem;
+
+    --light-turquoise: 173 70% 92%; /* #E0F7F4 */
+    --dark-turquoise: 179 96% 25%; /* #007C7C */
   }
 }
 
@@ -52,5 +55,20 @@
   }
   body {
     @apply text-foreground;
+  }
+}
+
+@layer utilities {
+  .message-trail::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -24px;
+    width: 18px;
+    height: 100%;
+    background: linear-gradient(90deg, hsla(var(--accent) / 0.4), transparent);
+    border-radius: 999px;
+    pointer-events: none;
+    @apply animate-trail;
   }
 }

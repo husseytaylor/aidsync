@@ -72,8 +72,8 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        'light-turquoise': '#E0F7F4',
-        'dark-turquoise': '#007C7C',
+        'light-turquoise': 'hsl(var(--light-turquoise))',
+        'dark-turquoise': 'hsl(var(--dark-turquoise))',
       },
       backgroundImage: {
         'aidsync-gradient-green': 'linear-gradient(135deg, hsl(var(--primary)), #31990f)',
@@ -107,10 +107,26 @@ export default {
             height: '0',
           },
         },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(0)' },
+          '25%': { transform: 'rotate(3deg)' },
+          '75%': { transform: 'rotate(-3deg)' },
+        },
+        'bounce-dot': {
+          '0%, 80%, 100%': { transform: 'scale(0)' },
+          '40%': { transform: 'scale(1.0)' },
+        },
+        trailFade: {
+          '0%, 100%': { opacity: '0', transform: 'translateY(-50%) translateX(-6px)' },
+          '50%': { opacity: '1', transform: 'translateY(-50%) translateX(0)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        wiggle: 'wiggle 0.6s ease-in-out 1.5s 1',
+        'bounce-dot': 'bounce-dot 1.4s infinite ease-in-out both',
+        trail: 'trailFade 2s ease-in-out infinite',
       },
     },
   },
