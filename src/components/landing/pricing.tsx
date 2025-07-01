@@ -1,8 +1,11 @@
+
+"use client";
+
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AnimatedSection } from '../animated-section';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const tiers = [
   {
@@ -64,31 +67,54 @@ const tiers = [
   },
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: "easeOut" } 
+  },
+};
+
 export function Pricing() {
   return (
-    <AnimatedSection id="pricing" tag="section" className="container py-24 sm:py-32">
-      <div className="max-w-2xl mx-auto text-center">
+    <section id="pricing" className="container py-24 sm:py-32">
+       <motion.div 
+        className="max-w-2xl mx-auto text-center mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Pricing Plans</h2>
         <p className="mt-4 text-lg text-muted-foreground">
           Choose the right tier for your business. All plans include hosting, updates, and dashboard access.
         </p>
-      </div>
-      <div className="mt-16 grid gap-8 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+      </motion.div>
+
+      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {tiers.map((tier, index) => (
-          <AnimatedSection key={index} delay={index * 150}>
-            <Card className={`flex flex-col h-full hover:shadow-glow-primary hover:-translate-y-2 ${tier.popular ? 'border-primary shadow-lg shadow-primary/20' : 'border-border'}`}>
-              <CardHeader>
-                <CardTitle className="font-headline">{tier.name}</CardTitle>
-                <CardDescription>{tier.description}</CardDescription>
+          <motion.div
+            key={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2, margin: "-50px" }}
+            transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
+          >
+            <Card className={`flex flex-col h-full transition-all duration-300 ${tier.popular ? 'border-primary shadow-lg shadow-primary/20 hover:shadow-glow-primary' : 'border-border/50 hover:border-primary/50 hover:shadow-glow-primary'} hover:-translate-y-2`}>
+              <CardHeader className="p-6">
+                <CardTitle className="font-headline text-xl">{tier.name}</CardTitle>
+                <CardDescription className="text-sm min-h-[40px]">{tier.description}</CardDescription>
                 <div className="pt-4">
-                  <span className="text-4xl font-bold font-headline">{tier.setupFee}</span>
+                  <span className="text-4xl font-extrabold font-headline text-accent">{tier.setupFee}</span>
                   <span className="text-muted-foreground"> Setup</span>
                   {tier.monthlyFee !== 'Custom' && (
                      <p className="text-xl font-semibold mt-1">{tier.monthlyFee} <span className="text-sm font-normal text-muted-foreground">/ month</span></p>
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 p-6 pt-0">
                 <ul className="space-y-3">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start">
@@ -98,15 +124,15 @@ export function Pricing() {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="p-6 pt-0">
                  <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
                     <Link href="#contact">{tier.cta}</Link>
                  </Button>
               </CardFooter>
             </Card>
-          </AnimatedSection>
+          </motion.div>
         ))}
       </div>
-    </AnimatedSection>
+    </section>
   );
 }
