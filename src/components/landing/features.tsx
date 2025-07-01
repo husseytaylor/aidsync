@@ -43,7 +43,7 @@ export function Features() {
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="rounded-xl shadow-2xl object-contain"
+            className="rounded-xl shadow-2xl object-cover"
           />
         </AnimatedSection>
 
@@ -53,7 +53,7 @@ export function Features() {
             <AnimatedSection
               key={index}
               delay={100 + index * 150}
-              className="bg-secondary/50 backdrop-blur-lg border border-primary/30 text-foreground p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
+              className="bg-card/80 backdrop-blur-md border border-primary/30 text-card-foreground p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
             >
               <div className="flex items-start gap-4">
                 <div className="bg-primary/10 p-3 rounded-full">
