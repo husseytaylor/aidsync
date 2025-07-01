@@ -1,12 +1,8 @@
 import { NextResponse } from 'next/server';
+import { AGENT_LOGGING_WEBHOOK_URL } from '@/config';
 
 export async function POST(request: Request) {
-  const webhookUrl = process.env.AGENT_ANALYTICS_WEBHOOK_URL;
-
-  if (!webhookUrl || webhookUrl === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
-    console.error('[API /chat] Agent analytics webhook URL is not configured in .env file.');
-    return NextResponse.json({ response: 'The chat service is currently unavailable due to a configuration issue.' }, { status: 500 });
-  }
+  const webhookUrl = AGENT_LOGGING_WEBHOOK_URL;
 
   try {
     const body = await request.json();

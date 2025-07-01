@@ -1,11 +1,14 @@
-import type {Metadata} from 'next';
 import './globals.css';
+import type {Metadata} from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import { ChatAssistant } from '@/components/chat/chat-assistant';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { createClient } from '@/lib/supabase/server';
 import { ClientOnly } from '@/components/client-only';
+
+// This import triggers the environment variable validation.
+import '@/config';
 
 export const metadata: Metadata = {
   title: 'AidSync AI Platform',

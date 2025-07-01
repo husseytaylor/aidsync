@@ -1,5 +1,5 @@
-
 import { AnalyticsDashboardClient } from "@/components/dashboard/analytics-client";
+import { ANALYTICS_WEBHOOK_URL } from "@/config";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -9,9 +9,9 @@ async function getAnalyticsData() {
     chatChartData: [],
   };
 
-  const webhookUrl = process.env.AGENT_ANALYTICS_WEBHOOK_URL;
-  if (!webhookUrl || webhookUrl === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
-    console.error("[Analytics Page] Agent analytics webhook URL is not configured in .env file.");
+  const webhookUrl = ANALYTICS_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.error("[Analytics Page] Agent analytics webhook URL is not configured.");
     return defaultState;
   }
 

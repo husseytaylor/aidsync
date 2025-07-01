@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/config';
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -7,22 +8,10 @@ export async function middleware(request: NextRequest) {
       headers: request.headers,
     },
   })
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || supabaseUrl === 'YOUR_SUPABASE_URL' || !supabaseKey || supabaseKey === 'YOUR_SUPABASE_ANON_KEY') {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(`[Supabase Middleware] Auth credentials not found or are placeholders. Middleware is skipping session refresh.
-        Please provide NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your root .env file.
-        Remember to restart your dev server after updating .env.`);
-    }
-    return response;
-  }
   
   const supabase = createServerClient(
-    supabaseUrl,
-    supabaseKey,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name: string) {

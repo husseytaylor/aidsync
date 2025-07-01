@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { SUPABASE_URL } from "@/config";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -17,6 +18,10 @@ const signupSchema = z.object({
 
 
 export async function login(formData: FormData) {
+  if (!SUPABASE_URL) {
+      return redirect(`/auth/login?message=Authentication is not configured. Please check server logs.`);
+  }
+
   const supabase = createClient();
   const rawFormData = Object.fromEntries(formData.entries());
   
@@ -33,9 +38,6 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.error("Login error:", error.message);
-    if (error.name === 'MissingSupabaseConfigError') {
-      return redirect(`/auth/login?message=Authentication is not configured. Please provide Supabase credentials in your .env file.`);
-    }
     return redirect(`/auth/login?message=${encodeURIComponent(error.message)}`);
   }
 
@@ -43,6 +45,10 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
+  if (!SUPABASE_URL) {
+      return redirect(`/auth/signup?message=Authentication is not configured. Please check server logs.`);
+  }
+
   const origin = headers().get("origin");
   const supabase = createClient();
   const rawFormData = Object.fromEntries(formData.entries());
@@ -63,9 +69,6 @@ export async function signup(formData: FormData) {
 
   if (error) {
     console.error("Signup error:", error.message);
-    if (error.name === 'MissingSupabaseConfigError') {
-      return redirect(`/auth/signup?message=Authentication is not configured. Please provide Supabase credentials in your .env file.`);
-    }
     return redirect(`/auth/signup?message=${encodeURIComponent(error.message)}`);
   }
 
