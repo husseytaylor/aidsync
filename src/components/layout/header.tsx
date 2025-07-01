@@ -8,7 +8,7 @@ import { logout } from '@/app/auth/actions';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 import type { User } from '@supabase/supabase-js';
-import { cloneElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
@@ -32,6 +32,11 @@ export function Header({ user }: { user: User | null }) {
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,7 +85,7 @@ export function Header({ user }: { user: User | null }) {
     };
   }, [pathname, isLandingPage, landingNavLinks]);
   
-  const buttonStyle = isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
+  const buttonStyle = isMounted && isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
@@ -119,7 +124,7 @@ export function Header({ user }: { user: User | null }) {
       id="site-header"
       className={cn(
         "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
-        isScrolled
+        isMounted && isScrolled
           ? 'bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90 border-white/10 shadow-md'
           : 'bg-transparent border-transparent'
       )}
@@ -175,7 +180,7 @@ export function Header({ user }: { user: User | null }) {
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(isScrolled ? 'text-foreground' : 'text-white')}>
+                <Button variant="ghost" size="icon" className={cn(isMounted && isScrolled ? 'text-foreground' : 'text-white')}>
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
