@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from 'react';
@@ -18,9 +19,9 @@ interface Message {
   timestamp: Date;
 }
 
-const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
-const SESSION_LOG_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/e92508bb-03f8-4b4f-b8ee-5911008a9835';
-const ORG_ID = '8dee815e-5e29-47cb-a171-8f522fee0eea';
+const WEBHOOK_URL = process.env.NEXT_PUBLIC_CHAT_WEBHOOK_URL;
+const SESSION_LOG_WEBHOOK_URL = process.env.NEXT_PUBLIC_SESSION_LOG_WEBHOOK_URL;
+const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
@@ -72,6 +73,10 @@ export function ChatAssistant() {
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
   const sendEvent = async (payload: object) => {
+    if (!WEBHOOK_URL) {
+      console.error('Chat webhook URL not configured.');
+      return;
+    }
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
@@ -84,7 +89,7 @@ export function ChatAssistant() {
   };
 
   const sendSessionAnalyticsOnClose = async (history: Message[]) => {
-    if (!sessionId || !sessionStartTime) return;
+    if (!sessionId || !sessionStartTime || !SESSION_LOG_WEBHOOK_URL || !ORG_ID) return;
 
     const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
     const chatHistoryForApi = history.map(msg => ({
@@ -189,6 +194,13 @@ export function ChatAssistant() {
         });
       }
       
+      if (!WEBHOOK_URL) {
+        console.error('Chat webhook URL not configured.');
+        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
+        setMessages((prev) => [...prev, errorMessage]);
+        return;
+      }
+
       try {
         const response = await fetch(WEBHOOK_URL, {
           method: 'POST',

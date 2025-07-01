@@ -12,8 +12,14 @@ async function getAnalyticsData() {
     chatChartData: [],
   };
 
+  const webhookUrl = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.error("Agent analytics webhook URL is not configured.");
+    return defaultState;
+  }
+
   try {
-    const response = await fetch("https://bridgeboost.app.n8n.cloud/webhook/38ed3752-371e-49dc-87e6-2a15b0be206f", { cache: 'no-store' });
+    const response = await fetch(webhookUrl, { cache: 'no-store' });
 
     if (!response.ok) {
       console.error("Failed to fetch analytics from external webhook. Status:", response.status);
