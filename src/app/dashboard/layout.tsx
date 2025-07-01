@@ -23,7 +23,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="relative min-h-screen w-full">
       <div className="fixed inset-0 -z-10 bg-[url('/dash.png')] bg-cover bg-center bg-no-repeat" />
-      <div className="fixed inset-0 -z-10 bg-[#0B3D2E]/80" />
 
       <div className="relative flex min-h-screen w-full flex-col">
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-white/10 bg-black/50 px-4 backdrop-blur-md md:px-6">
