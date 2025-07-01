@@ -61,13 +61,13 @@ export function Demo() {
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
           <div>
-            <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
+            <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-accent/10 p-3 rounded-full">
-                    <MessageSquare className="w-6 h-6 text-accent" />
+                  <div className="bg-[#00ffd0]/10 p-3 rounded-full">
+                    <MessageSquare className="w-6 h-6 text-[#00ffd0]" />
                   </div>
-                  <CardTitle className="font-headline text-2xl">Try Our Chat Agent</CardTitle>
+                  <CardTitle className="font-headline text-2xl text-white">Try Our Chat Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -83,13 +83,13 @@ export function Demo() {
 
           {/* Phone Agent Box */}
           <div>
-             <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
+             <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-accent/10 p-3 rounded-full">
-                    <Phone className="w-6 h-6 text-accent" />
+                  <div className="bg-[#00ffd0]/10 p-3 rounded-full">
+                    <Phone className="w-6 h-6 text-[#00ffd0]" />
                   </div>
-                  <CardTitle className="font-headline text-2xl">Talk to the Phone Agent</CardTitle>
+                  <CardTitle className="font-headline text-2xl text-white">Talk to the Phone Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
