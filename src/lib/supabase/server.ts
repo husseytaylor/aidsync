@@ -5,10 +5,12 @@ export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey || supabaseUrl === 'YOUR_SUPABASE_URL') {
-    const errorMessage = "Supabase URL or Anon Key is missing. Please check your environment variables."
-    console.warn(errorMessage);
-    const error = { message: errorMessage, name: 'MissingSupabaseConfigError' };
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('YOUR_SUPABASE_URL')) {
+    const errorMessage = "Supabase credentials are not configured. Authentication will not work. Please provide NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env file."
+    console.error(`\n\n--- [AidSync Config Error] ---\n${errorMessage}\n------------------------------\n`);
+    
+    const error = { message: "Authentication is not configured. Please provide Supabase credentials in your .env file.", name: 'MissingSupabaseConfigError' };
+    
     return {
       auth: {
         getUser: async () => ({ data: { user: null }, error: null }),
