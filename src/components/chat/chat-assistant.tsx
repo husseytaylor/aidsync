@@ -29,11 +29,6 @@ export function ChatAssistant() {
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
-  if (restrictedPaths.some(path => pathname.startsWith(path))) {
-    return null;
-  }
-
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
       setTimeout(() => {
@@ -47,6 +42,11 @@ export function ChatAssistant() {
     }
   }, [messages, isOpen]);
   
+  const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
+  if (restrictedPaths.some(path => pathname.startsWith(path))) {
+    return null;
+  }
+
   const sendEvent = async (payload: object) => {
     try {
       await fetch(WEBHOOK_URL, {
