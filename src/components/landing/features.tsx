@@ -40,14 +40,14 @@ export function Features() {
         <AnimatedSection
           tag="div"
           variants={imageVariants}
-          className="relative rounded-xl shadow-2xl bg-black"
+          className="relative rounded-xl shadow-2xl"
         >
           <Image
             src="/hand.png"
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="object-contain"
+            className="object-contain rounded-xl"
           />
         </AnimatedSection>
 
