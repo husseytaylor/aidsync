@@ -45,7 +45,7 @@ export function Footer() {
             <Button asChild>
                 <Link href="/contact#calendly">
                     <Calendar />
-                    Book a Call
+                    Discovery Call
                 </Link>
             </Button>
         </div>

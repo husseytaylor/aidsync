@@ -1,14 +1,15 @@
 import { AnimatedSection } from '@/components/animated-section';
+import { Card } from '@/components/ui/card';
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="container py-24 sm:py-32">
       <AnimatedSection>
-        <div className="max-w-3xl mx-auto">
-          <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12">
+        <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-md border border-white/10 shadow-xl p-6 sm:p-8 md:p-12">
+          <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12 text-center">
             Privacy Policy
           </h1>
-          <div className="prose prose-invert lg:prose-xl text-muted-foreground space-y-6">
+          <div className="prose prose-invert lg:prose-xl text-muted-foreground space-y-6 mx-auto">
             <p>Effective Date: June 6, 2025</p>
 
             <p>
@@ -70,7 +71,7 @@ export default function PrivacyPolicyPage() {
             </p>
 
           </div>
-        </div>
+        </Card>
       </AnimatedSection>
     </div>
   );
