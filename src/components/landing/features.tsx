@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { AnimatedSection } from '../animated-section';
 
 const features = [
   {
@@ -25,10 +24,13 @@ const features = [
 
 export function Features() {
   return (
-    <AnimatedSection
+    <motion.section
       id="features" 
       className="container py-24 sm:py-32 scroll-mt-20"
-      delay={300}
+      initial={{ opacity: 0, x: 40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true, amount: 0.3 }}
     >
       <div className="text-center mb-12">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
@@ -51,9 +53,11 @@ export function Features() {
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="w-full h-auto object-contain rounded-xl shadow-2xl"
+            className="w-full h-auto rounded-xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+            style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="human AI partnership"
             priority
+            unoptimized
           />
         </motion.div>
 
@@ -77,6 +81,6 @@ export function Features() {
           ))}
         </div>
       </div>
-    </AnimatedSection>
+    </motion.section>
   );
 }
