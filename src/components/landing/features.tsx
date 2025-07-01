@@ -1,49 +1,76 @@
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { AnimatedSection } from '../animated-section';
 
 const features = [
   {
-    icon: <Bot className="h-8 w-8 text-primary" />,
+    icon: <Bot className="h-8 w-8 text-accent" />,
     title: 'Branded AI Agents',
     description: 'Deploy 24/7 web chat and voice assistants trained on your business data to answer questions and qualify leads.',
   },
   {
-    icon: <Globe className="h-8 w-8 text-primary" />,
+    icon: <Globe className="h-8 w-8 text-accent" />,
     title: 'Custom Client-Facing Website',
     description: 'A professionally designed, mobile-responsive website with your branding, hosted on your custom domain.',
   },
   {
-    icon: <BarChart3 className="h-8 w-8 text-primary" />,
+    icon: <BarChart3 className="h-8 w-8 text-accent" />,
     title: 'Analytics & Optimization',
     description: 'Access a full dashboard to track quotes, calls, and agent usage, with continuous backend improvements.',
   },
 ];
 
+const imageVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+};
+
 export function Features() {
   return (
-    <AnimatedSection id="features" tag="section" className="container py-24 sm:py-32">
-       <div className="max-w-2xl mx-auto text-center">
-         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
-         <p className="mt-4 text-lg text-muted-foreground">
-           AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
-         </p>
-       </div>
-      <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => (
-          <AnimatedSection key={index} delay={index * 150}>
-            <Card className="h-full text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-              <CardHeader className="items-center">
-                <div className="bg-primary/10 p-4 rounded-full mb-4">
-                  {feature.icon}
-                </div>
-                <CardTitle className="font-headline text-xl">{feature.title}</CardTitle>
-                <CardDescription className="pt-2">{feature.description}</CardDescription>
-              </CardHeader>
-            </Card>
+    <section id="features" className="container py-24 sm:py-32">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left Column (Image) - This will stack on top on mobile */}
+        <AnimatedSection tag="div" variants={imageVariants} className="relative">
+          <Image
+            src="/hand.png"
+            alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
+            width={1200}
+            height={800}
+            className="rounded-xl shadow-xl object-contain"
+          />
+        </AnimatedSection>
+
+        {/* Right Column (Content) */}
+        <div>
+          <AnimatedSection>
+            <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
+            </p>
           </AnimatedSection>
-        ))}
+
+          <div className="mt-8 flex flex-col gap-6">
+            {features.map((feature, index) => (
+              <AnimatedSection
+                key={index}
+                delay={100 + index * 150}
+                className="bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg transition-transform duration-300 hover:scale-[1.03]"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="bg-primary-foreground/10 p-3 rounded-full">
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
+                    <p className="mt-1 text-primary-foreground/80">{feature.description}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
       </div>
-    </AnimatedSection>
+    </section>
   );
 }
