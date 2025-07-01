@@ -197,15 +197,13 @@ export function ChatAssistant() {
         <motion.button
           onClick={handleOpen}
           className={cn(
-            "flex items-center gap-3 px-5 py-3 bg-aidsync-gradient-green text-white font-semibold rounded-2xl shadow-glow-accent-button transition-transform",
+            "flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-card px-6 py-3 font-headline text-sm font-semibold tracking-tight text-white shadow-xl backdrop-blur-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] sm:text-base",
             isWiggling && "animate-wiggle"
           )}
           aria-label="Open AidSync Chat Agent"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
         >
-          <Logo className="w-6 h-6" />
-          <span className="hidden sm:inline">AidSync Chat Agent</span>
+          <Logo className="w-8 h-8" />
+          <span>AidSync Chat Agent</span>
         </motion.button>
       </div>
 
