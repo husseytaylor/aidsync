@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { AnimatedSection } from "@/components/animated-section";
+import { N8nAnalytics } from "@/components/dashboard/n8n-analytics";
+import { ClientOnly } from "@/components/client-only";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -267,6 +269,13 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
       </AnimatedSection>
+
+      <ClientOnly>
+        <AnimatedSection tag="div" className="lg:col-span-2" delay={300}>
+            <N8nAnalytics />
+        </AnimatedSection>
+      </ClientOnly>
+
     </div>
   );
 }

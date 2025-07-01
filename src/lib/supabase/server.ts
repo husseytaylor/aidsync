@@ -2,11 +2,29 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export function createClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    // Return a no-op client if Supabase is not configured.
+    // This allows the app to run without crashing.
+    console.warn("Supabase credentials not set. Auth features are disabled.");
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signInWithPassword: async () => ({ error: { message: 'Supabase not configured' } }),
+        signUp: async () => ({ error: { message: 'Supabase not configured' } }),
+        signOut: async () => ({ error: null }),
+        exchangeCodeForSession: async () => ({ error: { message: 'Supabase not configured' } }),
+      },
+    } as any;
+  }
+
   const cookieStore = cookies()
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         get(name: string) {
