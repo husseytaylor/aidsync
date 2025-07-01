@@ -49,15 +49,15 @@ export function Faq() {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="group/item bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise data-[state=open]:text-dark-turquoise"
+              className="group/item bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise"
             >
-              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline">
+              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline text-accent">
                 <div className="flex items-center gap-4">
                   {faq.icon}
                   <span className="text-left">{faq.question}</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-base text-muted-foreground transition-colors duration-300">
+              <AccordionContent className="px-6 pb-4 text-base text-dark-turquoise transition-colors duration-300">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
