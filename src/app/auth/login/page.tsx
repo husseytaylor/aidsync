@@ -34,7 +34,7 @@ export default function LoginPage() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="w-full max-w-md"
         >
-          <Card className="bg-[#002d2e]/80 backdrop-blur-xl p-8">
+          <Card className="p-8">
             <div className="text-center mb-6">
               <Link href="/" className="inline-flex justify-center items-center space-x-2 mb-4">
                 <Logo className="w-12 h-12" />
@@ -80,7 +80,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 formAction={login}
-                className="bg-gradient-to-r from-[#00FFD0] to-[#0066FF] text-white rounded-md px-4 py-2 w-full mt-4 font-semibold shadow-md hover:shadow-[0_0_15px_rgba(0,255,210,0.4)] transition-all"
+                className="w-full mt-4"
               >
                 Login
               </Button>

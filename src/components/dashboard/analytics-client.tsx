@@ -76,8 +76,8 @@ const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }
 export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: AnalyticsData }) {
   const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analyticsData;
 
-  const voiceChartConfig = { calls: { label: "Calls", color: "#3FA419" } } satisfies ChartConfig;
-  const chatChartConfig = { sessions: { label: "Sessions", color: "#48D1CC" } } satisfies ChartConfig;
+  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
+  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
 
   return (
     <>
@@ -122,7 +122,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
                             <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
                             <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                            <Line dataKey="calls" type="monotone" stroke="#3FA419" strokeWidth={2} dot={{ r: 2, fill: '#3FA419' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: '#3FA419' }} />
+                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
@@ -192,7 +192,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
                             <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
                             <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                            <Line dataKey="sessions" type="monotone" stroke="#48D1CC" strokeWidth={2} dot={{ r: 2, fill: '#48D1CC' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: '#48D1CC' }} />
+                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
