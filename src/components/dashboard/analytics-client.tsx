@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon, FileText } from 'lucide-react';
+import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon, FileText, BarChart3, Users, Clock } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -82,175 +82,161 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
   const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2 items-start">
-      <div className="lg:col-span-2 mb-4">
-        <AnimatedSection>
-            <h1 className="font-headline text-4xl font-extrabold text-foreground tracking-tight" style={{ textShadow: "0 0 10px hsl(var(--accent) / 0.5)" }}>AidSync Agent Insights</h1>
-            <p className="text-muted-foreground mt-2 text-lg">Live metrics from your customer-facing AI chat and voice agents.</p>
+    <div className="container mx-auto">
+      <AnimatedSection>
+          <h1 className="font-headline text-4xl font-extrabold text-foreground tracking-tight" style={{ textShadow: "0 0 10px hsl(var(--accent) / 0.5)" }}>AidSync Agent Insights</h1>
+          <p className="text-muted-foreground mt-2 text-lg">Live metrics from your customer-facing AI chat and voice agents.</p>
+      </AnimatedSection>
+      
+      <div className="grid gap-8 lg:grid-cols-2 items-start mt-8">
+        {/* Voice Analytics Column */}
+        <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={100}>
+          <Card className="bg-black/50 backdrop-blur-md border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-2xl font-headline text-accent">
+                <Phone />
+                Voice Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-6 text-center">
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-2"><BarChart3 className="w-4 h-4"/>Total Calls</dt>
+                  <dd className="text-4xl font-bold text-foreground mt-1">{voice_analytics.summary.total_calls}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-2"><Clock className="w-4 h-4"/>Avg. Duration</dt>
+                  <dd className="text-4xl font-bold text-foreground mt-1">{formatDuration(voice_analytics.summary.average_duration_seconds)}</dd>
+                </div>
+              </div>
+              <div className="h-[250px] p-2">
+                  <ChartContainer config={voiceChartConfig} className="h-full w-full">
+                      <ResponsiveContainer>
+                          <LineChart data={voiceChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
+                              <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
+                              <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
+                              <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                              <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                          </LineChart>
+                      </ResponsiveContainer>
+                  </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/50 backdrop-blur-md border-white/10">
+            <CardHeader>
+              <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
+              <CardDescription>Review transcripts from the latest calls.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
+                  <Dialog key={index}>
+                    <DialogTrigger asChild>
+                      <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
+                        <div className="flex items-center gap-3 text-sm">
+                           <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(call.started_at)}</div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(call.duration)}</div>
+                           <Button variant="ghost" size="sm" className="h-8">View</Button>
+                        </div>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2"><FileText /> Call Transcript</DialogTitle>
+                        <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
+                      </DialogHeader>
+                      <ScrollArea className="h-[50vh] mt-4">
+                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-body p-4 bg-black/20 rounded-md">{call.transcript || "No transcript available."}</pre>
+                      </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent calls found.</div>}
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Chat Analytics Column */}
+        <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={200}>
+          <Card className="bg-black/50 backdrop-blur-md border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-2xl font-headline text-accent">
+                <MessageSquare />
+                Chat Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-2"><Users className="w-4 h-4"/>Total</dt>
+                  <dd className="text-3xl font-bold text-foreground mt-1">{chat_analytics.summary.total_sessions}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-2"><Clock className="w-4 h-4"/>Avg. Time</dt>
+                  <dd className="text-3xl font-bold text-foreground mt-1">{formatDuration(chat_analytics.summary.average_duration_seconds)}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-center gap-2"><BarChart3 className="w-4 h-4"/>Avg. Msgs</dt>
+                  <dd className="text-3xl font-bold text-foreground mt-1">{Math.round(chat_analytics.summary.average_message_count)}</dd>
+                </div>
+              </div>
+               <div className="h-[250px] p-2">
+                  <ChartContainer config={chatChartConfig} className="h-full w-full">
+                      <ResponsiveContainer>
+                          <LineChart data={chatChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
+                              <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
+                              <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
+                              <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                              <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                          </LineChart>
+                      </ResponsiveContainer>
+                  </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-black/50 backdrop-blur-md border-white/10">
+            <CardHeader>
+              <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
+              <CardDescription>Review dialogues from the latest sessions.</CardDescription>
+            </CardHeader>
+            <CardContent>
+               <div className="space-y-3">
+                {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
+                  <Dialog key={index}>
+                      <DialogTrigger asChild>
+                          <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
+                              <div className="flex items-center gap-3 text-sm">
+                                  <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(session.started_at)}</div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(session.duration)}</div>
+                                  <Button variant="ghost" size="sm" className="h-8">View</Button>
+                              </div>
+                          </div>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-xl">
+                          <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2"><MessageSquare /> Chat Dialogue</DialogTitle>
+                              <CardDescription>{formatTimestamp(session.started_at)} &bull; {formatDuration(session.duration)}</CardDescription>
+                          </DialogHeader>
+                          <ScrollArea className="h-[60vh] mt-4 pr-4">
+                              <ChatDialogue dialogue={session.dialogue} />
+                          </ScrollArea>
+                      </DialogContent>
+                  </Dialog>
+                )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent sessions found.</div>}
+              </div>
+            </CardContent>
+          </Card>
         </AnimatedSection>
       </div>
-      
-      {/* Voice Analytics Column */}
-      <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={100}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-2xl font-headline">
-              <Phone className="text-accent" />
-              Voice Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Calls</h3>
-              <p className="text-3xl font-bold text-foreground mt-1">{voice_analytics.summary.total_calls}</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Duration</h3>
-              <p className="text-3xl font-bold text-foreground mt-1">{formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-xl font-headline">
-                    <LineChartIcon className="text-accent"/>
-                    Call Volume (Last 30 Days)
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="h-[250px] p-2">
-                <ChartContainer config={voiceChartConfig} className="h-full w-full">
-                    <ResponsiveContainer>
-                        <LineChart data={voiceChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
-                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
-                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
-                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </ChartContainer>
-            </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
-            <CardDescription>Review transcripts from the latest calls.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
-                <Dialog key={index}>
-                  <DialogTrigger asChild>
-                    <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
-                      <div className="flex items-center gap-3 text-sm">
-                         <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(call.started_at)}</div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                         <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(call.duration)}</div>
-                         <Button variant="ghost" size="sm" className="h-8">View</Button>
-                      </div>
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2"><FileText /> Call Transcript</DialogTitle>
-                      <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
-                    </DialogHeader>
-                    <ScrollArea className="h-[50vh] mt-4">
-                      <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-body p-4 bg-black/20 rounded-md">{call.transcript || "No transcript available."}</pre>
-                    </ScrollArea>
-                  </DialogContent>
-                </Dialog>
-              )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent calls found.</div>}
-            </div>
-          </CardContent>
-        </Card>
-      </AnimatedSection>
-
-      {/* Chat Analytics Column */}
-      <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={200}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-2xl font-headline">
-              <MessageSquare className="text-accent" />
-              Chat Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Sessions</h3>
-              <p className="text-3xl font-bold text-foreground mt-1">{chat_analytics.summary.total_sessions}</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Duration</h3>
-              <p className="text-3xl font-bold text-foreground mt-1">{formatDuration(chat_analytics.summary.average_duration_seconds)}</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Messages</h3>
-              <p className="text-3xl font-bold text-foreground mt-1">{Math.round(chat_analytics.summary.average_message_count)}</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-xl font-headline">
-                    <LineChartIcon className="text-accent"/>
-                    Chat Volume (Last 30 Days)
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="h-[250px] p-2">
-                <ChartContainer config={chatChartConfig} className="h-full w-full">
-                    <ResponsiveContainer>
-                        <LineChart data={chatChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
-                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
-                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
-                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </ChartContainer>
-            </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
-            <CardDescription>Review dialogues from the latest sessions.</CardDescription>
-          </CardHeader>
-          <CardContent>
-             <div className="space-y-3">
-              {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
-                <Dialog key={index}>
-                    <DialogTrigger asChild>
-                        <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
-                            <div className="flex items-center gap-3 text-sm">
-                                <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(session.started_at)}</div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(session.duration)}</div>
-                                <Button variant="ghost" size="sm" className="h-8">View</Button>
-                            </div>
-                        </div>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-xl">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2"><MessageSquare /> Chat Dialogue</DialogTitle>
-                            <CardDescription>{formatTimestamp(session.started_at)} &bull; {formatDuration(session.duration)}</CardDescription>
-                        </DialogHeader>
-                        <ScrollArea className="h-[60vh] mt-4 pr-4">
-                            <ChatDialogue dialogue={session.dialogue} />
-                        </ScrollArea>
-                    </DialogContent>
-                </Dialog>
-              )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent sessions found.</div>}
-            </div>
-          </CardContent>
-        </Card>
-      </AnimatedSection>
     </div>
   );
 }

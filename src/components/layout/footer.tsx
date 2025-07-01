@@ -5,8 +5,16 @@ import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import { Calendar } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+  const isDashboard = pathname.startsWith('/dashboard');
+
+  if (isDashboard) {
+    return null;
+  }
+  
   return (
     <motion.footer 
       className="w-full border-t border-white/10 bg-black/20 backdrop-blur-md"
