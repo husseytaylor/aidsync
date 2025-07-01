@@ -54,17 +54,9 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  
-  const { pathname } = request.nextUrl
-
-  if (!session && pathname.startsWith('/dashboard')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
-    return NextResponse.redirect(url)
-  }
+  // This call is all that is needed to refresh the session cookie.
+  // The route protection is handled by the layout component for the dashboard.
+  await supabase.auth.getSession()
 
   return response
 }
