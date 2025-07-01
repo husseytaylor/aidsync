@@ -1,8 +1,5 @@
 
 import { AnalyticsDashboardClient } from "@/components/dashboard/analytics-client";
-import { ClientOnly } from "@/components/client-only";
-import { N8nAnalytics } from "@/components/dashboard/n8n-analytics";
-import { AnimatedSection } from "@/components/animated-section";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -128,11 +125,6 @@ export default async function AnalyticsPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-2 items-start">
       <AnalyticsDashboardClient analyticsData={analyticsData} />
-      <ClientOnly>
-        <AnimatedSection tag="div" className="lg:col-span-2" delay={300}>
-          <N8nAnalytics />
-        </AnimatedSection>
-      </ClientOnly>
     </div>
   );
 }
