@@ -45,9 +45,8 @@ export function N8nAnalytics() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
-        setLoading(true);
         const response = await fetch('/api/n8n/analytics');
         if (!response.ok) {
           const err = await response.json();
@@ -62,13 +61,20 @@ export function N8nAnalytics() {
             }))
         }
         setData(formattedResult);
+        setError(null);
       } catch (e: any) {
         setError(e.message);
       } finally {
-        setLoading(false);
+        if(loading){
+            setLoading(false);
+        }
       }
     }
+
     fetchData();
+    const intervalId = setInterval(fetchData, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
