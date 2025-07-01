@@ -66,40 +66,29 @@ const tiers = [
   },
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.6, ease: "easeOut" } 
-  },
-};
-
 export function Pricing() {
   return (
-    <section id="pricing" className="container py-24 sm:py-32 scroll-mt-20">
-       <motion.div 
+    <motion.section 
+      id="pricing" 
+      className="container py-24 sm:py-32 scroll-mt-20"
+      initial={{ opacity: 0, x: 40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true, amount: 0.3 }}
+    >
+       <div 
         className="max-w-2xl mx-auto text-center mb-16"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Pricing Plans</h2>
         <p className="mt-4 text-lg text-muted-foreground">
           Choose the right tier for your business. All plans include hosting, updates, and dashboard access.
         </p>
-      </motion.div>
+      </div>
 
       <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {tiers.map((tier, index) => (
-          <motion.div
+          <div
             key={index}
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2, margin: "-50px" }}
-            transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
             className="h-full"
           >
             <Card className="flex flex-col h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
@@ -145,9 +134,9 @@ export function Pricing() {
                  </Button>
               </CardFooter>
             </Card>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }

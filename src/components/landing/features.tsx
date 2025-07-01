@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
-import { AnimatedSection } from '../animated-section';
 import { motion } from 'framer-motion';
 
 const features = [
@@ -23,32 +22,26 @@ const features = [
   },
 ];
 
-const imageVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.8, ease: 'easeOut' },
-  },
-};
-
 export function Features() {
   return (
-    <section id="features" className="container py-24 sm:py-32 scroll-mt-20">
-      <AnimatedSection className="text-center mb-12">
+    <motion.section 
+      id="features" 
+      className="container py-24 sm:py-32 scroll-mt-20"
+      initial={{ opacity: 0, x: 40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true, amount: 0.3 }}
+    >
+      <div className="text-center mb-12">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
           AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
         </p>
-      </AnimatedSection>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
-        <motion.div
-          variants={imageVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+        <div
           className="relative w-full max-w-lg mx-auto"
         >
           <Image
@@ -60,14 +53,13 @@ export function Features() {
             data-ai-hint="human AI partnership"
             priority
           />
-        </motion.div>
+        </div>
 
         {/* Right Column (Content) */}
         <div className="flex flex-col gap-6">
           {features.map((feature, index) => (
-            <AnimatedSection
+            <div
               key={index}
-              delay={100 + index * 150}
               className="bg-card/80 backdrop-blur-md border border-accent/30 text-card-foreground p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-accent max-w-md"
             >
               <div className="flex items-start gap-4">
@@ -79,10 +71,10 @@ export function Features() {
                   <p className="mt-1 text-muted-foreground">{feature.description}</p>
                 </div>
               </div>
-            </AnimatedSection>
+            </div>
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

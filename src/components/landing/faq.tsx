@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Layers, DollarSign, MessageSquare, Clock, Pencil, Bot } from 'lucide-react';
 
@@ -36,7 +39,14 @@ const faqs = [
 
 export function Faq() {
   return (
-    <section id="faq" className="container py-24 sm:py-32 scroll-mt-20">
+    <motion.section 
+      id="faq" 
+      className="container py-24 sm:py-32 scroll-mt-20"
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true, amount: 0.3 }}
+    >
       <div className="bg-card/80 backdrop-blur-md border border-primary/30 rounded-2xl shadow-xl max-w-3xl mx-auto p-6 sm:p-8 md:p-10">
          <div className="text-center mb-12">
            <h2 className="font-headline text-4xl font-extrabold">Frequently Asked Questions</h2>
@@ -51,7 +61,7 @@ export function Faq() {
               value={`item-${index}`}
               className="group/item bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise"
             >
-              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline text-accent">
+              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline text-accent data-[state=open]:text-dark-turquoise">
                 <div className="flex items-center gap-4">
                   {faq.icon}
                   <span className="text-left">{faq.question}</span>
@@ -64,6 +74,6 @@ export function Faq() {
           ))}
         </Accordion>
       </div>
-    </section>
+    </motion.section>
   );
 }

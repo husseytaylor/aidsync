@@ -1,38 +1,10 @@
 "use client";
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, MessageSquare } from 'lucide-react';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const imageVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { 
-    opacity: 1, 
-    x: 0, 
-    transition: { duration: 0.8, ease: "easeOut" } 
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.6, ease: "easeOut" } 
-  },
-};
+import { motion } from 'framer-motion';
 
 export function Demo() {
   const handleStartChat = () => {
@@ -45,29 +17,28 @@ export function Demo() {
   };
   
   return (
-    <section id="demo" className="container py-24 sm:py-32 scroll-mt-20">
-      <motion.div 
+    <motion.section 
+      id="demo" 
+      className="container py-24 sm:py-32 scroll-mt-20"
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true, amount: 0.3 }}
+    >
+      <div 
         className="max-w-2xl mx-auto text-center mb-16"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Demo AidSync AI</h2>
         <p className="mt-4 text-lg text-muted-foreground">
           Experience our AI firsthand. Interact with our chat and phone agents to see their capabilities in real-time.
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div 
+      <div 
         className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
       >
         {/* Left Column (Image) */}
-        <motion.div variants={imageVariants} className="relative w-full max-w-lg mx-auto">
+        <div className="relative w-full max-w-lg mx-auto">
           <Image
             src="/node.png"
             alt="Abstract network node visualization representing AI connections"
@@ -76,12 +47,12 @@ export function Demo() {
             className="w-full h-auto object-contain rounded-xl shadow-2xl"
             data-ai-hint="network node"
           />
-        </motion.div>
+        </div>
 
         {/* Right Column (Interactive Boxes) */}
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
-          <motion.div variants={cardVariants}>
+          <div>
             <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
               <CardHeader>
                 <div className="flex items-center gap-4">
@@ -100,10 +71,10 @@ export function Demo() {
                  <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
               </CardFooter>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Phone Agent Box */}
-          <motion.div variants={cardVariants}>
+          <div>
              <Card className="h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
               <CardHeader>
                 <div className="flex items-center gap-4">
@@ -122,9 +93,9 @@ export function Demo() {
                  <Button onClick={handlePhoneCall} className="w-full">Call Now</Button>
               </CardFooter>
             </Card>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
-    </section>
+      </div>
+    </motion.section>
   );
 }
