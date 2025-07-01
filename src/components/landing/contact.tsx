@@ -1,39 +1,30 @@
 "use client";
 
-import { motion } from 'framer-motion';
+import { AnimatedSection } from '../animated-section';
 
 export function Contact() {
   return (
-    <motion.section
-      id="contact"
-      className="container py-24 sm:py-32 scroll-mt-20"
-      initial={{ opacity: 0, x: 40 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      <div className="text-center mb-12 max-w-2xl mx-auto">
-        <h2 className="font-headline text-3xl sm:text-4xl font-extrabold">
+    <section id="contact" className="container py-24 sm:py-32 scroll-mt-20 text-center">
+      <AnimatedSection className="max-w-2xl mx-auto">
+        <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-white mb-4">
           Let’s Build Your Automation System
         </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
+        <p className="text-lg text-muted-foreground">
           Book a free discovery call to explore how AidSync can streamline your workflows.
         </p>
-      </div>
+      </AnimatedSection>
 
-      <div
-        className="rounded-2xl bg-card/80 backdrop-blur-md border border-primary/30 shadow-lg overflow-hidden p-4"
+      <AnimatedSection
+        delay={200}
+        className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] p-4 sm:p-8"
       >
         <iframe
-          src="https://calendly.com/cthussey2/new-meeting?primary_color=00A693"
-          width="100%"
-          height="100%"
-          className="rounded-xl border-none"
-          style={{ minHeight: '800px' }}
+          src="https://calendly.com/cthussey2/new-meeting?primary_color=00ffd0"
+          className="w-full h-[800px] rounded-2xl border-none bg-transparent"
           frameBorder="0"
           scrolling="no"
-        />
-      </div>
-    </motion.section>
+        ></iframe>
+      </AnimatedSection>
+    </section>
   );
 }

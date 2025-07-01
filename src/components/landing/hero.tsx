@@ -30,10 +30,12 @@ export function Hero() {
             <Button asChild size="lg">
               <Link href="#pricing">View Pricing</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="#contact">
-                Book a Discovery Call <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Book a Discovery Call <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>

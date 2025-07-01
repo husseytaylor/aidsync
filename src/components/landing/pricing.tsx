@@ -3,7 +3,6 @@
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 const tiers = [
@@ -129,9 +128,12 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="p-4 sm:p-6 pt-0">
-                 <Button asChild className="w-full">
-                    <Link href="#contact">{tier.cta}</Link>
-                 </Button>
+                 <Button
+                    className="w-full"
+                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    {tier.cta}
+                  </Button>
               </CardFooter>
             </Card>
           </div>

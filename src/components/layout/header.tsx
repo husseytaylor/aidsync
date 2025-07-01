@@ -132,11 +132,13 @@ export function Header({ user }: { user: User | null }) {
                     <span>Call Agent</span>
                   </Link>
                 </Button>
-                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
-                  <Link href="#contact">
-                    <Calendar />
-                    <span>Book a Call</span>
-                  </Link>
+                <Button
+                  size="sm"
+                  className={cn("rounded-full font-bold", buttonStyle)}
+                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <Calendar />
+                  <span>Book a Call</span>
                 </Button>
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="/auth/login">Log In</Link>
@@ -189,11 +191,15 @@ export function Header({ user }: { user: User | null }) {
                               <span>Call Voice Agent</span>
                           </Link>
                         </Button>
-                        <Button asChild className="w-full justify-center">
-                          <Link href="#contact" onClick={() => setIsSheetOpen(false)}>
-                              <Calendar />
-                              <span>Book a Discovery Call</span>
-                          </Link>
+                        <Button
+                          className="w-full justify-center"
+                          onClick={() => {
+                            document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                            setIsSheetOpen(false);
+                          }}
+                        >
+                          <Calendar />
+                          <span>Book a Discovery Call</span>
                         </Button>
                         <Button asChild className="w-full justify-center">
                           <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
