@@ -23,12 +23,12 @@ export default function AboutPage() {
       <AnimatedSection delay={200} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}>
         <div className="relative aspect-video max-w-5xl mx-auto mb-24">
             <Image
-                src="https://placehold.co/1200x600.png"
-                alt="AidSync team working collaboratively in a modern office"
+                src="/smart.png"
+                alt="Smart automation illustration"
                 fill
                 className="rounded-2xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
                 style={{ backgroundColor: '#0c0c0c' }}
-                data-ai-hint="team collaboration"
+                priority
                 unoptimized
             />
         </div>
