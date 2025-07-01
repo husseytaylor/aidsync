@@ -23,7 +23,7 @@ interface AnalyticsData {
 const chartConfig = {
   duration: {
     label: "Duration (s)",
-    color: "#3FA419",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
 
@@ -66,7 +66,6 @@ export function N8nAnalytics() {
         if (!isCancelled) setData(result);
       } catch (primaryError: any) {
         console.error("n8n analytics primary fetch failed:", primaryError.message);
-        // Retry once after 500ms
         await new Promise(resolve => setTimeout(resolve, 500));
         if (isCancelled) return;
         
@@ -167,7 +166,7 @@ export function N8nAnalytics() {
                         width={30} 
                         domain={[0, 'dataMax + 10']}
                         allowDecimals={false}
-                        label={{ value: 'Seconds', angle: -90, position: 'insideLeft', offset: 0, style: { textAnchor: 'middle', fill: '#A0A0A0' } }}
+                        label={{ value: 'Seconds', angle: -90, position: 'insideLeft', offset: 0, style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))' } }}
                         />
                         <ChartTooltip 
                         cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} 
@@ -176,17 +175,17 @@ export function N8nAnalytics() {
                         <Line 
                         dataKey="duration" 
                         type="monotone" 
-                        stroke="#3FA419"
+                        stroke="var(--color-duration)"
                         strokeWidth={2} 
                         dot={false}
                         activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} 
                         />
-                        <Brush dataKey="startedAt" height={30} stroke="#0B3D2E" fill="#48D1CC" travellerWidth={15} />
+                        <Brush dataKey="startedAt" height={30} stroke="hsl(var(--background))" fill="hsl(var(--accent))" travellerWidth={15} />
                     </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
             ) : (
-                <div className="h-[300px] w-full flex items-center justify-center text-muted-foreground">
+                <div className="h-[300px] w-full flex items-center justify-center rounded-lg bg-black/20 text-center text-sm text-muted-foreground">
                     No data available for timeline.
                 </div>
             )}

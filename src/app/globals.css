@@ -51,7 +51,7 @@
 
     --color-calls: hsl(var(--primary));
     --color-sessions: hsl(var(--accent));
-    --color-duration: hsl(var(--accent));
+    --color-duration: hsl(var(--primary));
   }
 }
 

@@ -19,9 +19,14 @@ async function getAnalyticsData() {
       console.error("Failed to fetch analytics from external webhook. Status:", response.status);
       return defaultState;
     }
+    
+    const responseText = await response.text();
+    if (!responseText) {
+        console.error("Webhook returned empty response.");
+        return defaultState;
+    }
 
-    const rawData = await response.json();
-    // The webhook might return an array with a single object.
+    const rawData = JSON.parse(responseText);
     const externalData = Array.isArray(rawData) ? rawData[0] : rawData;
     
     if (!externalData) {
@@ -34,7 +39,6 @@ async function getAnalyticsData() {
     
     const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => {
       try {
-        // The dialogue can be a stringified JSON array.
         const dialogueData = session.dialogue && typeof session.dialogue === 'string' 
           ? JSON.parse(session.dialogue) 
           : (session.dialogue || []);
