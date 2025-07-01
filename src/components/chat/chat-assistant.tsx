@@ -72,21 +72,15 @@ export function ChatAssistant() {
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
   const sendAgentAnalytics = async (history: Message[]) => {
-    if (!AGENT_ANALYTICS_WEBHOOK_URL) {
-      console.error('[Agent Analytics] Webhook URL is not configured. Skipping analytics.');
+    if (!AGENT_ANALYTICS_WEBHOOK_URL || AGENT_ANALYTICS_WEBHOOK_URL === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
+      // Don't log error to console for user, but we know it's not configured
       return;
     }
-    if (!history || history.length === 0) {
-      console.warn('[Agent Analytics] Message history is empty. Skipping analytics.');
-      return;
-    }
-    if (!sessionId || !sessionStartTime || !ORG_ID) {
-      console.warn('[Agent Analytics] Session context is missing. Skipping analytics.');
-      return;
-    }
+    if (!history || history.length === 0) return;
+    if (!sessionId || !sessionStartTime || !ORG_ID) return;
     
     if (process.env.NODE_ENV === 'development') {
-        console.log('[Agent Analytics] Sending data to:', AGENT_ANALYTICS_WEBHOOK_URL);
+        console.log('[Agent Analytics] Sending session log to:', AGENT_ANALYTICS_WEBHOOK_URL);
     }
 
     const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
@@ -109,17 +103,13 @@ export function ChatAssistant() {
     };
 
     try {
-      const response = await fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
+      // Fire-and-forget this request
+      fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        keepalive: true,
       });
-      if (!response.ok) {
-        throw new Error(`Analytics webhook failed with status: ${response.status}`);
-      }
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Agent Analytics] Session analytics sent successfully.');
-      }
     } catch (error) {
       console.error('[Agent Analytics] Failed to send session analytics:', error);
     }
@@ -183,15 +173,14 @@ export function ChatAssistant() {
     setInput('');
 
     startTransition(async () => {
-      // Start session if it's the first message
       if (!sessionId) {
         setSessionId(crypto.randomUUID());
         setSessionStartTime(new Date());
       }
 
-      if (!AGENT_ANALYTICS_WEBHOOK_URL) {
-        console.error('AI chat error: Webhook URL is not configured.');
-        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. The chat webhook is not configured.", timestamp: new Date() };
+      if (!AGENT_ANALYTICS_WEBHOOK_URL || AGENT_ANALYTICS_WEBHOOK_URL === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
+        console.error('[Chat Widget] Error: Webhook URL is not configured in .env file.');
+        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now because the chat webhook is not configured.", timestamp: new Date() };
         setMessages((prev) => [...prev, errorMessage]);
         return;
       }
@@ -215,11 +204,11 @@ export function ChatAssistant() {
           const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
           setMessages((prev) => [...prev, assistantMessage]);
         } else {
-          throw new Error('AI assistant returned an empty or invalid response.');
+          throw new Error('AI assistant returned an empty or invalid response from webhook.');
         }
 
       } catch (error: any) {
-        console.error('AI chat error:', error.message);
+        console.error('[Chat Widget] AI chat error:', error);
         const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
         setMessages((prev) => [...prev, errorMessage]);
       }

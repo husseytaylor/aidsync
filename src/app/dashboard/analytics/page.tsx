@@ -10,8 +10,8 @@ async function getAnalyticsData() {
   };
 
   const webhookUrl = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
-  if (!webhookUrl) {
-    console.error("Agent analytics webhook URL is not configured.");
+  if (!webhookUrl || webhookUrl === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
+    console.error("[Analytics Page] Agent analytics webhook URL is not configured in .env file.");
     return defaultState;
   }
 
@@ -19,13 +19,13 @@ async function getAnalyticsData() {
     const response = await fetch(webhookUrl, { cache: 'no-store' });
 
     if (!response.ok) {
-      console.error("Failed to fetch analytics from external webhook. Status:", response.status);
+      console.error(`[Analytics Page] Failed to fetch analytics from webhook. Status: ${response.status} ${response.statusText}`);
       return defaultState;
     }
     
     const responseText = await response.text();
     if (!responseText) {
-        console.error("Webhook returned empty response.");
+        console.error("[Analytics Page] Webhook returned empty response.");
         return defaultState;
     }
 
@@ -33,14 +33,14 @@ async function getAnalyticsData() {
     try {
       rawData = JSON.parse(responseText);
     } catch (e) {
-      console.error("Failed to parse JSON from webhook. Response was:", responseText);
+      console.error("[Analytics Page] Failed to parse JSON from webhook. Response was:", responseText);
       return defaultState;
     }
     
     const externalData = Array.isArray(rawData) ? rawData[0] : rawData;
     
     if (!externalData) {
-        console.error("Webhook data is empty or in an unexpected format.");
+        console.error("[Analytics Page] Webhook data is empty or in an unexpected format.");
         return defaultState;
     }
 
@@ -56,11 +56,13 @@ async function getAnalyticsData() {
         return { ...session };
       }
 
+      // Handle cases where dialogue is a stringified JSON array
       if (typeof session.dialogue === 'string') {
         try {
           const parsed = JSON.parse(session.dialogue);
           return { ...session, dialogue: Array.isArray(parsed) ? parsed : [] };
         } catch (e) {
+          // Handle cases where dialogue is a simple string log
           const parsedFromText = session.dialogue.split('\n').filter(line => line.trim() !== '').map(line => {
             const parts = line.split(': ');
             const sender = parts.shift()?.trim() || 'unknown';
@@ -115,7 +117,7 @@ async function getAnalyticsData() {
     };
 
   } catch (error) {
-    console.error("Error fetching or processing analytics data:", error);
+    console.error("[Analytics Page] Error fetching or processing analytics data:", error);
     return defaultState;
   }
 }
