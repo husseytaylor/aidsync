@@ -72,6 +72,8 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        'light-turquoise': '#C4F3EC',
+        'dark-turquoise': '#035C52',
       },
       borderRadius: {
         lg: 'var(--radius)',
