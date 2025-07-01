@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, Phone, Calendar } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
@@ -95,28 +95,38 @@ export function Header({ user }: { user: User | null }) {
             ))}
           </nav>
         )}
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          {user ? (
-            <>
-              <Button asChild>
-                <Link href="/dashboard/analytics">Dashboard</Link>
-              </Button>
-              <form action={logout}>
-                <Button>Logout</Button>
-              </form>
-            </>
-          ) : (
-            <>
-              <Button asChild>
-                <Link href="/auth/login">Log In</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/auth/signup">Sign Up</Link>
-              </Button>
-            </>
-          )}
-        </div>
-        {isLandingPage && (
+        <div className="flex flex-1 items-center justify-end">
+          <div className="hidden md:flex items-center space-x-2">
+            {user ? (
+              <>
+                <Button asChild size="sm" className="rounded-full font-bold">
+                  <Link href="/dashboard/analytics">Dashboard</Link>
+                </Button>
+                <form action={logout}>
+                  <Button size="sm" className="rounded-full font-bold">Logout</Button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Button asChild size="sm" className="rounded-full font-bold">
+                  <Link href="tel:6624986621">
+                    <Phone className="h-4 w-4" />
+                    <span>Call Agent</span>
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="rounded-full font-bold">
+                  <Link href="#contact">
+                    <Calendar className="h-4 w-4" />
+                    <span>Book a Call</span>
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="rounded-full font-bold">
+                  <Link href="/auth/login">Log In</Link>
+                </Button>
+              </>
+            )}
+          </div>
+
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
@@ -126,26 +136,60 @@ export function Header({ user }: { user: User | null }) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
-                <div className="flex flex-col space-y-4 pt-6">
-                  <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                    <Logo className="w-8 h-8" />
-                    <span className="font-bold font-headline text-lg text-primary">AidSync</span>
-                  </Link>
-                  {navLinks.map((link) => (
-                    <Link 
-                      key={link.href} 
-                      href={link.href} 
-                      className="text-lg font-medium"
-                      onClick={() => setIsSheetOpen(false)}
-                    >
-                      {link.label}
+                <div className="flex h-full flex-col">
+                  <div className="flex-1 space-y-4 pt-6">
+                    <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
+                      <Logo className="w-8 h-8" />
+                      <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                     </Link>
-                  ))}
+                    {isLandingPage && navLinks.map((link) => (
+                      <Link 
+                        key={link.href} 
+                        href={link.href} 
+                        className="block text-lg font-medium"
+                        onClick={() => setIsSheetOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="flex flex-col space-y-3 border-t pt-6">
+                   {user ? (
+                      <>
+                        <Button asChild className="w-full justify-center">
+                          <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
+                        </Button>
+                        <form action={logout} className="w-full">
+                           <Button className="w-full justify-center">Logout</Button>
+                        </form>
+                      </>
+                    ) : (
+                      <>
+                        <Button asChild className="w-full justify-center">
+                          <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
+                              <Phone className="h-4 w-4" />
+                              <span>Call Voice Agent</span>
+                          </Link>
+                        </Button>
+                        <Button asChild className="w-full justify-center">
+                          <Link href="#contact" onClick={() => setIsSheetOpen(false)}>
+                              <Calendar className="h-4 w-4" />
+                              <span>Book a Discovery Call</span>
+                          </Link>
+                        </Button>
+                        <Button asChild className="w-full justify-center">
+                          <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
+                            Log In
+                          </Link>
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-        )}
+        </div>
       </div>
     </motion.header>
   );
