@@ -1,4 +1,7 @@
 import { AnalyticsDashboardClient } from "@/components/dashboard/analytics-client";
+import { ClientOnly } from "@/components/client-only";
+import { N8nAnalytics } from "@/components/dashboard/n8n-analytics";
+import { AnimatedSection } from "@/components/animated-section";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -81,5 +84,14 @@ async function getAnalyticsData() {
 
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData();
-  return <AnalyticsDashboardClient analyticsData={analyticsData} />;
+  return (
+    <>
+      <AnalyticsDashboardClient analyticsData={analyticsData} />
+      <ClientOnly>
+        <AnimatedSection tag="div" className="lg:col-span-2 mt-8" delay={300}>
+          <N8nAnalytics />
+        </AnimatedSection>
+      </ClientOnly>
+    </>
+  );
 }
