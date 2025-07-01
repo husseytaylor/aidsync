@@ -3,32 +3,32 @@ import { Layers, DollarSign, MessageSquare, Clock, Pencil, Bot } from 'lucide-re
 
 const faqs = [
   {
-    icon: <Layers className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <Layers className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "What’s included at each tier?",
     answer: "Starter includes a website with a contact form and hosting. Growth adds web chat and voice agents. Command Suite includes an internal assistant and advanced analytics. Custom tier offers fully tailored AI systems and workflows."
   },
   {
-    icon: <DollarSign className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <DollarSign className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "What’s the pricing?",
     answer: "Starter: $2,500 setup + $950/mo. Growth: $4,500 setup + $1,500/mo. Command Suite: $7,000 setup + $2,500/mo. Custom plans are scoped and priced per project."
   },
   {
-    icon: <MessageSquare className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <MessageSquare className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "Can I text the phone number?",
     answer: "Not yet. Our agents currently support voice calls only. SMS capability is under development and coming soon."
   },
   {
-    icon: <Clock className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <Clock className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "How long does setup take?",
     answer: "The initial build is typically delivered in about 2 weeks, followed by a 2-week revision window before final launch."
   },
   {
-    icon: <Pencil className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <Pencil className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "Can I make changes later?",
     answer: "Yes. Your first three major changes in the first month are free. Minor backend and knowledge base updates are always included. Larger feature updates are billed hourly."
   },
   {
-    icon: <Bot className="h-6 w-6 text-accent flex-shrink-0" />,
+    icon: <Bot className="h-6 w-6 text-accent flex-shrink-0 group-data-[state=open]/item:text-dark-turquoise" />,
     question: "How does the agent know what to say?",
     answer: "We train the AI on your business documents (FAQs, service descriptions, etc.). The agent uses this private knowledge base to answer user questions. If a query is outside its scope, it will politely deflect to human support."
   }
@@ -49,15 +49,15 @@ export function Faq() {
             <AccordionItem 
               key={index} 
               value={`item-${index}`} 
-              className="bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 hover:shadow-glow-accent overflow-hidden"
+              className="group/item bg-background/50 border border-accent/20 rounded-xl transition-all duration-300 hover:shadow-glow-accent overflow-hidden data-[state=open]:bg-light-turquoise"
             >
-              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline">
+              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline group-data-[state=open]/item:text-dark-turquoise">
                 <div className="flex items-center gap-4">
                   {faq.icon}
                   <span className="text-left">{faq.question}</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-base text-muted-foreground transition-colors duration-300 data-[state=open]:bg-light-turquoise data-[state=open]:text-dark-turquoise">
+              <AccordionContent className="px-6 pb-4 text-base text-muted-foreground transition-colors duration-300 data-[state=open]:text-dark-turquoise">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
