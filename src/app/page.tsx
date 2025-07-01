@@ -12,10 +12,10 @@ export default function Home() {
       <Hero />
       <Features />
       <HowItWorks />
+      <Contact />
       <Demo />
       <Pricing />
       <Faq />
-      <Contact />
     </>
   );
 }
