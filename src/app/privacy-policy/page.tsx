@@ -9,42 +9,64 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <div className="prose prose-invert lg:prose-xl text-muted-foreground space-y-6">
-            <p>Last Updated: {new Date().toLocaleDateString()}</p>
+            <p>Effective Date: June 6, 2025</p>
 
-            <h2 className="font-headline text-2xl text-white">1. Introduction</h2>
             <p>
-              Welcome to AidSync AI ("we," "our," or "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+              AidSync ("we," "our," or "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you visit our website.
             </p>
 
-            <h2 className="font-headline text-2xl text-white">2. Information We Collect</h2>
+            <h2 className="font-headline text-2xl text-white">1. Information We Collect</h2>
             <p>
-              We may collect personal information that you voluntarily provide to us when you register on the website, express an interest in obtaining information about us or our products and services, when you participate in activities on the website, or otherwise when you contact us. The personal information that we collect depends on the context of your interactions with us and the website, the choices you make, and the products and features you use.
-            </p>
-
-            <h2 className="font-headline text-2xl text-white">3. How We Use Your Information</h2>
-            <p>
-              We use personal information collected via our website for a variety of business purposes described below. We process your personal information for these purposes in reliance on our legitimate business interests, in order to enter into or perform a contract with you, with your consent, and/or for compliance with our legal obligations.
+              We may collect basic information when you:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-                <li>To facilitate account creation and logon process.</li>
-                <li>To send administrative information to you.</li>
-                <li>To protect our Services.</li>
-                <li>To enforce our terms, conditions, and policies for business purposes, to comply with legal and regulatory requirements or in connection with our contract.</li>
+                <li>Fill out a form (e.g., to schedule a discovery call)</li>
+                <li>Contact us directly</li>
+                <li>Use features on our site</li>
             </ul>
-
-            <h2 className="font-headline text-2xl text-white">4. Will Your Information Be Shared With Anyone?</h2>
             <p>
-              We only share information with your consent, to comply with laws, to provide you with services, to protect your rights, or to fulfill business obligations.
+              This may include your name, email address, and any information you choose to provide.
+            </p>
+            <p>
+              We may also automatically collect non-personal information, such as your browser type, IP address, device, and pages visited.
+            </p>
+
+            <h2 className="font-headline text-2xl text-white">2. How We Use Your Information</h2>
+            <p>
+              We use your information to:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+                <li>Respond to inquiries</li>
+                <li>Provide and improve our services</li>
+                <li>Schedule meetings or calls when requested</li>
+            </ul>
+            <p>
+              We do not sell or share your personal information with third parties for marketing purposes.
+            </p>
+
+            <h2 className="font-headline text-2xl text-white">3. Cookies</h2>
+            <p>
+              Our website may use cookies to enhance your browsing experience. You can disable cookies in your browser settings if you prefer.
             </p>
             
-            <h2 className="font-headline text-2xl text-white">5. How We Keep Your Information Safe</h2>
+            <h2 className="font-headline text-2xl text-white">4. Data Security</h2>
             <p>
-              We have implemented appropriate technical and organizational security measures designed to protect the security of any personal information we process. However, despite our safeguards and efforts to secure your information, no electronic transmission over the Internet or information storage technology can be guaranteed to be 100% secure.
+              We take reasonable steps to protect your information but cannot guarantee absolute security.
+            </p>
+            
+            <h2 className="font-headline text-2xl text-white">5. Third-Party Links</h2>
+            <p>
+              Our website may contain links to other sites. We are not responsible for their content or privacy practices.
             </p>
 
-             <h2 className="font-headline text-2xl text-white">6. Contact Us</h2>
+             <h2 className="font-headline text-2xl text-white">6. Changes to This Policy</h2>
             <p>
-              If you have questions or comments about this policy, you may email us at support@aidsyncai.com.
+              We may update this Privacy Policy from time to time. Any changes will be posted on this page with the updated effective date.
+            </p>
+            
+            <h2 className="font-headline text-2xl text-white">7. Contact Us</h2>
+            <p>
+              If you have any questions about this Privacy Policy, you can contact us at: <a href="mailto:support@aidsyncai.com" className="text-accent hover:underline">support@aidsyncai.com</a>.
             </p>
 
           </div>
