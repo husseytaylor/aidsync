@@ -9,8 +9,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/logo";
+import { useSearchParams } from 'next/navigation';
 
-export default function LoginPage({ searchParams }: { searchParams: { message: string } }) {
+export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
+  
   return (
     <div className="relative min-h-screen w-full">
       <Image
@@ -67,9 +71,9 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
                 />
               </div>
 
-              {searchParams.message && (
+              {message && (
                 <p className="text-sm text-center p-2 rounded-md bg-destructive/20 text-destructive-foreground border border-destructive/50">
-                  {searchParams.message}
+                  {message}
                 </p>
               )}
               
