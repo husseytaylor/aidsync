@@ -97,7 +97,7 @@ export function N8nAnalytics() {
 
   if (error) {
     return (
-      <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2 hover:shadow-glow-mint transition-shadow duration-300">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl font-headline text-destructive">
             <Workflow />
@@ -124,7 +124,7 @@ export function N8nAnalytics() {
 
 
   return (
-    <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2 hover:shadow-glow-mint transition-shadow duration-300">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
           <Workflow />
@@ -198,7 +198,7 @@ export function N8nAnalytics() {
 
 function N8nAnalyticsSkeleton() {
     return (
-        <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2 hover:shadow-glow-mint transition-shadow duration-300">
+        <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
                     <Workflow />

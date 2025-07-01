@@ -78,7 +78,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
   const voiceChartConfig = { calls: { label: "Calls", color: "#3FA419" } } satisfies ChartConfig;
   const chatChartConfig = { sessions: { label: "Sessions", color: "#48D1CC" } } satisfies ChartConfig;
-  const cardClasses = "bg-gradient-to-b from-[#0B3D2E]/90 to-[#00110f]/90 border-white/10 backdrop-blur-sm";
 
   return (
     <>
@@ -89,7 +88,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
       
       {/* Voice Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={100}>
-        <Card className={cardClasses}>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
               <Phone />
@@ -108,7 +107,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </CardContent>
         </Card>
 
-        <Card className={cardClasses}>
+        <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
@@ -130,7 +129,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </CardContent>
         </Card>
 
-        <Card className={cardClasses}>
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
             <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -155,7 +154,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
       {/* Chat Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={200}>
-        <Card className={cardClasses}>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
               <MessageSquare />
@@ -178,7 +177,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </CardContent>
         </Card>
         
-        <Card className={cardClasses}>
+        <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
@@ -200,7 +199,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </CardContent>
         </Card>
         
-        <Card className={cardClasses}>
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
             <CardDescription>Review dialogues from the latest sessions.</CardDescription>
