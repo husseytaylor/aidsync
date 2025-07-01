@@ -35,7 +35,7 @@ export default function AboutPage() {
 
       <div className="grid md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto mb-24">
         <AnimatedSection tag="div" delay={300} className="h-full">
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-md border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                 <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <Rocket className="w-8 h-8 text-[#00ffd0]" />
                 </div>
@@ -44,7 +44,7 @@ export default function AboutPage() {
             </Card>
         </AnimatedSection>
         <AnimatedSection tag="div" delay={400} className="h-full">
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-md border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                 <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <Users className="w-8 h-8 text-[#00ffd0]" />
                 </div>
@@ -53,7 +53,7 @@ export default function AboutPage() {
             </Card>
         </AnimatedSection>
         <AnimatedSection tag="div" delay={500} className="h-full">
-             <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-md border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
+             <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-6">
                  <div className="w-16 h-16 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4 mx-auto">
                     <ShieldCheck className="w-8 h-8 text-[#00ffd0]" />
                 </div>

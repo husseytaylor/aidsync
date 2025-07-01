@@ -192,7 +192,7 @@ export function ChatAssistant() {
         <Button 
           size="icon"
           className={cn(
-            "rounded-full w-16 h-16 shadow-lg bg-aidsync-gradient-green text-white hover:shadow-glow-accent transition-all hover:scale-105 drop-shadow-lg",
+            "rounded-full w-16 h-16 shadow-lg bg-gradient-to-br from-green-500 to-emerald-400 text-white transition-all hover:scale-110 drop-shadow-lg",
             isIdleAnimating && "animate-pulse-wiggle"
           )}
           onClick={handleOpen}
