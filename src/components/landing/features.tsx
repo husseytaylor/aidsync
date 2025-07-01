@@ -1,21 +1,20 @@
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { AnimatedSection } from '../animated-section';
 
 const features = [
   {
-    icon: <Bot className="h-8 w-8 text-accent" />,
+    icon: <Bot className="h-8 w-8 text-primary" />,
     title: 'Branded AI Agents',
     description: 'Deploy 24/7 web chat and voice assistants trained on your business data to answer questions and qualify leads.',
   },
   {
-    icon: <Globe className="h-8 w-8 text-accent" />,
+    icon: <Globe className="h-8 w-8 text-primary" />,
     title: 'Custom Client-Facing Website',
     description: 'A professionally designed, mobile-responsive website with your branding, hosted on your custom domain.',
   },
   {
-    icon: <BarChart3 className="h-8 w-8 text-accent" />,
+    icon: <BarChart3 className="h-8 w-8 text-primary" />,
     title: 'Analytics & Optimization',
     description: 'Access a full dashboard to track quotes, calls, and agent usage, with continuous backend improvements.',
   },
@@ -30,14 +29,14 @@ export function Features() {
   return (
     <section id="features" className="container py-24 sm:py-32">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left Column (Image) - This will stack on top on mobile */}
+        {/* Left Column (Image) */}
         <AnimatedSection tag="div" variants={imageVariants} className="relative">
           <Image
             src="/hand.png"
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="rounded-xl shadow-xl object-contain"
+            className="rounded-xl shadow-2xl object-contain"
           />
         </AnimatedSection>
 
@@ -55,15 +54,15 @@ export function Features() {
               <AnimatedSection
                 key={index}
                 delay={100 + index * 150}
-                className="bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg transition-transform duration-300 hover:scale-[1.03]"
+                className="bg-background/90 border border-primary/30 text-primary-foreground p-6 rounded-2xl shadow-lg backdrop-blur-md transition-transform duration-300 hover:scale-[1.03] max-w-md"
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-primary-foreground/10 p-3 rounded-full">
+                  <div className="bg-primary/10 p-3 rounded-full">
                     {feature.icon}
                   </div>
                   <div>
                     <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
-                    <p className="mt-1 text-primary-foreground/80">{feature.description}</p>
+                    <p className="mt-1 text-muted-foreground">{feature.description}</p>
                   </div>
                 </div>
               </AnimatedSection>
