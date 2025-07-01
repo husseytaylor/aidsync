@@ -54,11 +54,11 @@ export function Hero() {
         </div>
         <motion.div variants={imageVariants} className="relative aspect-video rounded-xl shadow-2xl overflow-hidden">
           <Image
-            src="/hands.png"
-            alt="A digital, grid-like hand connecting with a human hand, symbolizing the partnership between AI and humanity."
+            src="/head.png"
+            alt="An abstract image of a head with circuitry, representing artificial intelligence."
             fill
             className="object-cover"
-            data-ai-hint="AI connection"
+            data-ai-hint="AI head"
             priority
           />
         </motion.div>
