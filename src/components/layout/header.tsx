@@ -39,6 +39,10 @@ export function Header({ user }: { user: User | null }) {
   }, []);
 
   useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
     const handleScroll = () => {
       const offset = window.scrollY;
       const contactSection = document.getElementById('calendly');
@@ -83,7 +87,7 @@ export function Header({ user }: { user: User | null }) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [pathname, isLandingPage, landingNavLinks]);
+  }, [isMounted, pathname, isLandingPage, landingNavLinks]);
   
   const buttonStyle = isMounted && isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
 
