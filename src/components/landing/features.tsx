@@ -1,6 +1,9 @@
+"use client";
+
 import Image from 'next/image';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { AnimatedSection } from '../animated-section';
+import { motion } from 'framer-motion';
 
 const features = [
   {
@@ -20,6 +23,15 @@ const features = [
   },
 ];
 
+const imageVariants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
+  },
+};
+
 export function Features() {
   return (
     <section id="features" className="container py-24 sm:py-32">
@@ -32,16 +44,22 @@ export function Features() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
-        <div className="flex justify-center items-center w-full">
+        <motion.div 
+          variants={imageVariants} 
+          initial="hidden" 
+          whileInView="visible" 
+          viewport={{ once: true, amount: 0.3 }} 
+          className="relative w-full max-w-lg mx-auto"
+        >
           <Image
             src="/hand.png"
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="rounded-xl w-full h-auto object-contain"
+            className="w-full h-auto object-contain rounded-xl shadow-2xl"
             priority
           />
-        </div>
+        </motion.div>
 
         {/* Right Column (Content) */}
         <div className="flex flex-col gap-6">
