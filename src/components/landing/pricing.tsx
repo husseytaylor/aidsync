@@ -91,10 +91,10 @@ export function Pricing() {
             className="h-full"
           >
             <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0f1f14] via-[#12372f] to-[#11271e] ring-1 ring-[#00ffd0]/20 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
-              <CardHeader className="p-4 sm:p-6">
+              <CardHeader className="p-4 sm:p-6 min-h-[230px]">
                 <CardTitle 
-                  className="font-headline font-bold text-[22px] text-[#00ffd0] transition-colors duration-300 hover:text-[#00ffd0]/90"
-                  style={{ textShadow: "0 0 8px rgba(0, 255, 208, 0.8)" }}
+                  className="font-headline font-bold text-[22px] text-white transition-colors duration-300"
+                  style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }}
                 >
                   {tier.name}
                 </CardTitle>
@@ -102,8 +102,8 @@ export function Pricing() {
                 <div className="pt-4">
                   <div className="flex items-baseline gap-2">
                     <span 
-                      className="text-4xl font-extrabold font-headline text-[#00ffd0] transition-colors duration-300 hover:text-[#00ffd0]/90"
-                      style={{ textShadow: "0 0 8px rgba(0, 255, 208, 0.8)" }}
+                      className="text-4xl font-extrabold font-headline text-white transition-colors duration-300"
+                      style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }}
                     >
                       {tier.setupFee}
                     </span>
@@ -121,7 +121,7 @@ export function Pricing() {
                 <ul className="space-y-4">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-[#00ffd0] mt-1 flex-shrink-0" />
+                      <Check className="w-5 h-5 text-white mt-1 flex-shrink-0" />
                       <span className="text-sm text-muted-foreground">{feature}</span>
                     </li>
                   ))}
