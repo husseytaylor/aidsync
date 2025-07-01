@@ -40,7 +40,7 @@ export function Features() {
         <AnimatedSection
           tag="div"
           variants={imageVariants}
-          className="relative bg-background rounded-xl shadow-2xl"
+          className="relative bg-black rounded-xl shadow-2xl"
         >
           <Image
             src="/hand.png"
