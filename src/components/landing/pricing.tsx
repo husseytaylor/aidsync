@@ -91,7 +91,7 @@ export function Pricing() {
             key={index}
             className="h-full"
           >
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <Card className="flex flex-col h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-white transition-colors duration-300"

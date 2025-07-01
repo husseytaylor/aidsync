@@ -5,7 +5,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="container py-24 sm:py-32">
       <AnimatedSection>
-        <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl p-6 sm:p-8 md:p-12">
+        <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-6 sm:p-8 md:p-12">
           <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12 text-center">
             Privacy Policy
           </h1>

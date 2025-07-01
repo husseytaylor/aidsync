@@ -66,7 +66,7 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] max-w-md"
+              className="rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] max-w-md"
             >
               <div className="flex items-start gap-4">
                 <div className="bg-[#00ffd0]/10 p-3 rounded-full">

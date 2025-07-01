@@ -17,6 +17,7 @@ interface Message {
 }
 
 const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
   <div className="flex items-center space-x-1.5 p-2 bg-white/10 rounded-full w-fit">
@@ -43,10 +44,11 @@ export function ChatAssistant() {
   }, []);
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
     const wiggleInterval = setInterval(() => {
       if (!isOpen) {
         setIsWiggling(true);
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           setIsWiggling(false);
         }, 400); // Animation duration
       }
@@ -54,6 +56,7 @@ export function ChatAssistant() {
 
     return () => {
       clearInterval(wiggleInterval);
+      if (timeout) clearTimeout(timeout);
     };
   }, [isOpen]);
   
@@ -85,7 +88,7 @@ export function ChatAssistant() {
 
       if (messages.length === 0) {
         setMessages([
-          { role: 'assistant', content: 'Hi there! I’m AidSync’s AI Assistant — how can I help today?' }
+          { role: 'assistant', content: FIRST_ASSISTANT_PROMPT }
         ]);
       }
     }
@@ -179,7 +182,7 @@ export function ChatAssistant() {
 
   return (
     <>
-      <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out", isOpen ? "scale-0" : "scale-100")}>
+      <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out transform-gpu will-change-transform", isOpen ? "scale-0" : "scale-100")}>
         <Button 
           size="icon"
           className={cn(

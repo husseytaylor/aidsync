@@ -47,7 +47,7 @@ export function Faq() {
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <div className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10 rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+      <div className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10 rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
          <div className="text-center mb-12">
            <h2 className="font-headline text-4xl font-extrabold">Frequently Asked Questions</h2>
            <p className="mt-4 text-lg text-muted-foreground">

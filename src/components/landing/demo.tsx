@@ -61,7 +61,7 @@ export function Demo() {
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
           <div>
-            <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <Card className="h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   <div className="bg-[#00ffd0]/10 p-3 rounded-full">
@@ -83,7 +83,7 @@ export function Demo() {
 
           {/* Phone Agent Box */}
           <div>
-             <Card className="h-full rounded-2xl bg-gradient-to-br from-[#0d3324] to-[#124733] backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+             <Card className="h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   <div className="bg-[#00ffd0]/10 p-3 rounded-full">

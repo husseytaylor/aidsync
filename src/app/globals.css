@@ -13,6 +13,8 @@
 
     --card: 163 50% 20%; /* Darker secondary green for card base */
     --card-foreground: 0 0% 98%; /* Almost White */
+    --card-start: 158 59% 13%; /* #0d3324 */
+    --card-end: 158 55% 17%; /* #124733 */
 
     --popover: 163 50% 15%; /* Darker popover for more depth */
     --popover-foreground: 0 0% 98%; /* Almost White */

@@ -77,6 +77,7 @@ export default {
       },
       backgroundImage: {
         'aidsync-gradient-green': 'linear-gradient(135deg, #3fa419, #00a86b)',
+        'gradient-card': 'linear-gradient(to bottom right, hsl(var(--card-start)), hsl(var(--card-end)))',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -112,14 +113,6 @@ export default {
           '25%': { transform: 'rotate(3deg)' },
           '75%': { transform: 'rotate(-3deg)' },
         },
-        'bounce-dot': {
-          '0%, 80%, 100%': { transform: 'scale(0)' },
-          '40%': { transform: 'scale(1.0)' },
-        },
-        floatPulse: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-4px)' },
-        },
         fadeInUp: {
           'from': { opacity: '0', transform: 'translateY(20px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
@@ -129,8 +122,6 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         wiggle: 'wiggle 0.4s ease-in-out',
-        'bounce-dot': 'bounce-dot 1.4s infinite ease-in-out both',
-        'float-idle': 'floatPulse 2s ease-in-out infinite',
         'fadeInUp': 'fadeInUp 0.8s ease-out both',
       },
     },
