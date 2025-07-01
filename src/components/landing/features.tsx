@@ -54,7 +54,7 @@ export function Features() {
               <AnimatedSection
                 key={index}
                 delay={100 + index * 150}
-                className="bg-background/90 border border-primary/30 text-primary-foreground p-6 rounded-2xl shadow-lg backdrop-blur-md transition-transform duration-300 hover:scale-[1.03] max-w-md"
+                className="bg-secondary/50 backdrop-blur-lg border border-primary/30 text-foreground p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
               >
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-full">

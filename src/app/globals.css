@@ -11,11 +11,11 @@ body {
     --background: 163 69% 14%; /* #0B3D2E - Primary Green */
     --foreground: 0 0% 98%; /* Almost White */
 
-    --card: 40 10% 98%; /* Off-white for cards */
-    --card-foreground: 163 69% 14%; /* Dark Green */
+    --card: 163 50% 20%; /* Darker secondary green for card base */
+    --card-foreground: 0 0% 98%; /* Almost White */
 
-    --popover: 40 10% 98%; /* Off-white for popovers */
-    --popover-foreground: 163 69% 14%; /* Dark Green */
+    --popover: 163 50% 15%; /* Darker popover for more depth */
+    --popover-foreground: 0 0% 98%; /* Almost White */
 
     --primary: 102 70% 44%; /* #3FA419 - Accent Green */
     --primary-foreground: 0 0% 98%; /* Almost White */
@@ -27,13 +27,13 @@ body {
     --muted-foreground: 0 0% 70%; /* Light Gray */
 
     --accent: 174 100% 33%; /* #00A693 - Accent Turquoise */
-    --accent-foreground: 163 69% 14%; /* Dark Green */
+    --accent-foreground: 0 0% 98%; /* Almost White */
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
     --border: 163 50% 25%; /* Subtle green border */
-    --input: 40 10% 98%; /* Off-white for inputs */
+    --input: 163 50% 25%; /* Using border color for input bg */
     --ring: 102 70% 44%; /* Accent Green */
     
     --chart-1: 12 76% 61%;
@@ -42,7 +42,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     
-    --radius: 0.5rem;
+    --radius: 1rem; /* Updated for rounded-2xl feel */
   }
 }
 

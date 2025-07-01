@@ -76,7 +76,7 @@ export function Pricing() {
       <div className="mt-16 grid gap-8 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
         {tiers.map((tier, index) => (
           <AnimatedSection key={index} delay={index * 150}>
-            <Card className={`flex flex-col h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
+            <Card className={`flex flex-col h-full hover:shadow-glow-primary hover:-translate-y-2 ${tier.popular ? 'border-primary shadow-lg shadow-primary/20' : 'border-border'}`}>
               <CardHeader>
                 <CardTitle className="font-headline">{tier.name}</CardTitle>
                 <CardDescription>{tier.description}</CardDescription>

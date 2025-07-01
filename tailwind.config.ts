@@ -75,8 +75,12 @@ export default {
       },
       borderRadius: {
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
+      },
+      boxShadow: {
+        'glow-primary': '0 0 15px hsl(var(--primary) / 0.8)',
+        'glow-accent': '0 0 15px hsl(var(--accent) / 0.8)',
       },
       keyframes: {
         'accordion-down': {

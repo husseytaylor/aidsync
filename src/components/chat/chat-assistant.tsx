@@ -142,7 +142,7 @@ export function ChatAssistant() {
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out", isOpen ? "scale-0" : "scale-100")}>
         <Button 
           size="icon"
-          className="rounded-full w-16 h-16 shadow-lg bg-primary hover:bg-accent"
+          className="rounded-full w-16 h-16 shadow-lg bg-primary/80 backdrop-blur-md border border-primary hover:bg-primary"
           onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
@@ -154,8 +154,8 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl bg-card">
-          <CardHeader className="flex flex-row items-center justify-between border-b bg-secondary">
+        <Card className="h-[70vh] flex flex-col shadow-2xl">
+          <CardHeader className="flex flex-row items-center justify-between border-b bg-secondary/80 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
               <CardTitle className="font-headline text-lg text-secondary-foreground">AidSync AI Assistant</CardTitle>
@@ -182,6 +182,7 @@ export function ChatAssistant() {
                 placeholder="Ask a question..."
                 disabled={isPending}
                 autoFocus
+                className="bg-background/50 backdrop-blur-sm"
               />
               <Button type="submit" size="icon" disabled={isPending || !input.trim()}>
                 <Send className="h-4 w-4" />
