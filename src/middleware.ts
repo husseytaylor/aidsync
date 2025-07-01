@@ -12,7 +12,8 @@ export async function middleware(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   // If Supabase is not configured, skip the middleware logic.
-  if (!supabaseUrl || !supabaseKey || supabaseUrl === 'YOUR_SUPABASE_URL') {
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn("Supabase credentials not found in .env, middleware is skipping session refresh.")
     return response;
   }
 
