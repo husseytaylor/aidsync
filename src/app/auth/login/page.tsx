@@ -34,7 +34,7 @@ export default function LoginPage() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="w-full max-w-md"
         >
-          <Card className="bg-[#002d2e]/80 rounded-2xl shadow-2xl backdrop-blur-xl p-8 border border-accent/10 hover:shadow-[0_0_20px_rgba(0,255,210,0.3)] transition-all duration-500">
+          <Card className="bg-[#002d2e]/80 backdrop-blur-xl p-8">
             <div className="text-center mb-6">
               <Link href="/" className="inline-flex justify-center items-center space-x-2 mb-4">
                 <Logo className="w-12 h-12" />
