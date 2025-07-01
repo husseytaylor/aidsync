@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Check } from 'lucide-react';
@@ -101,11 +100,17 @@ export function Pricing() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.2, margin: "-50px" }}
             transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
+            className="h-full"
           >
-            <Card className={`flex flex-col h-full transition-all duration-300 ${tier.popular ? 'border-primary shadow-lg shadow-primary/20 hover:shadow-glow-primary' : 'border-border/50 hover:border-primary/50 hover:shadow-glow-primary'} hover:-translate-y-2`}>
-              <CardHeader className="p-6">
-                <CardTitle className="font-headline text-xl">{tier.name}</CardTitle>
-                <CardDescription className="text-sm min-h-[40px]">{tier.description}</CardDescription>
+            <Card className={`flex flex-col h-full transition-all duration-300 ${tier.popular ? 'border-primary shadow-glow-primary' : 'border-primary/30'} hover:shadow-glow-primary hover:-translate-y-2`}>
+              <CardHeader className="p-6 lg:p-8">
+                <CardTitle 
+                  className="font-headline font-bold text-[22px] text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"
+                  style={{ textShadow: "0 0 8px #00E6C280" }}
+                >
+                  {tier.name}
+                </CardTitle>
+                <CardDescription className="text-sm min-h-[40px] pt-2">{tier.description}</CardDescription>
                 <div className="pt-4">
                   <span className="text-4xl font-extrabold font-headline text-accent">{tier.setupFee}</span>
                   <span className="text-muted-foreground"> Setup</span>
@@ -114,17 +119,17 @@ export function Pricing() {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 p-6 pt-0">
-                <ul className="space-y-3">
+              <CardContent className="flex-1 p-6 lg:p-8 pt-0">
+                <ul className="space-y-4">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start">
-                      <Check className="w-5 h-5 text-primary mr-2 mt-1 flex-shrink-0" />
+                    <li key={feature} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
                       <span className="text-sm text-muted-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="p-6 pt-0">
+              <CardFooter className="p-6 lg:p-8 pt-0">
                  <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
                     <Link href="#contact">{tier.cta}</Link>
                  </Button>
