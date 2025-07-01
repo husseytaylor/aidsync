@@ -81,12 +81,17 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
   const cardClasses = "bg-gradient-to-b from-[#0B3D2E]/90 to-[#00110f]/90 border-white/10 backdrop-blur-sm";
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2 items-start">
+    <>
+      <div className="lg:col-span-2 mb-4">
+        <h1 className="text-3xl font-headline text-accent">AidSync Agent Insights</h1>
+        <p className="text-muted-foreground mt-1">Live metrics from your customer-facing AI chat and voice agents.</p>
+      </div>
+      
       {/* Voice Analytics Column */}
-      <AnimatedSection tag="div" className="space-y-8" delay={100}>
+      <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={100}>
         <Card className={cardClasses}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
+            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
               <Phone />
               Voice Analytics
             </CardTitle>
@@ -149,10 +154,10 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
       </AnimatedSection>
 
       {/* Chat Analytics Column */}
-      <AnimatedSection tag="div" className="space-y-8" delay={200}>
+      <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={200}>
         <Card className={cardClasses}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
+            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
               <MessageSquare />
               Chat Analytics
             </CardTitle>
@@ -219,7 +224,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </CardContent>
         </Card>
       </AnimatedSection>
-
-    </div>
+    </>
   );
 }

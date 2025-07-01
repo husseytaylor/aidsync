@@ -23,7 +23,7 @@ interface AnalyticsData {
 const chartConfig = {
   duration: {
     label: "Duration (s)",
-    color: "hsl(var(--accent))",
+    color: "#3FA419",
   },
 } satisfies ChartConfig;
 
@@ -47,59 +47,38 @@ export function N8nAnalytics() {
   useEffect(() => {
     let isCancelled = false;
 
+    const attemptFetch = async () => {
+      const response = await fetch('/api/n8n/analytics');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+        throw new Error(errData.error || `Request failed with status ${response.status}`);
+      }
+      return response.json();
+    }
+
     const fetchData = async () => {
       if (isCancelled) return;
       setLoading(true);
+      setError(null);
 
-      const attemptFetch = async () => {
-        const response = await fetch('/api/n8n/analytics');
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
-          throw new Error(errData.error || `Request failed with status ${response.status}`);
-        }
-        return response.json();
-      }
-      
       try {
-        const result: AnalyticsData = await attemptFetch();
-        if (isCancelled) return;
-
-        const formattedResult = {
-          ...result,
-          executionTimeline: result.executionTimeline.map(e => ({
-            ...e,
-            startedAt: new Date(e.startedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          }))
-        };
-        setData(formattedResult);
-        setError(null);
-
+        const result = await attemptFetch();
+        if (!isCancelled) setData(result);
       } catch (primaryError: any) {
+        console.error("n8n analytics primary fetch failed:", primaryError.message);
         // Retry once after 500ms
         await new Promise(resolve => setTimeout(resolve, 500));
         if (isCancelled) return;
         
         try {
-          const result: AnalyticsData = await attemptFetch();
-          if (isCancelled) return;
-          const formattedResult = {
-            ...result,
-            executionTimeline: result.executionTimeline.map(e => ({
-              ...e,
-              startedAt: new Date(e.startedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            }))
-          };
-          setData(formattedResult);
-          setError(null);
+          const result = await attemptFetch();
+          if (!isCancelled) setData(result);
         } catch (retryError: any) {
-          if (!isCancelled) {
-            setError(retryError.message);
-          }
+          console.error("n8n analytics retry fetch failed:", retryError.message);
+          if (!isCancelled) setError(retryError.message);
         }
       } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+        if (!isCancelled) setLoading(false);
       }
     };
 
@@ -135,6 +114,14 @@ export function N8nAnalytics() {
   if (!data) return null;
   
   const successRateColor = data.successRate >= 80 ? "text-primary" : "text-destructive";
+  
+  const validTimeline = (data.executionTimeline || [])
+    .filter(e => typeof e.duration === 'number' && e.duration >= 0)
+    .map(e => ({
+      ...e,
+      startedAt: new Date(e.startedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    }));
+
 
   return (
     <Card className="bg-card border-accent/20 backdrop-blur-sm lg:col-span-2 hover:shadow-glow-mint transition-shadow duration-300">
@@ -162,41 +149,47 @@ export function N8nAnalytics() {
         
         <div className="bg-black/20 rounded-lg p-4">
           <h3 className="text-xl font-headline mb-4">Execution Duration (Last 50)</h3>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
-            <ResponsiveContainer>
-              <LineChart data={data.executionTimeline} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
-                <XAxis 
-                  dataKey="startedAt" 
-                  tickLine={false} 
-                  axisLine={false} 
-                  tickMargin={8}
-                />
-                <YAxis 
-                  tickLine={false} 
-                  axisLine={false} 
-                  tickMargin={8} 
-                  width={30} 
-                  domain={[0, 'dataMax + 10']}
-                  allowDecimals={false}
-                  label={{ value: 'Seconds', angle: -90, position: 'insideLeft', offset: 0, style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))' } }}
-                />
-                <ChartTooltip 
-                  cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} 
-                  content={<ChartTooltipContent indicator="dot" />} 
-                />
-                <Line 
-                  dataKey="duration" 
-                  type="monotone" 
-                  stroke="var(--color-duration)" 
-                  strokeWidth={2} 
-                  dot={false}
-                  activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} 
-                />
-                <Brush dataKey="startedAt" height={30} stroke="hsl(var(--accent))" fill="hsl(var(--background))" travellerWidth={15} />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartContainer>
+            {validTimeline.length > 0 ? (
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                    <ResponsiveContainer>
+                    <LineChart data={validTimeline} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
+                        <XAxis 
+                        dataKey="startedAt" 
+                        tickLine={false} 
+                        axisLine={false} 
+                        tickMargin={8}
+                        />
+                        <YAxis 
+                        tickLine={false} 
+                        axisLine={false} 
+                        tickMargin={8} 
+                        width={30} 
+                        domain={[0, 'dataMax + 10']}
+                        allowDecimals={false}
+                        label={{ value: 'Seconds', angle: -90, position: 'insideLeft', offset: 0, style: { textAnchor: 'middle', fill: '#A0A0A0' } }}
+                        />
+                        <ChartTooltip 
+                        cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} 
+                        content={<ChartTooltipContent indicator="dot" />} 
+                        />
+                        <Line 
+                        dataKey="duration" 
+                        type="monotone" 
+                        stroke="#3FA419"
+                        strokeWidth={2} 
+                        dot={false}
+                        activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} 
+                        />
+                        <Brush dataKey="startedAt" height={30} stroke="#0B3D2E" fill="#48D1CC" travellerWidth={15} />
+                    </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            ) : (
+                <div className="h-[300px] w-full flex items-center justify-center text-muted-foreground">
+                    No data available for timeline.
+                </div>
+            )}
         </div>
       </CardContent>
     </Card>

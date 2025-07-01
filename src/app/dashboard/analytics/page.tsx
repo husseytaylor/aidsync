@@ -94,13 +94,13 @@ async function getAnalyticsData() {
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData();
   return (
-    <>
+    <div className="grid gap-8 lg:grid-cols-2 items-start">
       <AnalyticsDashboardClient analyticsData={analyticsData} />
       <ClientOnly>
-        <AnimatedSection tag="div" className="lg:col-span-2 mt-8" delay={300}>
+        <AnimatedSection tag="div" className="lg:col-span-2" delay={300}>
           <N8nAnalytics />
         </AnimatedSection>
       </ClientOnly>
-    </>
+    </div>
   );
 }
