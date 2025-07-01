@@ -1,15 +1,8 @@
 import { AnimatedSection } from '@/components/animated-section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FounderCard } from '@/components/founder-card';
 import { Users, Rocket, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-
-const founder = {
-  name: 'Taylor Hussey',
-  role: 'Founder & Lead AI Strategist',
-  avatar: '/avatars/taylor.png',
-  dataAiHint: 'man portrait',
-  bio: 'Taylor is a competitive bodybuilder, pre-law scholar, and automation specialist with a passion for helping businesses scale through intelligent systems. With a background in logic, branding, and AI architecture, he founded AidSync to merge high-performance mindset with world-class automation — empowering clients to work smarter, faster, and more confidently.',
-};
 
 export default function AboutPage() {
   return (
@@ -71,30 +64,10 @@ export default function AboutPage() {
       </div>
 
       <AnimatedSection delay={600}>
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-headline text-3xl sm:text-4xl font-extrabold mb-12">Meet the Founder</h2>
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="font-headline text-3xl sm:text-4xl font-extrabold">Meet the Founder</h2>
         </div>
-        <div className="max-w-2xl mx-auto">
-             <Card className="flex flex-col items-center text-center rounded-2xl bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-md border border-white/10 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] p-8">
-                <div className="relative w-32 h-32 mx-auto mb-6 rounded-full border-2 border-white/10 shadow-inner overflow-hidden">
-                    <Image
-                        src="https://placehold.co/128x128.png"
-                        alt={`Portrait of ${founder.name}`}
-                        fill
-                        className="object-cover"
-                        data-ai-hint={founder.dataAiHint}
-                        unoptimized
-                    />
-                </div>
-                <CardTitle className="font-headline text-2xl text-white">{founder.name}</CardTitle>
-                <p className="text-accent mt-1 mb-4">{founder.role}</p>
-                <CardContent className="p-0">
-                    <p className="text-muted-foreground text-base whitespace-pre-line">
-                        {founder.bio}
-                    </p>
-                </CardContent>
-            </Card>
-        </div>
+        <FounderCard />
       </AnimatedSection>
     </div>
   );
