@@ -27,6 +27,7 @@ const TypingIndicator = () => (
 );
 
 export function ChatAssistant() {
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,6 +39,10 @@ export function ChatAssistant() {
 
   const [isIdleAnimating, setIdleAnimating] = useState(false);
   const idleTimeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const startIdleAnimation = () => {
@@ -101,7 +106,7 @@ export function ChatAssistant() {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
     return () => window.removeEventListener('open-aidsync-chat', eventHandler);
-  });
+  }, []);
 
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
@@ -116,6 +121,10 @@ export function ChatAssistant() {
     }
   }, [messages, isOpen]);
   
+  if (!isMounted) {
+    return null;
+  }
+
   if (restrictedPaths.some(path => pathname.startsWith(path))) {
     return null;
   }
