@@ -57,8 +57,10 @@ export function FounderCard() {
             src="/pp.png"
             alt="Portrait of Taylor Hussey, Founder of AidSync"
             fill
-            className="object-cover"
+            priority
             unoptimized
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 160px"
           />
         </motion.div>
       </motion.div>
