@@ -24,7 +24,7 @@ export function FounderCard() {
           }}
         />
         <motion.div
-          className="relative w-40 h-40 rounded-full shadow-2xl overflow-hidden border-4 border-white/10"
+          className="relative w-40 h-40 rounded-full shadow-2xl overflow-hidden border-4 border-foreground/10"
           animate={{ y: [0, -10, 0] }}
           transition={{
             duration: 5,
@@ -46,9 +46,9 @@ export function FounderCard() {
       </div>
 
       {/* Founder Bio Card */}
-      <Card className="w-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+      <Card>
         <CardContent className="text-center p-6 sm:p-8">
-           <h3 className="font-headline text-3xl font-bold text-white">Taylor Hussey</h3>
+           <h3 className="font-headline text-3xl font-bold text-foreground">Taylor Hussey</h3>
            <p className="text-accent font-semibold mt-1 text-lg">Founder & Lead AI Strategist</p>
            <p className="mt-6 text-muted-foreground leading-relaxed">
             {bio}

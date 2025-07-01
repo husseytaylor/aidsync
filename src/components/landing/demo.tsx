@@ -50,7 +50,7 @@ export function Demo() {
             alt="Abstract network node visualization representing AI connections"
             width={600}
             height={400}
-            className="w-full h-auto rounded-2xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+            className="w-full h-auto rounded-2xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="network node"
             unoptimized
@@ -61,13 +61,13 @@ export function Demo() {
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
           <div>
-            <Card className="h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <Card className="h-full">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-[#00ffd0]/10 p-3 rounded-full">
-                    <MessageSquare className="w-6 h-6 text-[#00ffd0]" />
+                  <div className="bg-accent/10 p-3 rounded-full">
+                    <MessageSquare className="w-6 h-6 text-accent" />
                   </div>
-                  <CardTitle className="font-headline text-2xl text-white">Try Our Chat Agent</CardTitle>
+                  <CardTitle className="font-headline text-2xl text-foreground">Try Our Chat Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -83,13 +83,13 @@ export function Demo() {
 
           {/* Phone Agent Box */}
           <div>
-             <Card className="h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+             <Card className="h-full">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-[#00ffd0]/10 p-3 rounded-full">
-                    <Phone className="w-6 h-6 text-[#00ffd0]" />
+                  <div className="bg-accent/10 p-3 rounded-full">
+                    <Phone className="w-6 h-6 text-accent" />
                   </div>
-                  <CardTitle className="font-headline text-2xl text-white">Talk to the Phone Agent</CardTitle>
+                  <CardTitle className="font-headline text-2xl text-foreground">Talk to the Phone Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>

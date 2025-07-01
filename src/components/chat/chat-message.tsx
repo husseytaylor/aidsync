@@ -24,8 +24,8 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
         className={cn(
           'relative max-w-xs md:max-w-sm rounded-xl px-4 py-2 text-sm shadow-lg backdrop-blur-sm',
           isUser
-            ? 'bg-gradient-to-tr from-[#3fa419] to-[#00a86b] text-white'
-            : 'bg-white/10 text-white/90'
+            ? 'bg-aidsync-gradient-green text-primary-foreground'
+            : 'bg-foreground/10 text-foreground/90'
         )}
       >
         {typeof content === 'string' ? <p className="whitespace-pre-wrap">{content}</p> : content}

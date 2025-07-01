@@ -23,10 +23,10 @@ const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
-  <div className="flex items-center space-x-1.5 p-2 bg-white/10 rounded-full w-fit">
-    <span className="h-2 w-2 bg-white rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-    <span className="h-2 w-2 bg-white rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-    <span className="h-2 w-2 bg-white rounded-full animate-pulse"></span>
+  <div className="flex items-center space-x-1.5 p-2 bg-foreground/10 rounded-full w-fit">
+    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse"></span>
   </div>
 );
 
@@ -209,7 +209,7 @@ export function ChatAssistant() {
         <motion.button
           onClick={handleOpen}
           className={cn(
-            "flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-card px-6 py-3 font-headline text-sm font-semibold tracking-tight text-white shadow-xl backdrop-blur-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] sm:text-base",
+            "flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-card px-6 py-3 font-headline text-sm font-semibold tracking-tight text-foreground shadow-xl backdrop-blur-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-glow-accent sm:text-base",
             isWiggling && "animate-wiggle"
           )}
           aria-label="Open AidSync Chat Agent"
@@ -223,7 +223,7 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border-[1.5px] border-white/10 bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-lg transition-shadow duration-300 hover:shadow-glow-accent">
+        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border-[1.5px] border-white/10 bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-lg">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />

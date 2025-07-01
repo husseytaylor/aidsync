@@ -76,7 +76,7 @@ export default {
         'dark-turquoise': 'hsl(var(--dark-turquoise))',
       },
       backgroundImage: {
-        'aidsync-gradient-green': 'linear-gradient(135deg, #3fa419, #00a86b)',
+        'aidsync-gradient-green': 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
         'gradient-card': 'linear-gradient(to bottom right, hsl(var(--card-start)), hsl(var(--card-end)))',
       },
       borderRadius: {
@@ -87,10 +87,8 @@ export default {
         '2xl': 'calc(var(--radius) + 8px)',
       },
       boxShadow: {
-        'glow-primary': '0 0 10px hsl(var(--primary) / 0.67)',
-        'glow-accent': '0 0 12px 2px #3FA419',
-        'glow-mint': '0 0 12px 2px #48D1CC',
-        'glow-accent-button': '0 0 12px hsl(var(--accent))',
+        'glow-primary': '0 0 12px 2px hsl(var(--primary) / 0.8)',
+        'glow-accent': '0 0 12px 2px hsl(var(--accent) / 0.8)',
       },
       keyframes: {
         'accordion-down': {

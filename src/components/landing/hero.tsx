@@ -52,7 +52,7 @@ export function Hero() {
             src="/head.png"
             alt="An abstract image of a head with circuitry, representing artificial intelligence."
             fill
-            className="rounded-xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+            className="rounded-xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="AI head"
             priority

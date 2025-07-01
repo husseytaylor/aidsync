@@ -29,12 +29,12 @@ export default function ContactPage() {
         
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
             <AnimatedSection tag="div" delay={100} className="h-full">
-                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                 <Card className="h-full flex flex-col">
                     <CardHeader>
-                        <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
-                            <MessageSquare className="w-6 h-6 text-[#00ffd0]" />
+                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                            <MessageSquare className="w-6 h-6 text-accent" />
                         </div>
-                        <CardTitle className="font-headline text-2xl text-white">Chat with AI</CardTitle>
+                        <CardTitle className="font-headline text-2xl text-foreground">Chat with AI</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow">
                         <p className="text-muted-foreground">Get instant answers to your questions by chatting with our AI assistant, available 24/7.</p>
@@ -45,12 +45,12 @@ export default function ContactPage() {
                 </Card>
             </AnimatedSection>
             <AnimatedSection tag="div" delay={200} className="h-full">
-                <Card className="h-full flex flex-col rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                <Card className="h-full flex flex-col">
                     <CardHeader>
-                        <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
-                            <Phone className="w-6 h-6 text-[#00ffd0]" />
+                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                            <Phone className="w-6 h-6 text-accent" />
                         </div>
-                        <CardTitle className="font-headline text-2xl text-white">Call Voice Agent</CardTitle>
+                        <CardTitle className="font-headline text-2xl text-foreground">Call Voice Agent</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow">
                         <p className="text-muted-foreground">Speak with our 24/7 AI-powered voice agent for immediate phone support.</p>
@@ -61,12 +61,12 @@ export default function ContactPage() {
                 </Card>
             </AnimatedSection>
             <AnimatedSection tag="div" delay={300} className="h-full">
-                 <Card className="h-full flex flex-col rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+                 <Card className="h-full flex flex-col">
                     <CardHeader>
-                         <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-2">
-                            <Mail className="w-6 h-6 text-[#00ffd0]" />
+                         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                            <Mail className="w-6 h-6 text-accent" />
                         </div>
-                        <CardTitle className="font-headline text-2xl text-white">Email Support</CardTitle>
+                        <CardTitle className="font-headline text-2xl text-foreground">Email Support</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow">
                         <p className="text-muted-foreground">For formal inquiries or account-specific issues, please send us an email.</p>
@@ -81,7 +81,7 @@ export default function ContactPage() {
         <ClientOnly>
           <AnimatedSection delay={400} id="calendly">
               <div className="text-center max-w-3xl mx-auto">
-                  <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-white mb-4">
+                  <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-foreground mb-4">
                     Schedule a Discovery Call
                   </h2>
                   <p className="text-lg text-muted-foreground">

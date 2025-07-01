@@ -5,22 +5,22 @@ import { FileText, PhoneCall, Rocket, ClipboardCheck } from 'lucide-react';
 
 const steps = [
   {
-    icon: <PhoneCall className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <PhoneCall className="h-8 w-8 text-accent" />,
     title: '1. Discovery & Intake',
     description: 'Book a call via our site, complete an intake form, and sign the service agreement. We learn about your goals and needs.',
   },
   {
-    icon: <FileText className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <FileText className="h-8 w-8 text-accent" />,
     title: '2. Content & Guidance',
     description: 'You receive detailed instructions on uploading your business documents (FAQs, processes, etc.) for AI training.',
   },
   {
-    icon: <Rocket className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <Rocket className="h-8 w-8 text-accent" />,
     title: '3. Build & Deploy',
     description: 'We deliver your custom-branded website and trained AI agent in approximately two weeks for you to review.',
   },
   {
-    icon: <ClipboardCheck className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <ClipboardCheck className="h-8 w-8 text-accent" />,
     title: '4. Revisions & Launch',
     description: 'After a two-week revision window for your feedback, we complete the final launch and provide a user guide.',
   },
@@ -46,11 +46,11 @@ export function HowItWorks() {
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
         {steps.map((step, index) => (
           <div key={index} className="h-full">
-            <div className="h-full text-center md:text-left flex flex-col items-center md:items-start rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
-              <div className="w-12 h-12 rounded-full bg-[#00ffd0]/10 flex items-center justify-center mb-4">
+            <div className="h-full text-center md:text-left flex flex-col items-center md:items-start rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-glow-accent">
+              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
                 {step.icon}
               </div>
-              <h3 className="font-headline text-xl font-bold text-white">{step.title}</h3>
+              <h3 className="font-headline text-xl font-bold text-foreground">{step.title}</h3>
               <p className="mt-2 text-muted-foreground text-sm flex-grow">{step.description}</p>
             </div>
           </div>

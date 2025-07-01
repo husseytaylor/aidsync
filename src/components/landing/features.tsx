@@ -6,17 +6,17 @@ import { motion } from 'framer-motion';
 
 const features = [
   {
-    icon: <Bot className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <Bot className="h-8 w-8 text-accent" />,
     title: 'Branded AI Agents',
     description: 'Deploy 24/7 web chat and voice assistants trained on your business data to answer questions and qualify leads.',
   },
   {
-    icon: <Globe className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <Globe className="h-8 w-8 text-accent" />,
     title: 'Custom Client-Facing Website',
     description: 'A professionally designed, mobile-responsive website with your branding, hosted on your custom domain.',
   },
   {
-    icon: <BarChart3 className="h-8 w-8 text-[#00ffd0]" />,
+    icon: <BarChart3 className="h-8 w-8 text-accent" />,
     title: 'Analytics & Optimization',
     description: 'Access a full dashboard to track quotes, calls, and agent usage, with continuous backend improvements.',
   },
@@ -53,7 +53,7 @@ export function Features() {
             alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
             width={1200}
             height={800}
-            className="w-full h-auto rounded-2xl shadow-[0_0_20px_3px_rgba(0,255,150,0.25)] object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
+            className="w-full h-auto rounded-2xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="human AI partnership"
             priority
@@ -66,14 +66,14 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)] max-w-md"
+              className="rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-glow-accent max-w-md"
             >
               <div className="flex items-start gap-4">
-                <div className="bg-[#00ffd0]/10 p-3 rounded-full">
+                <div className="bg-accent/10 p-3 rounded-full">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="font-headline text-xl font-bold text-white">{feature.title}</h3>
+                  <h3 className="font-headline text-xl font-bold text-foreground">{feature.title}</h3>
                   <p className="mt-1 text-muted-foreground">{feature.description}</p>
                 </div>
               </div>

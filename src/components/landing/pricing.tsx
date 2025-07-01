@@ -91,11 +91,11 @@ export function Pricing() {
             key={index}
             className="h-full"
           >
-            <Card className="flex flex-col h-full rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+            <Card className="flex flex-col h-full">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
-                  className="font-headline font-bold text-[22px] text-white transition-colors duration-300"
-                  style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }}
+                  className="font-headline font-bold text-[22px] text-foreground transition-colors duration-300"
+                  style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }}
                 >
                   {tier.name}
                 </CardTitle>
@@ -103,8 +103,8 @@ export function Pricing() {
                 <div className="pt-4 min-h-[100px]">
                   <div className="flex items-baseline gap-2">
                     <span 
-                      className="text-4xl font-extrabold font-headline text-white transition-colors duration-300"
-                      style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }}
+                      className="text-4xl font-extrabold font-headline text-foreground transition-colors duration-300"
+                      style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }}
                     >
                       {tier.setupFee}
                     </span>
@@ -112,7 +112,7 @@ export function Pricing() {
                   </div>
                   {tier.monthlyFee !== 'Custom' && (
                      <div className="flex items-baseline gap-1 mt-1">
-                      <p className="text-xl font-semibold text-white">{tier.monthlyFee}</p>
+                      <p className="text-xl font-semibold text-foreground">{tier.monthlyFee}</p>
                       <span className="text-sm font-normal text-muted-foreground">/ month</span>
                     </div>
                   )}
@@ -122,7 +122,7 @@ export function Pricing() {
                 <ul className="space-y-4">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-white mt-1 flex-shrink-0" style={{ textShadow: "0 0 4px rgba(255, 255, 255, 0.2)" }} />
+                      <Check className="w-5 h-5 text-foreground mt-1 flex-shrink-0" style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }} />
                       <span className="text-sm text-muted-foreground">{feature}</span>
                     </li>
                   ))}

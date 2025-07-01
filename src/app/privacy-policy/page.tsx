@@ -7,7 +7,7 @@ export default function PrivacyPolicyPage() {
     <div className="container py-24 sm:py-32">
       <ClientOnly>
         <AnimatedSection>
-          <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-6 sm:p-8 md:p-12 transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
+          <Card className="max-w-3xl mx-auto p-6 sm:p-8 md:p-12">
             <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12 text-center">
               Privacy Policy
             </h1>
@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
                 AidSync ("we," "our," or "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you visit our website.
               </p>
 
-              <h2 className="font-headline text-2xl text-white">1. Information We Collect</h2>
+              <h2 className="font-headline text-2xl text-foreground">1. Information We Collect</h2>
               <p>
                 We may collect basic information when you:
               </p>
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
                 We may also automatically collect non-personal information, such as your browser type, IP address, device, and pages visited.
               </p>
 
-              <h2 className="font-headline text-2xl text-white">2. How We Use Your Information</h2>
+              <h2 className="font-headline text-2xl text-foreground">2. How We Use Your Information</h2>
               <p>
                 We use your information to:
               </p>
@@ -47,27 +47,27 @@ export default function PrivacyPolicyPage() {
                 We do not sell or share your personal information with third parties for marketing purposes.
               </p>
 
-              <h2 className="font-headline text-2xl text-white">3. Cookies</h2>
+              <h2 className="font-headline text-2xl text-foreground">3. Cookies</h2>
               <p>
                 Our website may use cookies to enhance your browsing experience. You can disable cookies in your browser settings if you prefer.
               </p>
               
-              <h2 className="font-headline text-2xl text-white">4. Data Security</h2>
+              <h2 className="font-headline text-2xl text-foreground">4. Data Security</h2>
               <p>
                 We take reasonable steps to protect your information but cannot guarantee absolute security.
               </p>
               
-              <h2 className="font-headline text-2xl text-white">5. Third-Party Links</h2>
+              <h2 className="font-headline text-2xl text-foreground">5. Third-Party Links</h2>
               <p>
                 Our website may contain links to other sites. We are not responsible for their content or privacy practices.
               </p>
 
-              <h2 className="font-headline text-2xl text-white">6. Changes to This Policy</h2>
+              <h2 className="font-headline text-2xl text-foreground">6. Changes to This Policy</h2>
               <p>
                 We may update this Privacy Policy from time to time. Any changes will be posted on this page with the updated effective date.
               </p>
               
-              <h2 className="font-headline text-2xl text-white">7. Contact Us</h2>
+              <h2 className="font-headline text-2xl text-foreground">7. Contact Us</h2>
               <p>
                 If you have any questions about this Privacy Policy, you can contact us at: <a href="mailto:support@aidsyncai.com" className="text-accent hover:underline">support@aidsyncai.com</a>.
               </p>
