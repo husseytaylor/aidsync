@@ -5,7 +5,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="container py-24 sm:py-32">
       <AnimatedSection>
-        <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-6 sm:p-8 md:p-12">
+        <Card className="max-w-3xl mx-auto rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-6 sm:p-8 md:p-12 transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_0_15px_rgba(0,255,210,0.3)]">
           <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12 text-center">
             Privacy Policy
           </h1>
@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
                 <li>Use features on our site</li>
             </ul>
             <p>
-              This may include your name, email address, and any information you choose to provide.
+              This may also include your name, email address, and any information you choose to provide.
             </p>
             <p>
               We may also automatically collect non-personal information, such as your browser type, IP address, device, and pages visited.
