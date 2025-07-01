@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/auth/login");
   }
 
-  const getInitials = (email: string) => {
+  const getInitials = (email?: string | null) => {
     return email?.substring(0, 2).toUpperCase() || "AD";
   }
 
@@ -42,8 +42,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                   <Avatar>
-                      <AvatarImage src={user.user_metadata.avatar_url} />
-                      <AvatarFallback>{getInitials(user.email!)}</AvatarFallback>
+                      <AvatarImage src={user.user_metadata?.avatar_url} />
+                      <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                   </Avatar>
                   <span className="sr-only">Toggle user menu</span>
                 </Button>
