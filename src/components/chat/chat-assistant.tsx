@@ -88,13 +88,28 @@ export function ChatAssistant() {
     }
   };
 
-  const sendSessionAnalyticsOnClose = async (history: Message[]) => {
-    if (!sessionId || !sessionStartTime || !SESSION_LOG_WEBHOOK_URL || !ORG_ID) return;
+  const sendAgentAnalytics = async (history: Message[]) => {
+    if (!SESSION_LOG_WEBHOOK_URL) {
+      console.error('[Agent Analytics] Webhook URL is not configured. Skipping analytics.');
+      return;
+    }
+    if (!history || history.length === 0) {
+      console.warn('[Agent Analytics] Message history is empty. Skipping analytics.');
+      return;
+    }
+    if (!sessionId || !sessionStartTime || !ORG_ID) {
+      console.warn('[Agent Analytics] Session context is missing. Skipping analytics.');
+      return;
+    }
+    
+    if (process.env.NODE_ENV === 'development') {
+        console.log('[Agent Analytics] Sending data to:', SESSION_LOG_WEBHOOK_URL);
+    }
 
     const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
     const chatHistoryForApi = history.map(msg => ({
-      message: msg.content,
-      sender_type: msg.role === 'assistant' ? 'agent' : 'user',
+      text: msg.content,
+      sender: msg.role,
       timestamp: msg.timestamp.toISOString(),
     }));
 
@@ -107,18 +122,23 @@ export function ChatAssistant() {
       source: "widget",
       org_id: ORG_ID,
       endedByUser: true,
-      chatHistory: chatHistoryForApi,
+      messages: chatHistoryForApi,
     };
 
     try {
-      await fetch(SESSION_LOG_WEBHOOK_URL, {
+      const response = await fetch(SESSION_LOG_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('Session analytics sent');
+      if (!response.ok) {
+        throw new Error(`Analytics webhook failed with status: ${response.status}`);
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Agent Analytics] Session analytics sent successfully.');
+      }
     } catch (error) {
-      console.error('Failed to send session analytics:', error);
+      console.error('[Agent Analytics] Failed to send session analytics:', error);
     }
   };
   
@@ -160,7 +180,7 @@ export function ChatAssistant() {
   
   const handleClose = () => {
     if (sessionId) {
-      sendSessionAnalyticsOnClose(messagesRef.current);
+      sendAgentAnalytics(messagesRef.current);
     }
     setIsOpen(false);
     // Reset for next conversation

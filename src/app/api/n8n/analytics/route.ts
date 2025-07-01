@@ -24,12 +24,15 @@ interface N8nInsights {
 }
 
 export async function GET() {
-  if (!N8N_API_KEY) {
-    return NextResponse.json({ error: 'N8N_API_KEY is not configured.' }, { status: 500 });
+  if (!N8N_API_KEY || !N8N_BASE_URL) {
+    const errorMsg = '[n8n Config Error] N8N_API_KEY or N8N_BASE_URL is not configured.';
+    console.error(errorMsg);
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
-
-  if (!N8N_BASE_URL) {
-    return NextResponse.json({ error: 'N8N_BASE_URL is not configured.' }, { status: 500 });
+  
+  if (process.env.NODE_ENV === 'development') {
+      console.log('[n8n Analytics] Fetching data from:', N8N_BASE_URL);
+      console.log('[n8n Analytics] Using API Key Prefix:', N8N_API_KEY.slice(0, 8) + '...');
   }
 
   const headers = {
@@ -45,29 +48,34 @@ export async function GET() {
 
     if (!executionsRes.ok) {
         const errorText = await executionsRes.text();
-        console.error("Failed to fetch from n8n executions API. Status:", executionsRes.status, "Details:", errorText);
-
         let friendlyError = 'Failed to fetch execution data from n8n.';
+        
         if (executionsRes.status === 401 || executionsRes.status === 403) {
-            friendlyError = 'Authentication failed. Please check if your N8N_API_KEY is correct and has the required permissions.';
+            friendlyError = 'Authentication with n8n failed. Please check if your N8N_API_KEY is correct and has the required permissions.';
         } else if (executionsRes.status >= 500) {
             friendlyError = 'The n8n server returned an error. Please check the n8n instance logs.';
         }
         
+        console.error("n8n executions API error. Status:", executionsRes.status, "Details:", errorText);
         return NextResponse.json({ error: friendlyError }, { status: executionsRes.status });
+    }
+
+    if (!insightsRes.ok) {
+        const errorText = await insightsRes.text();
+        console.error("n8n insights API error. Status:", insightsRes.status, "Details:", errorText);
+        return NextResponse.json({ error: 'Failed to fetch insights data from n8n.' }, { status: insightsRes.status });
     }
 
     const executionsPayload = await executionsRes.json();
     const executions: N8nExecution[] = executionsPayload?.data || [];
-
-    const insights = insightsRes.ok ? await insightsRes.json() : null;
+    const insights: N8nInsights = await insightsRes.json();
 
     const completed = executions.filter(e => e.startedAt && e.finishedAt);
     const totalDuration = completed.reduce((sum, e) => {
       return sum + (new Date(e.finishedAt!).getTime() - new Date(e.startedAt).getTime()) / 1000;
     }, 0);
 
-    const avgDuration = completed.length ? totalDuration / completed.length : 0;
+    const avgDuration = completed.length > 0 ? totalDuration / completed.length : 0;
     
     let successRate = 0;
     if (insights?.total > 0) {
@@ -90,8 +98,9 @@ export async function GET() {
       executionTimeline,
     });
 
-  } catch (err) {
-    console.error("n8n analytics error:", err);
-    return NextResponse.json({ error: 'Failed to fetch n8n analytics' }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+    console.error("n8n analytics fetch error:", errorMessage);
+    return NextResponse.json({ error: 'Failed to fetch n8n analytics data.' }, { status: 500 });
   }
 }
