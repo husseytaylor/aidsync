@@ -107,7 +107,7 @@ export function Header({ user }: { user: User | null }) {
     );
 
     return (
-        <Link href={link.href} onClick={isAnchor ? clickHandler : () => {if(isMobile) setIsSheetOpen(false)}} className={navLinkClasses}>
+        <Link href={link.href} key={link.href} onClick={isAnchor ? clickHandler : () => {if(isMobile) setIsSheetOpen(false)}} className={navLinkClasses}>
             {link.label}
         </Link>
     );
@@ -129,15 +129,15 @@ export function Header({ user }: { user: User | null }) {
     >
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
-          <Link href="/" className="flex items-center space-x-2">
-            <Logo className="w-8 h-8" />
-            <span className="font-bold font-headline text-lg text-primary">AidSync</span>
+          <Link href="/" className="group flex items-center gap-2">
+            <Logo className="w-8 h-8 transition-transform group-hover:scale-105" />
+            <span className="hidden font-headline text-xl font-bold tracking-tight text-primary sm:inline">AidSync</span>
           </Link>
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-            {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
-            {mainNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
+            {isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
+            {mainNavLinks.map((link) => renderNavLink(link))}
         </nav>
         
         <div className="flex flex-1 items-center justify-end">
@@ -183,12 +183,12 @@ export function Header({ user }: { user: User | null }) {
               <SheetContent side="right">
                 <div className="flex h-full flex-col">
                   <div className="flex-1 space-y-4 pt-6">
-                    <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                      <Logo className="w-8 h-8" />
-                      <span className="font-bold font-headline text-lg text-primary">AidSync</span>
+                    <Link href="/" className="group flex items-center gap-2 mb-4" onClick={() => setIsSheetOpen(false)}>
+                      <Logo className="w-8 h-8 transition-transform group-hover:scale-105" />
+                      <span className="font-headline text-xl font-bold tracking-tight text-primary">AidSync</span>
                     </Link>
-                    {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
-                    {mainNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
+                    {isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
+                    {mainNavLinks.map((link) => renderNavLink(link, true))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
