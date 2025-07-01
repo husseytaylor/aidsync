@@ -4,6 +4,7 @@ import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChar
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { AnimatedSection } from "@/components/animated-section";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -130,7 +131,7 @@ export default async function AnalyticsPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-2 items-start">
       {/* Voice Analytics Column */}
-      <div className="space-y-8">
+      <AnimatedSection tag="div" className="space-y-8" delay={100}>
         <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
@@ -164,8 +165,8 @@ export default async function AnalyticsPage() {
                             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
                             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
                             <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={false} />
+                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
@@ -193,10 +194,10 @@ export default async function AnalyticsPage() {
             </Accordion>
           </CardContent>
         </Card>
-      </div>
+      </AnimatedSection>
 
       {/* Chat Analytics Column */}
-      <div className="space-y-8">
+      <AnimatedSection tag="div" className="space-y-8" delay={200}>
         <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
@@ -234,8 +235,8 @@ export default async function AnalyticsPage() {
                             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
                             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
                             <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={false} />
+                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
@@ -265,7 +266,7 @@ export default async function AnalyticsPage() {
             </Accordion>
           </CardContent>
         </Card>
-      </div>
+      </AnimatedSection>
     </div>
   );
 }
