@@ -15,6 +15,11 @@ export function createClient() {
     throw new Error('[Supabase Config Error] Invalid or missing NEXT_PUBLIC_SUPABASE_ANON_KEY. Please check your .env file and restart the development server.');
   }
 
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Supabase Server] URL:', supabaseUrl);
+    console.log('[Supabase Server] Key Loaded:', supabaseKey.slice(0, 8) + '...');
+  }
+
   return createServerClient(
     supabaseUrl,
     supabaseKey,
