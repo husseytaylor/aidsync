@@ -79,7 +79,7 @@ export default {
         sm: 'calc(var(--radius) - 8px)',
       },
       boxShadow: {
-        'glow-primary': '0 0 15px hsl(var(--primary) / 0.8)',
+        'glow-primary': '0 0 10px hsl(var(--primary) / 0.67)',
         'glow-accent': '0 0 15px hsl(var(--accent) / 0.8)',
       },
       keyframes: {
