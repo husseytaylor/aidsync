@@ -15,9 +15,12 @@ import { motion } from 'framer-motion';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  timestamp: Date;
 }
 
 const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+const SESSION_LOG_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/e92508bb-03f8-4b4f-b8ee-5911008a9835';
+const ORG_ID = '8dee815e-5e29-47cb-a171-8f522fee0eea';
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
@@ -39,13 +42,16 @@ export function ChatAssistant() {
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isWiggling, setIsWiggling] = useState(false);
+  const messagesRef = useRef(messages);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // This useEffect handles the wiggle animation for the chat button.
-  // It triggers every 35 seconds, but only if the chat window is closed.
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const wiggleInterval = setInterval(() => {
@@ -53,7 +59,7 @@ export function ChatAssistant() {
         setIsWiggling(true);
         timeout = setTimeout(() => {
           setIsWiggling(false);
-        }, 400); // Animation duration matches tailwind config
+        }, 400);
       }
     }, 35000);
 
@@ -76,17 +82,50 @@ export function ChatAssistant() {
       console.error('Webhook event failed:', error);
     }
   };
+
+  const sendSessionAnalyticsOnClose = async (history: Message[]) => {
+    if (!sessionId || !sessionStartTime) return;
+
+    const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
+    const chatHistoryForApi = history.map(msg => ({
+      message: msg.content,
+      sender_type: msg.role === 'assistant' ? 'agent' : 'user',
+      timestamp: msg.timestamp.toISOString(),
+    }));
+
+    const payload = {
+      sessionId,
+      timestamp: new Date().toISOString(),
+      messageCount: history.length,
+      durationSeconds,
+      domain: window.location.hostname,
+      source: "widget",
+      org_id: ORG_ID,
+      endedByUser: true,
+      chatHistory: chatHistoryForApi,
+    };
+
+    try {
+      await fetch(SESSION_LOG_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      console.log('Session analytics sent');
+    } catch (error) {
+      console.error('Failed to send session analytics:', error);
+    }
+  };
   
   const handleOpen = () => {
     if (messages.length === 0) {
       setMessages([
-        { role: 'assistant', content: FIRST_ASSISTANT_PROMPT }
+        { role: 'assistant', content: FIRST_ASSISTANT_PROMPT, timestamp: new Date() }
       ]);
     }
     setIsOpen(true);
   };
 
-  // Event listener to open chat from other components
   useEffect(() => {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
@@ -115,25 +154,21 @@ export function ChatAssistant() {
   }
   
   const handleClose = () => {
-    if (sessionId && sessionStartTime) {
-      const duration_seconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
-      sendEvent({
-        event: 'chat_closed',
-        session_id: sessionId,
-        timestamp: new Date().toISOString(),
-        message_count: messages.filter(m => m.role === 'user').length,
-        history: messages,
-        duration_seconds,
-      });
+    if (sessionId) {
+      sendSessionAnalyticsOnClose(messagesRef.current);
     }
     setIsOpen(false);
+    // Reset for next conversation
+    setMessages([]);
+    setSessionId(null);
+    setSessionStartTime(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isPending) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { role: 'user', content: input.trim(), timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
     const currentInput = input;
     setInput('');
@@ -141,14 +176,12 @@ export function ChatAssistant() {
     startTransition(async () => {
       let currentSessionId = sessionId;
       
-      // If this is the first message, initialize the session.
       if (!currentSessionId) {
         const newSessionId = crypto.randomUUID();
         setSessionId(newSessionId);
         setSessionStartTime(new Date());
         currentSessionId = newSessionId;
         
-        // Send a session start event
         await sendEvent({
           event: 'chat_started',
           session_id: newSessionId,
@@ -175,14 +208,14 @@ export function ChatAssistant() {
         const assistantContent = result.response || result.message;
 
         if (assistantContent) {
-          const assistantMessage: Message = { role: 'assistant', content: assistantContent };
+          const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
           setMessages((prev) => [...prev, assistantMessage]);
         } else {
           throw new Error('Empty or invalid response from webhook');
         }
       } catch (error) {
         console.error('AI chat error:', error);
-        const errorMessage: Message = { role: 'assistant', content: "I’ll forward this to our team. Please email us or book a call using the link below." };
+        const errorMessage: Message = { role: 'assistant', content: "I’ll forward this to our team. Please email us or book a call using the link below.", timestamp: new Date() };
         setMessages((prev) => [...prev, errorMessage]);
       }
     });
