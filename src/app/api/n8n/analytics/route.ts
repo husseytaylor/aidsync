@@ -31,7 +31,7 @@ export async function GET() {
   }
 
   const headers = {
-    Authorization: `Bearer ${N8N_API_KEY}`,
+    'X-N8N-API-KEY': N8N_API_KEY,
     Accept: 'application/json',
   };
 
