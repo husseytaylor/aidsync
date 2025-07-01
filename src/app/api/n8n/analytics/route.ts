@@ -42,7 +42,15 @@ export async function GET() {
     if (!executionsRes.ok) {
         const errorText = await executionsRes.text();
         console.error("Failed to fetch from n8n executions API. Status:", executionsRes.status, "Details:", errorText);
-        return NextResponse.json({ error: 'Failed to fetch execution data from n8n.' }, { status: executionsRes.status });
+
+        let friendlyError = 'Failed to fetch execution data from n8n.';
+        if (executionsRes.status === 401 || executionsRes.status === 403) {
+            friendlyError = 'Authentication failed. Please check if your N8N_API_KEY is correct and has the required permissions.';
+        } else if (executionsRes.status >= 500) {
+            friendlyError = 'The n8n server returned an error. Please check the n8n instance logs.';
+        }
+        
+        return NextResponse.json({ error: friendlyError }, { status: executionsRes.status });
     }
 
     const executionsPayload = await executionsRes.json();
