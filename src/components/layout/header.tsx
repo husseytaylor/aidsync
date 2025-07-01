@@ -8,15 +8,62 @@ import { logout } from '@/app/auth/actions';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 import type { User } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 export function Header({ user }: { user: User | null }) {
+  const pathname = usePathname();
   const navLinks = [
     { href: '#features', label: 'Features' },
     { href: '#how-it-works', label: 'How It Works' },
+    { href: '#demo', label: 'Demo' },
     { href: '#pricing', label: 'Pricing' },
     { href: '#faq', label: 'FAQ' },
     { href: '#contact', label: 'Contact' },
   ];
+
+  const [activeLink, setActiveLink] = useState('');
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Don't run scroll spy on non-landing pages
+      if (pathname !== '/') return;
+
+      const offset = 80; // Header height + buffer
+      const scrollY = window.scrollY;
+      let currentSectionId = '';
+
+      for (const link of navLinks) {
+        const section = document.getElementById(link.href.substring(1));
+        if (section) {
+          const sectionTop = section.offsetTop - offset;
+          const sectionHeight = section.offsetHeight;
+          if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+            currentSectionId = section.id;
+            break;
+          }
+        }
+      }
+
+      // Special case for the bottom of the page
+      if (window.innerHeight + scrollY >= document.body.offsetHeight - 50) {
+        currentSectionId = navLinks[navLinks.length - 1].href.substring(1);
+      }
+
+      setActiveLink(currentSectionId);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [pathname, navLinks]);
+  
+  const isLandingPage = pathname === '/';
 
   return (
     <motion.header 
@@ -32,30 +79,35 @@ export function Header({ user }: { user: User | null }) {
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
         </div>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="relative transition-colors hover:text-foreground text-foreground/60 after:absolute after:bg-primary after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        {isLandingPage && (
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "relative transition-colors text-foreground/60 hover:text-accent after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+                  activeLink === link.href.substring(1) && "text-accent after:scale-x-100"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        )}
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user ? (
             <>
-              <Button asChild variant="ghost">
+              <Button asChild>
                 <Link href="/dashboard/analytics">Dashboard</Link>
               </Button>
               <form action={logout}>
-                <Button variant="outline">Logout</Button>
+                <Button>Logout</Button>
               </form>
             </>
           ) : (
             <>
-              <Button asChild variant="ghost">
+              <Button asChild>
                 <Link href="/auth/login">Log In</Link>
               </Button>
               <Button asChild>
@@ -64,29 +116,36 @@ export function Header({ user }: { user: User | null }) {
             </>
           )}
         </div>
-        <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col space-y-4 pt-6">
-                <Link href="/" className="flex items-center space-x-2 mb-4">
-                  <Logo className="w-8 h-8" />
-                  <span className="font-bold font-headline text-lg text-primary">AidSync</span>
-                </Link>
-                {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className="text-lg font-medium">
-                    {link.label}
+        {isLandingPage && (
+          <div className="md:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <div className="flex flex-col space-y-4 pt-6">
+                  <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
+                    <Logo className="w-8 h-8" />
+                    <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                   </Link>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+                  {navLinks.map((link) => (
+                    <Link 
+                      key={link.href} 
+                      href={link.href} 
+                      className="text-lg font-medium"
+                      onClick={() => setIsSheetOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        )}
       </div>
     </motion.header>
   );

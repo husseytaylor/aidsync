@@ -34,7 +34,7 @@ const cardVariants = {
   },
 };
 
-export function Testimonials() {
+export function Demo() {
   const handleStartChat = () => {
     // This custom event will be picked up by the ChatAssistant component
     window.dispatchEvent(new CustomEvent('open-aidsync-chat'));
@@ -45,7 +45,7 @@ export function Testimonials() {
   };
   
   return (
-    <section id="demo" className="container py-24 sm:py-32">
+    <section id="demo" className="container py-24 sm:py-32 scroll-mt-20">
       <motion.div 
         className="max-w-2xl mx-auto text-center mb-16"
         initial={{ opacity: 0, y: 20 }}
@@ -97,7 +97,7 @@ export function Testimonials() {
                 </CardDescription>
               </CardContent>
               <CardFooter>
-                 <Button onClick={handleStartChat} className="w-full" variant="outline">Start Chat</Button>
+                 <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
               </CardFooter>
             </Card>
           </motion.div>
@@ -119,7 +119,7 @@ export function Testimonials() {
                 </CardDescription>
               </CardContent>
               <CardFooter>
-                 <Button onClick={handlePhoneCall} className="w-full" variant="outline">Call Now</Button>
+                 <Button onClick={handlePhoneCall} className="w-full">Call Now</Button>
               </CardFooter>
             </Card>
           </motion.div>

@@ -48,7 +48,7 @@ export function HowItWorks() {
   return (
     <motion.section 
       id="how-it-works"
-      className="container py-24 sm:py-32"
+      className="container py-24 sm:py-32 scroll-mt-20"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"

@@ -77,7 +77,7 @@ const cardVariants = {
 
 export function Pricing() {
   return (
-    <section id="pricing" className="container py-24 sm:py-32">
+    <section id="pricing" className="container py-24 sm:py-32 scroll-mt-20">
        <motion.div 
         className="max-w-2xl mx-auto text-center mb-16"
         initial={{ opacity: 0, y: 20 }}
@@ -105,8 +105,8 @@ export function Pricing() {
             <Card className="flex flex-col h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
               <CardHeader className="p-6 lg:p-8">
                 <CardTitle 
-                  className="font-headline font-bold text-[22px] text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"
-                  style={{ textShadow: "0 0 8px #00E6C280" }}
+                  className="font-headline font-bold text-[22px] text-accent transition-colors duration-300 hover:text-accent/90"
+                  style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.8)" }}
                 >
                   {tier.name}
                 </CardTitle>
@@ -114,8 +114,8 @@ export function Pricing() {
                 <div className="pt-4">
                   <div className="flex items-baseline gap-2">
                     <span 
-                      className="text-4xl font-extrabold font-headline text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"
-                      style={{ textShadow: "0 0 8px #00E6C280" }}
+                      className="text-4xl font-extrabold font-headline text-accent transition-colors duration-300 hover:text-accent/90"
+                      style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.8)" }}
                     >
                       {tier.setupFee}
                     </span>
@@ -140,7 +140,7 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="p-6 lg:p-8 pt-0">
-                 <Button asChild className="w-full" variant="default">
+                 <Button asChild className="w-full">
                     <Link href="#contact">{tier.cta}</Link>
                  </Button>
               </CardFooter>
