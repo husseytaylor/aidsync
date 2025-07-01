@@ -19,7 +19,6 @@ interface Message {
   timestamp: Date;
 }
 
-const AGENT_ANALYTICS_WEBHOOK_URL = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
 const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
@@ -72,15 +71,11 @@ export function ChatAssistant() {
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
   const sendAgentAnalytics = async (history: Message[]) => {
-    if (!AGENT_ANALYTICS_WEBHOOK_URL || AGENT_ANALYTICS_WEBHOOK_URL === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
-      // Don't log error to console for user, but we know it's not configured
-      return;
-    }
     if (!history || history.length === 0) return;
     if (!sessionId || !sessionStartTime || !ORG_ID) return;
     
     if (process.env.NODE_ENV === 'development') {
-        console.log('[Agent Analytics] Sending session log to:', AGENT_ANALYTICS_WEBHOOK_URL);
+        console.log('[Agent Analytics] Sending session log via proxy');
     }
 
     const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
@@ -104,14 +99,14 @@ export function ChatAssistant() {
 
     try {
       // Fire-and-forget this request
-      fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
+      fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         keepalive: true,
       });
     } catch (error) {
-      console.error('[Agent Analytics] Failed to send session analytics:', error);
+      console.error('[Agent Analytics] Failed to send session analytics via proxy:', error);
     }
   };
   
@@ -177,34 +172,24 @@ export function ChatAssistant() {
         setSessionId(crypto.randomUUID());
         setSessionStartTime(new Date());
       }
-
-      if (!AGENT_ANALYTICS_WEBHOOK_URL || AGENT_ANALYTICS_WEBHOOK_URL === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
-        console.error('[Chat Widget] Error: Webhook URL is not configured in .env file.');
-        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now because the chat webhook is not configured.", timestamp: new Date() };
-        setMessages((prev) => [...prev, errorMessage]);
-        return;
-      }
       
       try {
-        const response = await fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
+        const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: currentInput }),
         });
         
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Webhook request failed with status ${response.status}: ${errorText}`);
-        }
-
         const result = await response.json();
+        
+        // The API route now provides a `response` field even on error.
         const assistantContent = result.response || result.message;
 
         if (assistantContent) {
           const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
           setMessages((prev) => [...prev, assistantMessage]);
         } else {
-          throw new Error('AI assistant returned an empty or invalid response from webhook.');
+          throw new Error('AI assistant returned an empty or invalid response from webhook proxy.');
         }
 
       } catch (error: any) {

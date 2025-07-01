@@ -9,7 +9,7 @@ async function getAnalyticsData() {
     chatChartData: [],
   };
 
-  const webhookUrl = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
+  const webhookUrl = process.env.AGENT_ANALYTICS_WEBHOOK_URL;
   if (!webhookUrl || webhookUrl === 'YOUR_AGENT_ANALYTICS_WEBHOOK_URL') {
     console.error("[Analytics Page] Agent analytics webhook URL is not configured in .env file.");
     return defaultState;
