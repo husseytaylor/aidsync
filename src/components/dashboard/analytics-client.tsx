@@ -77,14 +77,14 @@ const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }
 export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: AnalyticsData }) {
   const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analyticsData;
 
-  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--accent))" } } satisfies ChartConfig;
+  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
   const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 items-start">
       {/* Voice Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8" delay={100}>
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
               <Phone />
@@ -103,14 +103,14 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
                     Call Volume (Last 30 Days)
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-black/20 rounded-b-lg p-4">
                 <ChartContainer config={voiceChartConfig} className="h-[250px] w-full">
                     <ResponsiveContainer>
                         <LineChart data={voiceChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
@@ -118,14 +118,14 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
                             <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
                             <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--accent))' }} />
+                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))' }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartContainer>
             </CardContent>
         </Card>
 
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
             <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -142,7 +142,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pt-2 pb-4 whitespace-pre-wrap">{call.transcript}</AccordionContent>
                 </AccordionItem>
-              )) : <p className="text-muted-foreground text-sm">No recent calls found.</p>}
+              )) : <div className="rounded-lg bg-black/20 p-4 text-center text-sm text-muted-foreground">No recent calls found.</div>}
             </Accordion>
           </CardContent>
         </Card>
@@ -150,7 +150,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
       {/* Chat Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8" delay={200}>
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-accent">
               <MessageSquare />
@@ -173,14 +173,14 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </CardContent>
         </Card>
         
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-headline">
                     <LineChartIcon />
                     Chat Volume (Last 30 Days)
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-black/20 rounded-b-lg p-4">
                 <ChartContainer config={chatChartConfig} className="h-[250px] w-full">
                     <ResponsiveContainer>
                         <LineChart data={chatChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
@@ -195,7 +195,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </CardContent>
         </Card>
         
-        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-accent transition-shadow duration-300">
+        <Card className="bg-card border-accent/20 backdrop-blur-sm hover:shadow-glow-mint transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
             <CardDescription>Review dialogues from the latest sessions.</CardDescription>
@@ -214,7 +214,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                     <ChatDialogue dialogue={session.dialogue} />
                   </AccordionContent>
                 </AccordionItem>
-              )) : <p className="text-muted-foreground text-sm">No recent sessions found.</p>}
+              )) : <div className="rounded-lg bg-black/20 p-4 text-center text-sm text-muted-foreground">No recent sessions found.</div>}
             </Accordion>
           </CardContent>
         </Card>

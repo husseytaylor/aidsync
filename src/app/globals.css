@@ -48,6 +48,10 @@
 
     --light-turquoise: 178 62% 90%; /* #D9F5F4 - Light Mint */
     --dark-turquoise: 163 69% 14%; /* #0B3D2E - Dark Green */
+
+    --color-calls: hsl(var(--primary));
+    --color-sessions: hsl(var(--accent));
+    --color-duration: hsl(var(--accent));
   }
 }
 
