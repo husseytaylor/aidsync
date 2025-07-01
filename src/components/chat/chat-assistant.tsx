@@ -77,22 +77,10 @@ export function ChatAssistant() {
   };
   
   const handleOpen = () => {
-    if (!sessionId) {
-      const newSessionId = crypto.randomUUID();
-      setSessionId(newSessionId);
-      setSessionStartTime(new Date());
-
-      sendEvent({
-        event: 'chat_opened',
-        session_id: newSessionId,
-        timestamp: new Date().toISOString(),
-      });
-
-      if (messages.length === 0) {
-        setMessages([
-          { role: 'assistant', content: FIRST_ASSISTANT_PROMPT }
-        ]);
-      }
+    if (messages.length === 0) {
+      setMessages([
+        { role: 'assistant', content: FIRST_ASSISTANT_PROMPT }
+      ]);
     }
     setIsOpen(true);
   };
@@ -102,7 +90,7 @@ export function ChatAssistant() {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
     return () => window.removeEventListener('open-aidsync-chat', eventHandler);
-  }, [sessionId]); // Depends on sessionId to avoid re-registering
+  }, []);
 
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
@@ -142,7 +130,7 @@ export function ChatAssistant() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isPending || !sessionId) return;
+    if (!input.trim() || isPending) return;
 
     const userMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -150,13 +138,30 @@ export function ChatAssistant() {
     setInput('');
 
     startTransition(async () => {
+      let currentSessionId = sessionId;
+      
+      // If this is the first message, initialize the session.
+      if (!currentSessionId) {
+        const newSessionId = crypto.randomUUID();
+        setSessionId(newSessionId);
+        setSessionStartTime(new Date());
+        currentSessionId = newSessionId;
+        
+        // Send a session start event
+        await sendEvent({
+          event: 'chat_started',
+          session_id: newSessionId,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      
       try {
         const response = await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             event: 'message',
-            session_id: sessionId,
+            session_id: currentSessionId,
             sender: 'user',
             message: currentInput,
             timestamp: new Date().toISOString(),
