@@ -102,7 +102,7 @@ export function Pricing() {
             transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
             className="h-full"
           >
-            <Card className="flex flex-col h-full transition-all duration-300 border-primary/30 hover:shadow-glow-primary hover:-translate-y-2">
+            <Card className="flex flex-col h-full transition-all duration-300 border-accent/30 hover:shadow-glow-accent hover:-translate-y-2">
               <CardHeader className="p-6 lg:p-8">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-[#00E6C2] transition-colors duration-300 hover:text-[#00FFD0]"

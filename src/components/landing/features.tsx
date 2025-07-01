@@ -7,17 +7,17 @@ import { motion } from 'framer-motion';
 
 const features = [
   {
-    icon: <Bot className="h-8 w-8 text-primary" />,
+    icon: <Bot className="h-8 w-8 text-accent" />,
     title: 'Branded AI Agents',
     description: 'Deploy 24/7 web chat and voice assistants trained on your business data to answer questions and qualify leads.',
   },
   {
-    icon: <Globe className="h-8 w-8 text-primary" />,
+    icon: <Globe className="h-8 w-8 text-accent" />,
     title: 'Custom Client-Facing Website',
     description: 'A professionally designed, mobile-responsive website with your branding, hosted on your custom domain.',
   },
   {
-    icon: <BarChart3 className="h-8 w-8 text-primary" />,
+    icon: <BarChart3 className="h-8 w-8 text-accent" />,
     title: 'Analytics & Optimization',
     description: 'Access a full dashboard to track quotes, calls, and agent usage, with continuous backend improvements.',
   },
@@ -51,10 +51,10 @@ export function Features() {
             <AnimatedSection
               key={index}
               delay={100 + index * 150}
-              className="bg-card/80 backdrop-blur-md border border-primary/30 text-card-foreground p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
+              className="bg-card/80 backdrop-blur-md border border-accent/30 text-card-foreground p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-accent max-w-md"
             >
               <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
+                <div className="bg-accent/10 p-3 rounded-full">
                   {feature.icon}
                 </div>
                 <div>
