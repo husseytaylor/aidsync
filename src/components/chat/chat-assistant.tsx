@@ -20,7 +20,7 @@ interface Message {
 }
 
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_CHAT_WEBHOOK_URL;
-const SESSION_LOG_WEBHOOK_URL = process.env.NEXT_PUBLIC_SESSION_LOG_WEBHOOK_URL;
+const AGENT_ANALYTICS_WEBHOOK_URL = process.env.NEXT_PUBLIC_AGENT_ANALYTICS_WEBHOOK_URL;
 const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
@@ -89,7 +89,7 @@ export function ChatAssistant() {
   };
 
   const sendAgentAnalytics = async (history: Message[]) => {
-    if (!SESSION_LOG_WEBHOOK_URL) {
+    if (!AGENT_ANALYTICS_WEBHOOK_URL) {
       console.error('[Agent Analytics] Webhook URL is not configured. Skipping analytics.');
       return;
     }
@@ -103,7 +103,7 @@ export function ChatAssistant() {
     }
     
     if (process.env.NODE_ENV === 'development') {
-        console.log('[Agent Analytics] Sending data to:', SESSION_LOG_WEBHOOK_URL);
+        console.log('[Agent Analytics] Sending data to:', AGENT_ANALYTICS_WEBHOOK_URL);
     }
 
     const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
@@ -126,7 +126,7 @@ export function ChatAssistant() {
     };
 
     try {
-      const response = await fetch(SESSION_LOG_WEBHOOK_URL, {
+      const response = await fetch(AGENT_ANALYTICS_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
