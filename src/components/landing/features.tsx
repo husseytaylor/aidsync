@@ -35,20 +35,22 @@ export function Features() {
         </p>
       </AnimatedSection>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
         <AnimatedSection
           tag="div"
           variants={imageVariants}
-          className="relative bg-black rounded-xl shadow-2xl"
+          className="relative rounded-xl shadow-2xl"
         >
-          <Image
-            src="/hand.png"
-            alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
-            width={1200}
-            height={800}
-            className="object-contain"
-          />
+          <div className="bg-black rounded-xl">
+            <Image
+              src="/hand.png"
+              alt="A human hand and a robotic hand about to touch, symbolizing the partnership between humanity and AI."
+              width={1200}
+              height={800}
+              className="object-contain"
+            />
+          </div>
         </AnimatedSection>
 
         {/* Right Column (Content) */}
