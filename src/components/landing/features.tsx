@@ -28,6 +28,13 @@ const imageVariants = {
 export function Features() {
   return (
     <section id="features" className="container py-24 sm:py-32">
+      <AnimatedSection className="text-center mb-12">
+        <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
+        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+          AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
+        </p>
+      </AnimatedSection>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column (Image) */}
         <AnimatedSection tag="div" variants={imageVariants} className="relative">
@@ -41,33 +48,24 @@ export function Features() {
         </AnimatedSection>
 
         {/* Right Column (Content) */}
-        <div>
-          <AnimatedSection>
-            <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
-            </p>
-          </AnimatedSection>
-
-          <div className="mt-8 flex flex-col gap-6">
-            {features.map((feature, index) => (
-              <AnimatedSection
-                key={index}
-                delay={100 + index * 150}
-                className="bg-secondary/50 backdrop-blur-lg border border-primary/30 text-foreground p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    {feature.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
-                    <p className="mt-1 text-muted-foreground">{feature.description}</p>
-                  </div>
+        <div className="flex flex-col gap-6">
+          {features.map((feature, index) => (
+            <AnimatedSection
+              key={index}
+              delay={100 + index * 150}
+              className="bg-secondary/50 backdrop-blur-lg border border-primary/30 text-foreground p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-primary max-w-md"
+            >
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  {feature.icon}
                 </div>
-              </AnimatedSection>
-            ))}
-          </div>
+                <div>
+                  <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
+                  <p className="mt-1 text-muted-foreground">{feature.description}</p>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
         </div>
       </div>
     </section>
