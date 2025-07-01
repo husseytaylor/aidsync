@@ -57,18 +57,3 @@
     @apply text-foreground;
   }
 }
-
-@layer utilities {
-  .message-trail::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -24px;
-    width: 18px;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(40, 224, 176, 0.4), transparent);
-    border-radius: 999px;
-    pointer-events: none;
-    @apply animate-trail;
-  }
-}

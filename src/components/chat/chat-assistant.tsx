@@ -20,9 +20,9 @@ const WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-451
 
 const TypingIndicator = () => (
   <div className="flex items-center space-x-1.5 p-2">
-    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot [animation-delay:-0.3s]"></span>
-    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot [animation-delay:-0.15s]"></span>
-    <span className="h-2 w-2 bg-accent rounded-full animate-bounce-dot"></span>
+    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+    <span className="h-2 w-2 bg-dark-turquoise rounded-full animate-pulse"></span>
   </div>
 );
 
@@ -35,6 +35,31 @@ export function ChatAssistant() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const [isIdleAnimating, setIdleAnimating] = useState(false);
+  const idleTimeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    const startIdleAnimation = () => {
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+      idleTimeoutRef.current = setTimeout(() => {
+        if (!isOpen) {
+          setIdleAnimating(true);
+        }
+      }, 30000); // 30 seconds
+    };
+
+    if (isOpen) {
+      setIdleAnimating(false);
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    } else {
+      startIdleAnimation();
+    }
+
+    return () => {
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    };
+  }, [isOpen]);
   
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
@@ -157,7 +182,11 @@ export function ChatAssistant() {
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out", isOpen ? "scale-0" : "scale-100")}>
         <Button 
           size="icon"
-          className="rounded-full w-16 h-16 shadow-lg bg-primary/80 backdrop-blur-md border border-primary hover:bg-primary animate-wiggle"
+          className={cn(
+            "rounded-full w-16 h-16 shadow-lg bg-primary backdrop-blur-md border border-primary hover:bg-primary/90 hover:shadow-glow-accent transition-all duration-300",
+            isIdleAnimating && "animate-float-idle",
+            !isIdleAnimating && "animate-wiggle"
+          )}
           onClick={handleOpen}
           aria-label="Open AI Assistant"
         >
@@ -169,7 +198,7 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border border-primary/20 transition-shadow duration-300 hover:shadow-glow-accent">
+        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border border-accent/30 bg-secondary/80 backdrop-blur-sm transition-shadow duration-300 hover:shadow-glow-accent">
           <CardHeader className="flex flex-row items-center justify-between border-b bg-secondary/80 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />

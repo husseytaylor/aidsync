@@ -116,9 +116,9 @@ export default {
           '0%, 80%, 100%': { transform: 'scale(0)' },
           '40%': { transform: 'scale(1.0)' },
         },
-        trailFade: {
-          '0%, 100%': { opacity: '0', transform: 'translateY(-50%) translateX(-6px)' },
-          '50%': { opacity: '1', transform: 'translateY(-50%) translateX(0)' },
+        floatPulse: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-4px)' },
         }
       },
       animation: {
@@ -126,7 +126,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         wiggle: 'wiggle 0.6s ease-in-out 1.5s 1',
         'bounce-dot': 'bounce-dot 1.4s infinite ease-in-out both',
-        trail: 'trailFade 2s ease-in-out infinite',
+        'float-idle': 'floatPulse 2s ease-in-out infinite',
       },
     },
   },
