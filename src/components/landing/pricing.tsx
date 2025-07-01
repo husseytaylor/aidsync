@@ -4,6 +4,7 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const tiers = [
   {
@@ -129,10 +130,10 @@ export function Pricing() {
               </CardContent>
               <CardFooter className="p-4 sm:p-6 pt-0">
                  <Button
+                    asChild
                     className="w-full"
-                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                   >
-                    {tier.cta}
+                    <Link href="/contact#calendly">{tier.cta}</Link>
                   </Button>
               </CardFooter>
             </Card>

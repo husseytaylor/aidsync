@@ -4,7 +4,6 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { Pricing } from "@/components/landing/pricing";
 import { Demo } from "@/components/landing/demo";
 import { Faq } from "@/components/landing/faq";
-import { Contact } from "@/components/landing/contact";
 
 export default function Home() {
   return (
@@ -12,7 +11,6 @@ export default function Home() {
       <Hero />
       <Features />
       <HowItWorks />
-      <Contact />
       <Demo />
       <Pricing />
       <Faq />

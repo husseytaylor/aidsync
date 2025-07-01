@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Twitter, Github, Linkedin } from 'lucide-react';
 import { Logo } from '../logo';
 
 export function Footer() {
@@ -15,17 +14,17 @@ export function Footer() {
             © {new Date().getFullYear()} AidSync. All Rights Reserved.
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Link href="#" aria-label="Twitter">
-            <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+        <nav className="flex items-center gap-4 sm:gap-6 text-sm">
+          <Link href="/about" className="text-muted-foreground transition-colors hover:text-primary">
+            About
           </Link>
-          <Link href="#" aria-label="GitHub">
-            <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+          <Link href="/contact" className="text-muted-foreground transition-colors hover:text-primary">
+            Contact
           </Link>
-          <Link href="#" aria-label="LinkedIn">
-            <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+          <Link href="/privacy-policy" className="text-muted-foreground transition-colors hover:text-primary">
+            Privacy Policy
           </Link>
-        </div>
+        </nav>
       </div>
     </footer>
   );

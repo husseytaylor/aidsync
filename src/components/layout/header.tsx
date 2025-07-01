@@ -14,13 +14,19 @@ import { usePathname } from 'next/navigation';
 
 export function Header({ user }: { user: User | null }) {
   const pathname = usePathname();
-  const navLinks = [
+  const isLandingPage = pathname === '/';
+  
+  const landingNavLinks = [
     { href: '#features', label: 'Features' },
     { href: '#how-it-works', label: 'How It Works' },
     { href: '#demo', label: 'Demo' },
     { href: '#pricing', label: 'Pricing' },
     { href: '#faq', label: 'FAQ' },
-    { href: '#contact', label: 'Contact' },
+  ];
+  
+  const mainNavLinks = [
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   const [activeLink, setActiveLink] = useState('');
@@ -42,11 +48,11 @@ export function Header({ user }: { user: User | null }) {
       }
 
       // Scroll Spy Logic
-      if (pathname !== '/') return;
+      if (!isLandingPage) return;
       const scrollSpyOffset = 80; // Header height + buffer
       let currentSectionId = '';
 
-      for (const link of navLinks) {
+      for (const link of landingNavLinks) {
         const section = document.getElementById(link.href.substring(1));
         if (section) {
           const sectionTop = section.offsetTop - scrollSpyOffset;
@@ -59,7 +65,7 @@ export function Header({ user }: { user: User | null }) {
       }
 
       if (window.innerHeight + offset >= document.body.offsetHeight - 50) {
-        currentSectionId = navLinks[navLinks.length - 1].href.substring(1);
+        currentSectionId = landingNavLinks[landingNavLinks.length - 1].href.substring(1);
       }
       setActiveLink(currentSectionId);
     };
@@ -70,11 +76,35 @@ export function Header({ user }: { user: User | null }) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [pathname, navLinks]);
+  }, [pathname, isLandingPage, landingNavLinks]);
   
-  const isLandingPage = pathname === '/';
-
   const buttonStyle = isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
+
+  const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
+    const isAnchor = link.href.startsWith('#');
+    
+    const clickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (isMobile) setIsSheetOpen(false);
+        if (isAnchor) {
+            e.preventDefault();
+            document.getElementById(link.href.substring(1))?.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+    
+    const navLinkClasses = cn(
+      "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+      isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground',
+      isLandingPage && activeLink === link.href.substring(1) && "text-accent after:scale-x-100",
+      isMobile ? "block text-lg font-medium" : "text-sm font-medium"
+    );
+
+    return (
+        <Link href={link.href} onClick={clickHandler} className={navLinkClasses}>
+            {link.label}
+        </Link>
+    );
+  };
+
 
   return (
     <motion.header 
@@ -96,23 +126,21 @@ export function Header({ user }: { user: User | null }) {
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
         </div>
-        {isLandingPage && (
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
+        
+        <nav className="hidden md:flex items-center space-x-6">
+            {isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
+            {mainNavLinks.map((link) => renderNavLink(link))}
+             <Link
+                href="/contact#calendly"
                 className={cn(
-                  "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
-                  isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground',
-                  activeLink === link.href.substring(1) && "text-accent after:scale-x-100"
+                  "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left text-sm font-medium",
+                  isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground'
                 )}
               >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+                Discovery Call
+            </Link>
+        </nav>
+        
         <div className="flex flex-1 items-center justify-end">
           <div className="hidden md:flex items-center space-x-2">
             {user ? (
@@ -132,13 +160,11 @@ export function Header({ user }: { user: User | null }) {
                     <span>Call Agent</span>
                   </Link>
                 </Button>
-                <Button
-                  size="sm"
-                  className={cn("rounded-full font-bold", buttonStyle)}
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  <Calendar />
-                  <span>Book a Call</span>
+                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
+                  <Link href="/contact#calendly">
+                    <Calendar />
+                    <span>Book a Call</span>
+                  </Link>
                 </Button>
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="/auth/login">Log In</Link>
@@ -162,16 +188,15 @@ export function Header({ user }: { user: User | null }) {
                       <Logo className="w-8 h-8" />
                       <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                     </Link>
-                    {isLandingPage && navLinks.map((link) => (
-                      <Link 
-                        key={link.href} 
-                        href={link.href} 
+                    {isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
+                    {mainNavLinks.map((link) => renderNavLink(link, true))}
+                     <Link
+                        href="/contact#calendly"
                         className="block text-lg font-medium"
                         onClick={() => setIsSheetOpen(false)}
                       >
-                        {link.label}
-                      </Link>
-                    ))}
+                        Discovery Call
+                    </Link>
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
@@ -191,15 +216,11 @@ export function Header({ user }: { user: User | null }) {
                               <span>Call Voice Agent</span>
                           </Link>
                         </Button>
-                        <Button
-                          className="w-full justify-center"
-                          onClick={() => {
-                            document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                            setIsSheetOpen(false);
-                          }}
-                        >
-                          <Calendar />
-                          <span>Book a Discovery Call</span>
+                         <Button asChild className="w-full justify-center">
+                            <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
+                                <Calendar />
+                                <span>Book a Discovery Call</span>
+                            </Link>
                         </Button>
                         <Button asChild className="w-full justify-center">
                           <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
