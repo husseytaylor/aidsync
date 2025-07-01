@@ -45,18 +45,33 @@ async function getAnalyticsData() {
     const chat_analytics = externalData.chat_analytics || defaultState.chat_analytics;
     
     const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => {
-      try {
-        const dialogueData = session.dialogue && typeof session.dialogue === 'string' 
-          ? JSON.parse(session.dialogue) 
-          : (session.dialogue || []);
-        return {
-          ...session,
-          dialogue: Array.isArray(dialogueData) ? dialogueData : [],
-        }
-      } catch (e) {
-        console.error("Failed to parse chat dialogue:", e);
-        return { ...session, dialogue: [] }
+      if (!session.dialogue) {
+        return { ...session, dialogue: [] };
       }
+
+      if (Array.isArray(session.dialogue)) {
+        return { ...session };
+      }
+
+      if (typeof session.dialogue === 'string') {
+        try {
+          const parsed = JSON.parse(session.dialogue);
+          return { ...session, dialogue: Array.isArray(parsed) ? parsed : [] };
+        } catch (e) {
+          const parsedFromText = session.dialogue.split('\n').filter(line => line.trim() !== '').map(line => {
+            const parts = line.split(': ');
+            const sender = parts.shift()?.trim() || 'unknown';
+            const text = parts.join(': ').trim();
+            return {
+              sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
+              text: text,
+            };
+          });
+          return { ...session, dialogue: parsedFromText };
+        }
+      }
+      
+      return { ...session, dialogue: [] };
     }).slice(0, 5);
       
     const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
