@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 
-// Cache the response for 60 seconds
+// Revalidate every 60 seconds
 export const revalidate = 60;
 
 const N8N_API_KEY = process.env.N8N_API_KEY;
@@ -12,15 +12,10 @@ interface N8nExecution {
   status: 'success' | 'failed' | 'running';
   startedAt: string;
   finishedAt?: string;
-  workflowId: string;
-  mode: string;
-}
-
-interface N8nInsights {
-    total: number;
-    success: number;
-    failed: number;
-    running: number;
+  workflow: {
+      id: string;
+      name: string;
+  };
 }
 
 export async function GET() {
@@ -29,10 +24,10 @@ export async function GET() {
     console.error(errorMsg);
     return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
-  
+
   if (process.env.NODE_ENV === 'development') {
-      console.log('[n8n Analytics] Fetching data from:', N8N_BASE_URL);
-      console.log('[n8n Analytics] Using API Key Prefix:', N8N_API_KEY.slice(0, 8) + '...');
+    console.log('[n8n Analytics] Fetching executions from:', `${N8N_BASE_URL}/executions`);
+    console.log('[n8n Analytics] Using API Key Prefix:', N8N_API_KEY.slice(0, 8) + '...');
   }
 
   const headers = {
@@ -41,17 +36,17 @@ export async function GET() {
   };
 
   try {
-    const [executionsRes, insightsRes] = await Promise.all([
-      fetch(`${N8N_BASE_URL}/executions?limit=50`, { headers, next: { revalidate: 60 } }),
-      fetch(`${N8N_BASE_URL}/insights/total`, { headers, next: { revalidate: 60 } }),
-    ]);
-
+    const executionsRes = await fetch(`${N8N_BASE_URL}/executions?limit=25`, { 
+        headers, 
+        next: { revalidate: 60 } 
+    });
+    
     if (!executionsRes.ok) {
         const errorText = await executionsRes.text();
         let friendlyError = 'Failed to fetch execution data from n8n.';
         
         if (executionsRes.status === 401 || executionsRes.status === 403) {
-            friendlyError = 'Authentication with n8n failed. Please check if your N8N_API_KEY is correct and has the required permissions.';
+            friendlyError = 'Authentication with n8n failed. Please check if your N8N_API_KEY is correct and has the required permissions (execution:read).';
         } else if (executionsRes.status >= 500) {
             friendlyError = 'The n8n server returned an error. Please check the n8n instance logs.';
         }
@@ -60,42 +55,37 @@ export async function GET() {
         return NextResponse.json({ error: friendlyError }, { status: executionsRes.status });
     }
 
-    if (!insightsRes.ok) {
-        const errorText = await insightsRes.text();
-        console.error("n8n insights API error. Status:", insightsRes.status, "Details:", errorText);
-        return NextResponse.json({ error: 'Failed to fetch insights data from n8n.' }, { status: insightsRes.status });
-    }
-
     const executionsPayload = await executionsRes.json();
     const executions: N8nExecution[] = executionsPayload?.data || [];
-    const insights: N8nInsights = await insightsRes.json();
 
-    const completed = executions.filter(e => e.startedAt && e.finishedAt);
+    const totalExecutions = executions.length;
+    const successCount = executions.filter(e => e.status === 'success').length;
+    const failedCount = executions.filter(e => e.status === 'failed').length;
+    const runningCount = totalExecutions - successCount - failedCount;
+    const successRate = totalExecutions > 0 ? (successCount / totalExecutions) * 100 : 0;
+
+    const completed = executions.filter(e => e.status !== 'running' && e.startedAt && e.finishedAt);
     const totalDuration = completed.reduce((sum, e) => {
       return sum + (new Date(e.finishedAt!).getTime() - new Date(e.startedAt).getTime()) / 1000;
     }, 0);
-
     const avgDuration = completed.length > 0 ? totalDuration / completed.length : 0;
-    
-    let successRate = 0;
-    if (insights?.total > 0) {
-        successRate = (insights.success / insights.total) * 100;
-    } else if (executions.length > 0) {
-        const successfulExecutions = executions.filter(e => e.status === 'success').length;
-        successRate = (successfulExecutions / executions.length) * 100;
-    }
 
-    const executionTimeline = executions.map(e => ({
-      startedAt: e.startedAt,
+    const recentExecutions = executions.map(e => ({
+      id: e.id,
+      workflowName: e.workflow.name,
       status: e.status,
-      duration: e.finishedAt ? (new Date(e.finishedAt).getTime() - new Date(e.startedAt).getTime()) / 1000 : 0,
-    })).sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+      startedAt: e.startedAt,
+      duration: e.finishedAt ? (new Date(e.finishedAt).getTime() - new Date(e.startedAt).getTime()) / 1000 : null,
+    }));
 
     return NextResponse.json({
-      totalExecutions: insights?.total ?? executions.length,
-      avgDuration: parseFloat(avgDuration.toFixed(2)),
+      totalExecutions,
+      successCount,
+      failedCount,
+      runningCount,
       successRate: parseFloat(successRate.toFixed(2)),
-      executionTimeline,
+      avgDuration: parseFloat(avgDuration.toFixed(2)),
+      recentExecutions,
     });
 
   } catch (err: unknown) {
