@@ -2,12 +2,14 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon, FileText } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { AnimatedSection } from "@/components/animated-section";
+import { Button } from "@/components/ui/button";
 
 interface AnalyticsData {
   voice_analytics: {
@@ -52,15 +54,15 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
-    <div className="space-y-4 rounded-lg p-4 bg-black/20">
-      {dialogue && dialogue.map((message, index) => (
+    <div className="space-y-4">
+      {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
             <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0">
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-xs rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' )}>
+          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-aidsync-gradient-green text-primary-foreground' : 'bg-foreground/10 text-foreground/90')}>
             <p className="whitespace-pre-wrap">{message.text}</p>
           </div>
           {message.sender === 'user' && (
@@ -69,7 +71,7 @@ const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }
             </div>
           )}
         </div>
-      ))}
+      )) : <p className="text-muted-foreground text-center">No dialogue found.</p>}
     </div>
 );
 
@@ -80,42 +82,44 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
   const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
 
   return (
-    <>
+    <div className="grid gap-8 lg:grid-cols-2 items-start">
       <div className="lg:col-span-2 mb-4">
-        <h1 className="text-3xl font-headline text-accent">AidSync Agent Insights</h1>
-        <p className="text-muted-foreground mt-1">Live metrics from your customer-facing AI chat and voice agents.</p>
+        <AnimatedSection>
+            <h1 className="font-headline text-4xl font-extrabold text-foreground tracking-tight" style={{ textShadow: "0 0 10px hsl(var(--accent) / 0.5)" }}>AidSync Agent Insights</h1>
+            <p className="text-muted-foreground mt-2 text-lg">Live metrics from your customer-facing AI chat and voice agents.</p>
+        </AnimatedSection>
       </div>
       
       {/* Voice Analytics Column */}
       <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={100}>
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
-              <Phone />
+            <CardTitle className="flex items-center gap-3 text-2xl font-headline">
+              <Phone className="text-accent" />
               Voice Analytics
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
-            <div className="rounded-lg bg-black/20 p-4">
-              <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Total Calls</h3>
-              <p className="text-2xl font-semibold text-white">{voice_analytics.summary.total_calls}</p>
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Calls</h3>
+              <p className="text-3xl font-bold text-foreground mt-1">{voice_analytics.summary.total_calls}</p>
             </div>
-            <div className="rounded-lg bg-black/20 p-4">
-              <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Average Duration</h3>
-              <p className="text-2xl font-semibold text-white">{formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Duration</h3>
+              <p className="text-3xl font-bold text-foreground mt-1">{formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl font-headline">
-                    <LineChartIcon />
+                <CardTitle className="flex items-center gap-3 text-xl font-headline">
+                    <LineChartIcon className="text-accent"/>
                     Call Volume (Last 30 Days)
                 </CardTitle>
             </CardHeader>
-            <CardContent className="bg-black/20 rounded-b-lg p-4">
-                <ChartContainer config={voiceChartConfig} className="h-[250px] w-full">
+            <CardContent className="h-[250px] p-2">
+                <ChartContainer config={voiceChartConfig} className="h-full w-full">
                     <ResponsiveContainer>
                         <LineChart data={voiceChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
                             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
@@ -135,19 +139,32 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             <CardDescription>Review transcripts from the latest calls.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible className="w-full space-y-2">
+            <div className="space-y-3">
               {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-black/20 border-white/10 rounded-lg px-4">
-                  <AccordionTrigger className="hover:no-underline">
-                    <div className="flex justify-between w-full items-center text-sm">
-                       <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(call.started_at)}</div>
-                       <div className="flex items-center gap-2 text-muted-foreground"><Timer className="w-4 h-4" /> {formatDuration(call.duration)}</div>
+                <Dialog key={index}>
+                  <DialogTrigger asChild>
+                    <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
+                      <div className="flex items-center gap-3 text-sm">
+                         <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(call.started_at)}</div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                         <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(call.duration)}</div>
+                         <Button variant="ghost" size="sm" className="h-8">View</Button>
+                      </div>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pt-2 pb-4 whitespace-pre-wrap">{call.transcript}</AccordionContent>
-                </AccordionItem>
-              )) : <div className="rounded-lg bg-black/20 p-4 text-center text-sm text-muted-foreground">No recent calls found.</div>}
-            </Accordion>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2"><FileText /> Call Transcript</DialogTitle>
+                      <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
+                    </DialogHeader>
+                    <ScrollArea className="h-[50vh] mt-4">
+                      <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-body p-4 bg-black/20 rounded-md">{call.transcript || "No transcript available."}</pre>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+              )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent calls found.</div>}
+            </div>
           </CardContent>
         </Card>
       </AnimatedSection>
@@ -156,36 +173,36 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
       <AnimatedSection tag="div" className="space-y-8 lg:col-span-1" delay={200}>
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl font-headline text-white">
-              <MessageSquare />
+            <CardTitle className="flex items-center gap-3 text-2xl font-headline">
+              <MessageSquare className="text-accent" />
               Chat Analytics
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg bg-black/20 p-4">
-              <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Total Sessions</h3>
-              <p className="text-2xl font-semibold text-white">{chat_analytics.summary.total_sessions}</p>
+          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Sessions</h3>
+              <p className="text-3xl font-bold text-foreground mt-1">{chat_analytics.summary.total_sessions}</p>
             </div>
-            <div className="rounded-lg bg-black/20 p-4">
-              <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Avg. Duration</h3>
-              <p className="text-2xl font-semibold text-white">{formatDuration(chat_analytics.summary.average_duration_seconds)}</p>
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Duration</h3>
+              <p className="text-3xl font-bold text-foreground mt-1">{formatDuration(chat_analytics.summary.average_duration_seconds)}</p>
             </div>
-            <div className="rounded-lg bg-black/20 p-4">
-              <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Avg. Messages</h3>
-              <p className="text-2xl font-semibold text-white">{Math.round(chat_analytics.summary.average_message_count)}</p>
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm transition-all hover:bg-black/30">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Avg. Messages</h3>
+              <p className="text-3xl font-bold text-foreground mt-1">{Math.round(chat_analytics.summary.average_message_count)}</p>
             </div>
           </CardContent>
         </Card>
         
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl font-headline">
-                    <LineChartIcon />
+                <CardTitle className="flex items-center gap-3 text-xl font-headline">
+                    <LineChartIcon className="text-accent"/>
                     Chat Volume (Last 30 Days)
                 </CardTitle>
             </CardHeader>
-            <CardContent className="bg-black/20 rounded-b-lg p-4">
-                <ChartContainer config={chatChartConfig} className="h-[250px] w-full">
+            <CardContent className="h-[250px] p-2">
+                <ChartContainer config={chatChartConfig} className="h-full w-full">
                     <ResponsiveContainer>
                         <LineChart data={chatChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
                             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
@@ -205,24 +222,35 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             <CardDescription>Review dialogues from the latest sessions.</CardDescription>
           </CardHeader>
           <CardContent>
-             <Accordion type="single" collapsible className="w-full space-y-2">
+             <div className="space-y-3">
               {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-black/20 border-white/10 rounded-lg px-4">
-                  <AccordionTrigger className="hover:no-underline">
-                     <div className="flex justify-between w-full items-center text-sm">
-                       <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(session.started_at)}</div>
-                       <div className="flex items-center gap-2 text-muted-foreground"><Timer className="w-4 h-4" /> {formatDuration(session.duration)}</div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <ChatDialogue dialogue={session.dialogue} />
-                  </AccordionContent>
-                </AccordionItem>
-              )) : <div className="rounded-lg bg-black/20 p-4 text-center text-sm text-muted-foreground">No recent sessions found.</div>}
-            </Accordion>
+                <Dialog key={index}>
+                    <DialogTrigger asChild>
+                        <div className="flex justify-between items-center rounded-lg p-3 bg-black/20 hover:bg-black/30 border border-white/10 cursor-pointer transition-colors">
+                            <div className="flex items-center gap-3 text-sm">
+                                <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="w-4 h-4" /> {formatTimestamp(session.started_at)}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 text-muted-foreground text-sm"><Timer className="w-4 h-4" /> {formatDuration(session.duration)}</div>
+                                <Button variant="ghost" size="sm" className="h-8">View</Button>
+                            </div>
+                        </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2"><MessageSquare /> Chat Dialogue</DialogTitle>
+                            <CardDescription>{formatTimestamp(session.started_at)} &bull; {formatDuration(session.duration)}</CardDescription>
+                        </DialogHeader>
+                        <ScrollArea className="h-[60vh] mt-4 pr-4">
+                            <ChatDialogue dialogue={session.dialogue} />
+                        </ScrollArea>
+                    </DialogContent>
+                </Dialog>
+              )) : <div className="rounded-lg bg-black/20 p-6 text-center text-sm text-muted-foreground">No recent sessions found.</div>}
+            </div>
           </CardContent>
         </Card>
       </AnimatedSection>
-    </>
+    </div>
   );
 }

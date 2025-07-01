@@ -124,9 +124,5 @@ async function getAnalyticsData() {
 
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData();
-  return (
-    <div className="grid gap-8 lg:grid-cols-2 items-start">
-      <AnalyticsDashboardClient analyticsData={analyticsData} />
-    </div>
-  );
+  return <AnalyticsDashboardClient analyticsData={analyticsData} />;
 }
