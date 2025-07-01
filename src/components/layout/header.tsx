@@ -25,38 +25,47 @@ export function Header({ user }: { user: User | null }) {
 
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Don't run scroll spy on non-landing pages
-      if (pathname !== '/') return;
+      const offset = window.scrollY;
+      const contactSection = document.getElementById('contact');
+      // Set a large number if contact section is not on the page
+      const contactTop = contactSection ? contactSection.getBoundingClientRect().top : Infinity;
 
-      const offset = 80; // Header height + buffer
-      const scrollY = window.scrollY;
+      // Header should become opaque if scrolled more than 50px OR if the top of the contact section is near the top of the viewport
+      if (offset > 50 || contactTop < 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      // Scroll Spy Logic
+      if (pathname !== '/') return;
+      const scrollSpyOffset = 80; // Header height + buffer
       let currentSectionId = '';
 
       for (const link of navLinks) {
         const section = document.getElementById(link.href.substring(1));
         if (section) {
-          const sectionTop = section.offsetTop - offset;
+          const sectionTop = section.offsetTop - scrollSpyOffset;
           const sectionHeight = section.offsetHeight;
-          if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+          if (offset >= sectionTop && offset < sectionTop + sectionHeight) {
             currentSectionId = section.id;
             break;
           }
         }
       }
 
-      // Special case for the bottom of the page
-      if (window.innerHeight + scrollY >= document.body.offsetHeight - 50) {
+      if (window.innerHeight + offset >= document.body.offsetHeight - 50) {
         currentSectionId = navLinks[navLinks.length - 1].href.substring(1);
       }
-
       setActiveLink(currentSectionId);
     };
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    handleScroll(); // Initial check on mount
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -65,9 +74,17 @@ export function Header({ user }: { user: User | null }) {
   
   const isLandingPage = pathname === '/';
 
+  const buttonStyle = isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
+
   return (
     <motion.header 
-      className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      id="site-header"
+      className={cn(
+        "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
+        isScrolled
+          ? 'bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90 border-white/10 shadow-md'
+          : 'bg-background/80 backdrop-blur-sm border-transparent'
+      )}
       initial={{ y: -64, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -86,7 +103,8 @@ export function Header({ user }: { user: User | null }) {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative transition-colors text-foreground/60 hover:text-accent after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+                  "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+                  isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground',
                   activeLink === link.href.substring(1) && "text-accent after:scale-x-100"
                 )}
               >
@@ -108,19 +126,19 @@ export function Header({ user }: { user: User | null }) {
               </>
             ) : (
               <>
-                <Button asChild size="sm" className="rounded-full font-bold">
+                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="tel:6624986621">
-                    <Phone className="h-4 w-4" />
+                    <Phone />
                     <span>Call Agent</span>
                   </Link>
                 </Button>
-                <Button asChild size="sm" className="rounded-full font-bold">
+                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="#contact">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar />
                     <span>Book a Call</span>
                   </Link>
                 </Button>
-                <Button asChild size="sm" className="rounded-full font-bold">
+                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="/auth/login">Log In</Link>
                 </Button>
               </>
@@ -130,7 +148,7 @@ export function Header({ user }: { user: User | null }) {
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className={cn(isScrolled ? 'text-foreground' : 'text-white')}>
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
@@ -167,13 +185,13 @@ export function Header({ user }: { user: User | null }) {
                       <>
                         <Button asChild className="w-full justify-center">
                           <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
-                              <Phone className="h-4 w-4" />
+                              <Phone />
                               <span>Call Voice Agent</span>
                           </Link>
                         </Button>
                         <Button asChild className="w-full justify-center">
                           <Link href="#contact" onClick={() => setIsSheetOpen(false)}>
-                              <Calendar className="h-4 w-4" />
+                              <Calendar />
                               <span>Book a Discovery Call</span>
                           </Link>
                         </Button>
