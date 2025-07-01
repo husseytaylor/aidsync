@@ -24,7 +24,7 @@ interface N8nInsights {
 }
 
 export async function GET() {
-  if (!N8N_API_KEY || N8N_API_KEY.includes('BLANK_VALUE')) {
+  if (!N8N_API_KEY) {
     return NextResponse.json({ error: 'N8N_API_KEY is not configured.' }, { status: 500 });
   }
 
