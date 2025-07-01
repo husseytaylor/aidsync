@@ -1,54 +1,103 @@
+import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Phone, Clock, MessageSquare, BarChartHorizontal, Timer, Calendar, Bot, User } from 'lucide-react';
+import { Phone, MessageSquare, Timer, Calendar, Bot, User, LineChart as LineChartIcon } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 
-// In a real application, this data would be fetched from a secure, authenticated API endpoint.
-// For demonstration purposes, we are using mock data that matches the specified webhook payload structure.
 async function getAnalyticsData() {
-  const mockAnalyticsData = {
+  const supabase = createClient();
+
+  const { data: voiceData, error: voiceError } = await supabase
+    .from('VoiceAnalytics')
+    .select('*')
+    .order('started_at', { ascending: false });
+
+  const { data: chatData, error: chatError } = await supabase
+    .from('ChatAnalytics')
+    .select('*')
+    .order('started_at', { ascending: false });
+
+  if (voiceError || chatError) {
+    console.error("Error fetching analytics:", voiceError, chatError);
+    // Return empty state to prevent crash
+    return {
+      voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0 }, recent_calls: [] },
+      chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
+      voiceChartData: [],
+      chatChartData: [],
+    };
+  }
+
+  // Voice Analytics Summary
+  const total_calls = voiceData.length;
+  const total_voice_duration = voiceData.reduce((sum, call) => sum + call.duration, 0);
+  const average_voice_duration = total_calls > 0 ? total_voice_duration / total_calls : 0;
+
+  // Chat Analytics Summary
+  const total_sessions = chatData.length;
+  const total_chat_duration = chatData.reduce((sum, session) => sum + session.duration, 0);
+  const total_messages = chatData.reduce((sum, session) => sum + (session.message_count || 0), 0);
+  const average_chat_duration = total_sessions > 0 ? total_chat_duration / total_sessions : 0;
+  const average_message_count = total_sessions > 0 ? total_messages / total_sessions : 0;
+  
+  // Prepare chart data
+  const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
+    const countsByDay = data.reduce((acc, item) => {
+      const date = new Date(item.started_at).toISOString().split('T')[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    return Object.entries(countsByDay)
+      .map(([date, count]) => ({
+        date,
+        [valueKey]: count,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-30) // Get last 30 entries
+      .map(item => ({
+        ...item,
+        date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      }));
+  };
+
+  const voiceChartData = processDataForChart(voiceData, 'calls');
+  const chatChartData = processDataForChart(chatData, 'sessions');
+
+  // Parse dialogue from string to JSON
+  const parsedChatSessions = chatData.map(session => {
+    try {
+      return {
+        ...session,
+        dialogue: session.dialogue ? JSON.parse(session.dialogue) : [],
+      }
+    } catch (e) {
+      return { ...session, dialogue: [] }
+    }
+  }).slice(0, 5); // Take recent 5 for display
+
+
+  return {
     voice_analytics: {
       summary: {
-        total_calls: 152,
-        average_duration_seconds: 124,
+        total_calls,
+        average_duration_seconds: average_voice_duration,
       },
-      recent_calls: [
-        { started_at: '2024-07-25T22:54:59Z', duration: 95, transcript: 'User: Hello, I need help with my account. Agent: Of course, how can I assist you today?' },
-        { started_at: '2024-07-25T21:30:10Z', duration: 180, transcript: 'User: I would like to know more about your pricing. Agent: I can help with that. Our pricing tiers are Starter at $2,500 setup and $950 per month, Growth at $4,500 setup and $1,500 per month, and Command Suite at $7,000 setup and $2,500 per month.' },
-        { started_at: '2024-07-24T18:45:12Z', duration: 62, transcript: 'User: Can I book a discovery call? Agent: Yes, you can book a call directly on our website under the contact section.' },
-      ],
+      recent_calls: voiceData.slice(0, 5), // Take recent 5 for display
     },
     chat_analytics: {
       summary: {
-        total_sessions: 340,
-        average_duration_seconds: 255,
-        average_message_count: 8,
+        total_sessions,
+        average_duration_seconds: average_chat_duration,
+        average_message_count,
       },
-      recent_sessions: [
-        {
-          started_at: '2024-07-25T23:10:05Z',
-          duration: 300,
-          dialogue: [
-            { sender: 'user', text: 'Hi, can you help me upgrade my plan?' },
-            { sender: 'assistant', text: 'Certainly! I can guide you through that. Which plan are you interested in?' },
-            { sender: 'user', text: 'The Growth tier.' },
-            { sender: 'assistant', text: 'Great choice. The Growth tier includes the AI chat widget and a 24/7 voice agent.' },
-          ],
-        },
-        {
-          started_at: '2024-07-25T20:05:45Z',
-          duration: 150,
-          dialogue: [
-            { sender: 'user', text: 'What are your business hours?' },
-            { sender: 'assistant', text: 'We are available 24/7 through our AI assistants. For human support, our team is available from 9 AM to 5 PM, Monday to Friday.' },
-          ],
-        },
-      ],
+      recent_sessions: parsedChatSessions,
     },
+    voiceChartData,
+    chatChartData,
   };
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockAnalyticsData;
 }
 
 const formatDuration = (totalSeconds: number) => {
@@ -87,10 +136,12 @@ const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }
     </div>
 );
 
-
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData();
-  const { voice_analytics, chat_analytics } = analyticsData;
+  const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analyticsData;
+
+  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--accent))" } } satisfies ChartConfig;
+  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 items-start">
@@ -116,13 +167,35 @@ export default async function AnalyticsPage() {
         </Card>
 
         <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-headline">
+                    <LineChartIcon />
+                    Call Volume (Last 30 Days)
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={voiceChartConfig} className="h-[250px] w-full">
+                    <ResponsiveContainer>
+                        <LineChart data={voiceChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
+                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
+                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Calls</CardTitle>
             <CardDescription>Review transcripts from the latest calls.</CardDescription>
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible className="w-full space-y-2">
-              {voice_analytics.recent_calls.map((call, index) => (
+              {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-black/20 border-white/10 rounded-lg px-4">
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex justify-between w-full items-center text-sm">
@@ -132,7 +205,7 @@ export default async function AnalyticsPage() {
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pt-2 pb-4 whitespace-pre-wrap">{call.transcript}</AccordionContent>
                 </AccordionItem>
-              ))}
+              )) : <p className="text-muted-foreground text-sm">No recent calls found.</p>}
             </Accordion>
           </CardContent>
         </Card>
@@ -158,11 +231,33 @@ export default async function AnalyticsPage() {
             </div>
             <div className="rounded-lg bg-black/20 p-4">
               <h3 className="text-sm text-muted-foreground uppercase tracking-wide">Avg. Messages</h3>
-              <p className="text-2xl font-semibold text-white">{chat_analytics.summary.average_message_count}</p>
+              <p className="text-2xl font-semibold text-white">{Math.round(chat_analytics.summary.average_message_count)}</p>
             </div>
           </CardContent>
         </Card>
-
+        
+        <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-headline">
+                    <LineChartIcon />
+                    Chat Volume (Last 30 Days)
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chatChartConfig} className="h-[250px] w-full">
+                    <ResponsiveContainer>
+                        <LineChart data={chatChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.5)" />
+                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
+                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+        
         <Card className="bg-gradient-to-b from-[#00332f]/80 to-[#00110f]/80 border-white/10 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-xl font-headline">Recent Chat Sessions</CardTitle>
@@ -170,7 +265,7 @@ export default async function AnalyticsPage() {
           </CardHeader>
           <CardContent>
              <Accordion type="single" collapsible className="w-full space-y-2">
-              {chat_analytics.recent_sessions.map((session, index) => (
+              {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-black/20 border-white/10 rounded-lg px-4">
                   <AccordionTrigger className="hover:no-underline">
                      <div className="flex justify-between w-full items-center text-sm">
@@ -182,7 +277,7 @@ export default async function AnalyticsPage() {
                     <ChatDialogue dialogue={session.dialogue} />
                   </AccordionContent>
                 </AccordionItem>
-              ))}
+              )) : <p className="text-muted-foreground text-sm">No recent sessions found.</p>}
             </Accordion>
           </CardContent>
         </Card>
