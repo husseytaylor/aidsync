@@ -8,7 +8,7 @@ import { logout } from '@/app/auth/actions';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 import type { User } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
@@ -36,7 +36,7 @@ export function Header({ user }: { user: User | null }) {
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      const contactSection = document.getElementById('contact');
+      const contactSection = document.getElementById('calendly');
       // Set a large number if contact section is not on the page
       const contactTop = contactSection ? contactSection.getBoundingClientRect().top : Infinity;
 
@@ -52,20 +52,22 @@ export function Header({ user }: { user: User | null }) {
       const scrollSpyOffset = 80; // Header height + buffer
       let currentSectionId = '';
 
-      for (const link of landingNavLinks) {
-        const section = document.getElementById(link.href.substring(1));
-        if (section) {
-          const sectionTop = section.offsetTop - scrollSpyOffset;
-          const sectionHeight = section.offsetHeight;
-          if (offset >= sectionTop && offset < sectionTop + sectionHeight) {
-            currentSectionId = section.id;
-            break;
-          }
+      const sections = landingNavLinks.map(link => document.getElementById(link.href.substring(1))).filter(Boolean);
+
+      for (const section of sections) {
+        if(section) {
+            const sectionTop = section.offsetTop - scrollSpyOffset;
+            const sectionHeight = section.offsetHeight;
+            if (offset >= sectionTop && offset < sectionTop + sectionHeight) {
+                currentSectionId = section.id;
+                break;
+            }
         }
       }
 
       if (window.innerHeight + offset >= document.body.offsetHeight - 50) {
-        currentSectionId = landingNavLinks[landingNavLinks.length - 1].href.substring(1);
+        const lastSection = document.getElementById('faq');
+        if(lastSection) currentSectionId = lastSection.id;
       }
       setActiveLink(currentSectionId);
     };
@@ -87,7 +89,11 @@ export function Header({ user }: { user: User | null }) {
         if (isMobile) setIsSheetOpen(false);
         if (isAnchor) {
             e.preventDefault();
-            document.getElementById(link.href.substring(1))?.scrollIntoView({ behavior: 'smooth' });
+            const targetId = link.href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            if(targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     };
     
@@ -99,7 +105,7 @@ export function Header({ user }: { user: User | null }) {
     );
 
     return (
-        <Link href={link.href} onClick={clickHandler} className={navLinkClasses}>
+        <Link href={link.href} onClick={isAnchor ? clickHandler : () => {if(isMobile) setIsSheetOpen(false)}} className={navLinkClasses}>
             {link.label}
         </Link>
     );
@@ -113,7 +119,7 @@ export function Header({ user }: { user: User | null }) {
         "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
         isScrolled
           ? 'bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90 border-white/10 shadow-md'
-          : 'bg-background/80 backdrop-blur-sm border-transparent'
+          : 'bg-transparent border-transparent'
       )}
       initial={{ y: -64, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -128,17 +134,8 @@ export function Header({ user }: { user: User | null }) {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-            {isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
-            {mainNavLinks.map((link) => renderNavLink(link))}
-             <Link
-                href="/contact#calendly"
-                className={cn(
-                  "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left text-sm font-medium",
-                  isScrolled ? 'text-foreground/80 hover:text-accent' : 'text-foreground/70 hover:text-foreground'
-                )}
-              >
-                Discovery Call
-            </Link>
+            {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
+            {mainNavLinks.map((link) => cloneElement(renderNavLink(link), { key: link.href }))}
         </nav>
         
         <div className="flex flex-1 items-center justify-end">
@@ -149,7 +146,7 @@ export function Header({ user }: { user: User | null }) {
                   <Link href="/dashboard/analytics">Dashboard</Link>
                 </Button>
                 <form action={logout}>
-                  <Button size="sm" className="rounded-full font-bold">Logout</Button>
+                  <Button size="sm" variant="outline" className="rounded-full font-bold">Logout</Button>
                 </form>
               </>
             ) : (
@@ -161,10 +158,10 @@ export function Header({ user }: { user: User | null }) {
                   </Link>
                 </Button>
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
-                  <Link href="/contact#calendly">
-                    <Calendar />
-                    <span>Book a Call</span>
-                  </Link>
+                    <Link href="/contact#calendly">
+                        <Calendar />
+                        <span>Book a Call</span>
+                    </Link>
                 </Button>
                 <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
                   <Link href="/auth/login">Log In</Link>
@@ -188,24 +185,17 @@ export function Header({ user }: { user: User | null }) {
                       <Logo className="w-8 h-8" />
                       <span className="font-bold font-headline text-lg text-primary">AidSync</span>
                     </Link>
-                    {isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
-                    {mainNavLinks.map((link) => renderNavLink(link, true))}
-                     <Link
-                        href="/contact#calendly"
-                        className="block text-lg font-medium"
-                        onClick={() => setIsSheetOpen(false)}
-                      >
-                        Discovery Call
-                    </Link>
+                    {isLandingPage && landingNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
+                    {mainNavLinks.map((link) => cloneElement(renderNavLink(link, true), { key: link.href }))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
                       <>
                         <Button asChild className="w-full justify-center">
-                          <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
+                          <Link href="/dashboard/analytics" onClick={() => setIsSheetopen(false)}>Dashboard</Link>
                         </Button>
                         <form action={logout} className="w-full">
-                           <Button className="w-full justify-center">Logout</Button>
+                           <Button className="w-full justify-center" variant="outline">Logout</Button>
                         </form>
                       </>
                     ) : (
@@ -222,7 +212,7 @@ export function Header({ user }: { user: User | null }) {
                                 <span>Book a Discovery Call</span>
                             </Link>
                         </Button>
-                        <Button asChild className="w-full justify-center">
+                        <Button asChild className="w-full justify-center" variant="outline">
                           <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
                             Log In
                           </Link>
