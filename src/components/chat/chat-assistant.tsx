@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 import { Logo } from '../logo';
+import { motion } from 'framer-motion';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -193,17 +194,19 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-50 transition-transform duration-300 ease-in-out transform-gpu will-change-transform",
           isOpen ? "scale-0" : "scale-100"
         )}>
-        <Button 
-          size="icon"
+        <motion.button
+          onClick={handleOpen}
           className={cn(
-            "rounded-full w-16 h-16 shadow-lg bg-gradient-to-br from-green-500 to-emerald-400 text-white transition-all hover:scale-110 drop-shadow-lg",
+            "flex items-center gap-3 px-5 py-3 bg-aidsync-gradient-green text-white font-semibold rounded-2xl shadow-glow-accent-button transition-transform",
             isWiggling && "animate-wiggle"
           )}
-          onClick={handleOpen}
-          aria-label="Open AI Assistant"
+          aria-label="Open AidSync Chat Agent"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Logo className="w-10 h-10" />
-        </Button>
+          <Logo className="w-6 h-6" />
+          <span className="hidden sm:inline">AidSync Chat Agent</span>
+        </motion.button>
       </div>
 
       <div className={cn(
