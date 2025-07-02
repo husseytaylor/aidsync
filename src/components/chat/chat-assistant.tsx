@@ -258,7 +258,7 @@ export function ChatAssistant() {
         transition={{ duration: 0.3, ease: "easeOut" }}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       >
-        <Card className="h-[70vh] flex flex-col rounded-2xl border-accent/20 bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(72,209,204,0.25)]">
+        <div className="h-[70vh] flex flex-col rounded-2xl border border-accent/20 bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(72,209,204,0.25)] overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className={cn("relative", isPending && "after:absolute after:inset-0 after:rounded-full after:ring-2 after:ring-accent after:animate-pulse")}>
@@ -302,7 +302,7 @@ export function ChatAssistant() {
               </Button>
             </form>
           </CardFooter>
-        </Card>
+        </div>
       </motion.div>
     </>
   );
