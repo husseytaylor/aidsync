@@ -270,14 +270,17 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="flex-1 p-0 flex flex-col overflow-hidden">
-            <div className="flex-1 p-3 space-y-4 overflow-y-auto" ref={scrollAreaRef}>
+          
+          <CardContent className="flex-1 min-h-0 p-0 relative">
+            <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
+            <div className="h-full overflow-y-auto p-3 space-y-4" ref={scrollAreaRef}>
               {messages.map((msg, index) => (
                 <ChatMessage key={index} sender={msg.sender} text={msg.text} />
               ))}
               {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
             </div>
           </CardContent>
+          
           <CardFooter className="border-t pt-4 border-white/10">
             <form onSubmit={handleSubmit} className="relative flex w-full items-center">
               <Input
