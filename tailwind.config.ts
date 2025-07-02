@@ -90,10 +90,9 @@ export default {
       boxShadow: {
         'glow-primary': '0 0 12px 2px hsl(var(--primary) / 0.8)',
         'glow-accent': '0 0 12px 2px hsl(var(--accent) / 0.8)',
-        'glow-button': '0 0 20px -2px hsl(var(--primary) / 0.7)',
-        'card-rest': '0 10px 40px rgba(0,0,0,0.25)',
-        'card-overlay': '0 10px 30px rgba(0,0,0,0.3)',
         'button-glow': 'inset 0 0 0 1px rgba(255,255,255,0.2), 0 0 10px rgba(72,209,204,0.3)',
+        'aidsync-glow': '0 0 20px rgba(63, 164, 25, 0.35)',
+        'aidsync-glow-hover': '0 0 24px rgba(72, 209, 204, 0.45)',
       },
       keyframes: {
         'accordion-down': {

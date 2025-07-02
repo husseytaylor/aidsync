@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, FileText } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -126,23 +126,25 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           initial="hidden"
           animate="visible"
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-center p-8 bg-black/50 backdrop-blur-md rounded-2xl"
+          className="text-center"
         >
-          <div className="flex justify-center mb-4">
-            <Info className="w-12 h-12 text-accent animate-pulse" />
-          </div>
-          <h2 className="font-headline text-3xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
-            Awaiting Your First Interaction
-          </h2>
-          <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
-            Your analytics dashboard is live. As soon as your AI agents handle their first calls or chats, this page will populate with insights.
-          </p>
-          <div className="mt-6">
-              <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Check for New Data
-              </Button>
-          </div>
+          <Card className="p-8">
+            <div className="flex justify-center mb-4">
+              <Info className="w-12 h-12 text-accent animate-pulse" />
+            </div>
+            <h2 className="font-headline text-3xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
+              Awaiting Your First Interaction
+            </h2>
+            <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
+              Your analytics dashboard is live. As soon as your AI agents handle their first calls or chats, this page will populate with insights.
+            </p>
+            <div className="mt-6">
+                <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Check for New Data
+                </Button>
+            </div>
+          </Card>
         </motion.div>
       </section>
     );
@@ -177,7 +179,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <MotionCard
-            className="p-8"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -185,13 +186,13 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             transition={{ duration: 0.6, delay: 0.2 }}
             whileHover={cardHover}
           >
-            <CardHeader className="p-0">
+            <CardHeader>
               <CardTitle className="flex items-center gap-3 text-2xl md:text-3xl font-semibold text-white">
                 <Phone className="text-primary"/>
                 Voice Analytics
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0 mt-8 grid grid-cols-3 gap-8">
+            <CardContent className="grid grid-cols-3 gap-8">
                 <div>
                     <dt className="text-sm text-gray-300">Total Calls</dt>
                     <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{voice_analytics.summary.total_calls}</dd>
@@ -208,7 +209,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </MotionCard>
           
           <MotionCard
-            className="p-8"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -216,13 +216,13 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             transition={{ duration: 0.6, delay: 0.3 }}
             whileHover={cardHover}
           >
-            <CardHeader className="p-0">
+            <CardHeader>
               <CardTitle className="flex items-center gap-3 text-2xl md:text-3xl font-semibold text-white">
                 <MessageSquare className="text-accent"/>
                 Chat Analytics
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0 mt-8 grid grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-3 gap-4">
                 <div>
                     <dt className="text-sm text-gray-300">Total</dt>
                     <dd className="text-4xl md:text-5xl font-bold text-accent mt-1">{chat_analytics.summary.total_sessions}</dd>
@@ -241,7 +241,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <MotionCard
-                className="h-full p-6"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -249,26 +248,25 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 transition={{ duration: 0.6, delay: 0.4 }}
                 whileHover={cardHover}
             >
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-white">Call Volume (Last 30 Days)</h3>
-                </div>
-                <div className="h-64">
-                    <ChartContainer config={voiceChartConfig} className="h-full w-full">
-                        <ResponsiveContainer>
-                            <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                                <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                </div>
+              <CardHeader>
+                <CardTitle>Call Volume (Last 30 Days)</CardTitle>
+              </CardHeader>
+              <CardContent className="h-64">
+                <ChartContainer config={voiceChartConfig} className="h-full w-full">
+                    <ResponsiveContainer>
+                        <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                            <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
             </MotionCard>
             
             <MotionCard
-                className="h-full p-6"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -276,28 +274,27 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 transition={{ duration: 0.6, delay: 0.5 }}
                 whileHover={cardHover}
             >
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-white">Chat Volume (Last 30 Days)</h3>
-                </div>
-                <div className="h-64">
-                  <ChartContainer config={chatChartConfig} className="h-full w-full">
-                      <ResponsiveContainer>
-                          <LineChart data={chatChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                              <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                              <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                              <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                              <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
-                          </LineChart>
-                      </ResponsiveContainer>
-                  </ChartContainer>
-              </div>
+              <CardHeader>
+                <CardTitle>Chat Volume (Last 30 Days)</CardTitle>
+              </CardHeader>
+              <CardContent className="h-64">
+                <ChartContainer config={chatChartConfig} className="h-full w-full">
+                    <ResponsiveContainer>
+                        <LineChart data={chatChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                            <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
             </MotionCard>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <MotionCard
-                className="p-8"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -305,11 +302,11 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 transition={{ duration: 0.6, delay: 0.6 }}
                 whileHover={cardHover}
             >
-                <CardHeader className="p-0">
-                    <CardTitle className="text-xl font-semibold text-white">Recent Calls</CardTitle>
-                    <CardDescription className="text-gray-300">Review transcripts from the latest calls.</CardDescription>
+                <CardHeader>
+                    <CardTitle>Recent Calls</CardTitle>
+                    <CardDescription>Review transcripts from the latest calls.</CardDescription>
                 </CardHeader>
-                <CardContent className="p-0 mt-4">
+                <CardContent>
                     <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
                         {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
                             <Dialog key={index}>
@@ -324,7 +321,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                                 </DialogTrigger>
                                 <DialogContent className="max-w-2xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
                                     <DialogHeader>
-                                        <DialogTitle className="flex items-center gap-2 text-white"><MessageSquare /> Call Transcript</DialogTitle>
+                                        <DialogTitle className="flex items-center gap-2 text-white"><FileText /> Call Transcript</DialogTitle>
                                         <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
                                     </DialogHeader>
                                     <ScrollArea className="h-[50vh] mt-4 pr-4">
@@ -338,7 +335,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </MotionCard>
             
             <MotionCard
-                className="p-8"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -346,11 +342,11 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 transition={{ duration: 0.6, delay: 0.7 }}
                 whileHover={cardHover}
             >
-                <CardHeader className="p-0">
-                    <CardTitle className="text-xl font-semibold text-white">Recent Chat Sessions</CardTitle>
-                    <CardDescription className="text-gray-300">Review dialogues from the latest sessions.</CardDescription>
+                <CardHeader>
+                    <CardTitle>Recent Chat Sessions</CardTitle>
+                    <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                 </CardHeader>
-                <CardContent className="p-0 mt-4">
+                <CardContent>
                     <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
                         {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
                             <Dialog key={index}>
