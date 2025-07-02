@@ -318,7 +318,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                                         <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
                                     </DialogHeader>
                                     <ScrollArea className="h-[50vh] mt-4 pr-4">
-                                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-body p-4 bg-black/20 rounded-md">{call.transcript || "No transcript available."}</pre>
+                                        <pre className="text-sm text-foreground font-body whitespace-pre-wrap p-4 rounded-md bg-white/10 backdrop-blur-lg shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                     </ScrollArea>
                                 </DialogContent>
                             </Dialog>

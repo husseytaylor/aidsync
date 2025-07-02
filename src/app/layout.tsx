@@ -6,6 +6,9 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { createClient } from '@/lib/supabase/server';
 import { ClientOnly } from '@/components/client-only';
+import { Suspense } from 'react';
+import LoadingScreen from '@/components/loading-screen';
+
 
 // This import triggers the environment variable validation.
 import '@/config';
@@ -44,7 +47,9 @@ export default async function RootLayout({
         {/* Content Wrapper: This establishes a new stacking context so content appears above the background. */}
         <div className="relative flex flex-col min-h-screen">
           <Header user={user} />
-          <main className="flex-1">{children}</main>
+            <Suspense fallback={<LoadingScreen />}>
+              <main className="flex-1">{children}</main>
+            </Suspense>
           <Footer />
         </div>
         
