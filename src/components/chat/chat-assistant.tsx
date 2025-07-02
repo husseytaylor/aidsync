@@ -137,33 +137,41 @@ export function ChatAssistant() {
     const container = scrollAreaRef.current;
     if (!container) return;
 
+    // The actual scrollable element is the viewport within the Radix ScrollArea
+    const viewport = container.querySelector<HTMLDivElement>('div[data-radix-scroll-area-viewport]');
+    if (!viewport) return;
+
     const handleUserScroll = () => {
-        if (!scrollAreaRef.current) return;
-        const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
+        const { scrollTop, scrollHeight, clientHeight } = viewport;
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
         setScrollLocked(isAtBottom);
     };
 
-    container.addEventListener('scroll', handleUserScroll);
+    viewport.addEventListener('scroll', handleUserScroll);
     return () => {
-        if (container) {
-            container.removeEventListener('scroll', handleUserScroll);
-        }
+        viewport.removeEventListener('scroll', handleUserScroll);
     };
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen || !scrollAreaRef.current || !scrollLocked) return;
+    if (!isOpen || !scrollLocked) return;
+    
+    const container = scrollAreaRef.current;
+    if (!container) return;
+    
+    // The actual scrollable element is the viewport within the Radix ScrollArea
+    const viewport = container.querySelector<HTMLDivElement>('div[data-radix-scroll-area-viewport]');
+    if (!viewport) return;
+
 
     const scrollToBottom = () => {
-        if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({
-                top: scrollAreaRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }
+      viewport.scrollTo({
+        top: viewport.scrollHeight,
+        behavior: 'smooth',
+      });
     };
 
+    // Using requestAnimationFrame ensures the scroll happens after the new message has been rendered to the DOM.
     const rafId = requestAnimationFrame(scrollToBottom);
 
     return () => cancelAnimationFrame(rafId);
@@ -271,7 +279,7 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="relative flex-1 p-0">
+          <CardContent className="relative flex-1 p-0 overflow-hidden">
             <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
             <ScrollArea className="h-full w-full" ref={scrollAreaRef}>
               <div className="p-3 space-y-4">
