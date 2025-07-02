@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -55,6 +55,16 @@ export function ChatAssistant() {
       setSessionId(storedSessionId);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    const viewport = scrollAreaRef.current;
+    if (!viewport) return;
+    const timeout = setTimeout(() => {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+    }, 10);
+    return () => clearTimeout(timeout);
+  }, [isMounted]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -148,22 +158,14 @@ export function ChatAssistant() {
     };
   }, [isOpen]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isOpen || !scrollLocked) return;
-    
     const viewport = scrollAreaRef.current;
     if (!viewport) return;
-
-    const scrollToBottom = () => {
-      viewport.scrollTo({
-        top: viewport.scrollHeight,
-        behavior: 'smooth',
-      });
-    };
-
-    const rafId = requestAnimationFrame(scrollToBottom);
-
-    return () => cancelAnimationFrame(rafId);
+    const timeoutId = setTimeout(() => {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, [messages, isOpen, scrollLocked]);
   
   if (!isMounted) {
@@ -268,9 +270,9 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="relative flex-1 p-0 overflow-hidden">
+          <CardContent className="relative flex-1 overflow-hidden flex flex-col">
             <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
-            <div className="p-3 space-y-4 h-full overflow-y-auto" ref={scrollAreaRef}>
+            <div className="p-3 space-y-4 overflow-y-auto flex-1" ref={scrollAreaRef}>
               {messages.map((msg, index) => (
                 <ChatMessage key={index} sender={msg.sender} text={msg.text} />
               ))}
