@@ -94,12 +94,17 @@ export function Header({ user }: { user: User | null }) {
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
-    const finalHref = isAnchor && !isLandingPage ? `/${link.href}` : link.href;
+    
+    // FIX: To prevent hydration errors, we generate a consistent href on both server and client.
+    // Anchor links are always prefixed with `/` so they work from any page.
+    // The click handler will manage smooth scrolling on the landing page.
+    const finalHref = isAnchor ? `/${link.href}` : link.href;
     
     const clickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (isMobile) {
             setIsSheetOpen(false);
         }
+        // Use `isLandingPage` (which is reliable here in an event handler) to decide on smooth scroll.
         if (isAnchor && isLandingPage) {
             e.preventDefault();
             const targetId = link.href.substring(1);
