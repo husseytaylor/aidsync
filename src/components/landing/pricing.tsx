@@ -131,8 +131,8 @@ export function Pricing() {
                 >
                   {tier.name}
                 </CardTitle>
-                <CardDescription className="text-sm min-h-[40px] pt-2">{tier.description}</CardDescription>
-                <div className="pt-4 min-h-[100px]">
+                <CardDescription className="text-sm h-16 pt-2">{tier.description}</CardDescription>
+                <div className="pt-4 h-24">
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-extrabold font-headline text-foreground">
                       {tier.setupFee}
