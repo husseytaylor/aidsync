@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useTransition } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,12 +14,13 @@ import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 
 interface Message {
-  role: 'user' | 'assistant';
-  content: string;
+  sender: 'user' | 'bot';
+  text: string;
   timestamp: Date;
 }
 
-const ORG_ID = process.env.NEXT_PUBLIC_ORG_ID;
+const WEBHOOK_MESSAGE_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+const WEBHOOK_SESSION_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-7adf-4014-93b7-daad66d8df28';
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
@@ -36,40 +37,18 @@ export function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const messagesRef = useRef(messages);
 
   useEffect(() => {
     messagesRef.current = messages;
-    if (messages.length > 0 && sessionId) {
-        try {
-            const sessionToStore = { messages, sessionId, sessionStartTime };
-            localStorage.setItem('aidsync-chat-session', JSON.stringify(sessionToStore));
-        } catch (e) {
-            console.error("Failed to save chat session to localStorage", e);
-        }
-    }
-  }, [messages, sessionId, sessionStartTime]);
+  }, [messages]);
 
   useEffect(() => {
     setIsMounted(true);
-    try {
-        const storedSession = localStorage.getItem('aidsync-chat-session');
-        if (storedSession) {
-            const { messages: storedMessages, sessionId: storedSessionId, sessionStartTime: storedSessionStartTime } = JSON.parse(storedSession);
-            const parsedMessages = storedMessages.map((msg: any) => ({ ...msg, timestamp: new Date(msg.timestamp) }));
-            setMessages(parsedMessages);
-            setSessionId(storedSessionId);
-            setSessionStartTime(storedSessionStartTime ? new Date(storedSessionStartTime) : new Date());
-        }
-    } catch (e) {
-        console.error("Failed to load chat session from localStorage", e);
-        localStorage.removeItem('aidsync-chat-session');
-    }
   }, []);
 
   useEffect(() => {
@@ -91,49 +70,40 @@ export function ChatAssistant() {
   
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
-  const sendAgentAnalytics = async (history: Message[]) => {
-    if (!history || history.length === 0) return;
-    if (!sessionId || !sessionStartTime || !ORG_ID) return;
+  const endChatSession = async (currentMessages: Message[]) => {
+    if (!currentMessages.length || !sessionId) return;
     
-    if (process.env.NODE_ENV === 'development') {
-        console.log('[Agent Analytics] Sending session log via proxy');
-    }
+    // Don't log sessions that only have the initial bot prompt
+    if (currentMessages.length <= 1) return;
 
-    const durationSeconds = Math.round((new Date().getTime() - sessionStartTime.getTime()) / 1000);
-    const chatHistoryForApi = history.map(msg => ({
-      text: msg.content,
-      sender: msg.role,
-      timestamp: msg.timestamp.toISOString(),
+    const messagesForApi = currentMessages.map(msg => ({
+      sender: msg.sender,
+      text: msg.text,
     }));
 
     const payload = {
-      sessionId,
-      timestamp: new Date().toISOString(),
-      messageCount: history.length,
-      durationSeconds,
-      domain: window.location.hostname,
-      source: "widget",
-      org_id: ORG_ID,
-      endedByUser: true,
-      messages: chatHistoryForApi,
+      session_id: sessionId,
+      messages: messagesForApi,
+      ended_at: new Date().toISOString(),
     };
 
     try {
-      fetch('/api/chat', {
+      await fetch(WEBHOOK_SESSION_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        keepalive: true,
+        keepalive: true, // Ensures the request is sent even if the page is closing
       });
     } catch (error) {
-      console.error('[Agent Analytics] Failed to send session analytics via proxy:', error);
+      console.error('[Chat Widget] Failed to send full chat session:', error);
     }
   };
   
   const handleOpen = () => {
     if (messages.length === 0) {
+      setSessionId(crypto.randomUUID());
       setMessages([
-        { role: 'assistant', content: FIRST_ASSISTANT_PROMPT, timestamp: new Date() }
+        { sender: 'bot', text: FIRST_ASSISTANT_PROMPT, timestamp: new Date() }
       ]);
     }
     setIsOpen(true);
@@ -167,57 +137,52 @@ export function ChatAssistant() {
   }
   
   const handleClose = () => {
-    if (sessionId) {
-      sendAgentAnalytics(messagesRef.current);
-    }
+    endChatSession(messagesRef.current);
     setIsOpen(false);
     // Reset for next conversation
     setMessages([]);
     setSessionId(null);
-    setSessionStartTime(null);
-    localStorage.removeItem('aidsync-chat-session');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isPending) return;
 
-    const userMessage: Message = { role: 'user', content: input.trim(), timestamp: new Date() };
+    const userMessage: Message = { sender: 'user', text: input.trim(), timestamp: new Date() };
     const currentInput = input;
     
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
-
-    startTransition(async () => {
-      if (!sessionId) {
-        setSessionId(crypto.randomUUID());
-        setSessionStartTime(new Date());
-      }
+    setIsPending(true);
+    
+    try {
+      const response = await fetch(WEBHOOK_MESSAGE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: currentInput, session_id: sessionId }),
+      });
       
-      try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: currentInput }),
-        });
-        
-        const result = await response.json();
-        
-        const assistantContent = result.response || result.message;
-
-        if (assistantContent) {
-          const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
-          setMessages((prev) => [...prev, assistantMessage]);
-        } else {
-          throw new Error('AI assistant returned an empty or invalid response.');
-        }
-
-      } catch (error: any) {
-        console.error('[Chat Widget] AI chat error:', error);
-        const errorMessage: Message = { role: 'assistant', content: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
-        setMessages((prev) => [...prev, errorMessage]);
+      if (!response.ok) {
+        throw new Error(`Webhook responded with status: ${response.status}`);
       }
-    });
+
+      const result = await response.json();
+      const botOutput = result[0]?.output;
+      
+      if (botOutput) {
+        const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
+        setMessages((prev) => [...prev, botMessage]);
+      } else {
+        throw new Error('AI assistant returned an empty or invalid response.');
+      }
+
+    } catch (error: any) {
+      console.error('[Chat Widget] AI chat error:', error);
+      const errorMessage: Message = { sender: 'bot', text: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -239,11 +204,14 @@ export function ChatAssistant() {
         </motion.button>
       </div>
 
-      <div className={cn(
-          "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
-          isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
-      )}>
-        <Card className="h-[70vh] flex flex-col rounded-xl border-accent/20 bg-card/80 backdrop-blur-md shadow-glow-accent">
+      <motion.div
+        className="fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-sm"
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={isOpen ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+      >
+        <Card className="h-[70vh] flex flex-col rounded-2xl border-accent/20 bg-black/70 backdrop-blur-lg shadow-glow-accent">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
@@ -257,9 +225,9 @@ export function ChatAssistant() {
             <ScrollArea className="h-full" ref={scrollAreaRef}>
               <div className="p-4 space-y-4">
                 {messages.map((msg, index) => (
-                  <ChatMessage key={index} role={msg.role} content={msg.content} />
+                  <ChatMessage key={index} sender={msg.sender} text={msg.text} />
                 ))}
-                {isPending && <ChatMessage role="assistant" content={<TypingIndicator />} />}
+                {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
               </div>
             </ScrollArea>
           </CardContent>
@@ -278,7 +246,7 @@ export function ChatAssistant() {
             </form>
           </CardFooter>
         </Card>
-      </div>
+      </motion.div>
     </>
   );
 }

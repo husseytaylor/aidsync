@@ -8,12 +8,12 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 interface ChatMessageProps {
-  role: 'user' | 'assistant';
-  content: ReactNode;
+  sender: 'user' | 'bot';
+  text: ReactNode;
 }
 
-export function ChatMessage({ role, content }: ChatMessageProps) {
-  const isUser = role === 'user';
+export function ChatMessage({ sender, text }: ChatMessageProps) {
+  const isUser = sender === 'user';
 
   return (
     <motion.div
@@ -34,10 +34,10 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
           'relative max-w-xs md:max-w-sm rounded-xl px-4 py-2 text-sm shadow-lg',
           isUser
             ? 'bg-accent text-accent-foreground'
-            : 'bg-card text-card-foreground'
+            : 'bg-card text-card-foreground shadow-glow-accent'
         )}
       >
-        {typeof content === 'string' ? <p className="whitespace-pre-wrap">{content}</p> : content}
+        {typeof text === 'string' ? <p className="whitespace-pre-wrap">{text}</p> : text}
       </div>
       {isUser && (
         <Avatar className="w-8 h-8">
