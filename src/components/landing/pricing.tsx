@@ -120,7 +120,7 @@ export function Pricing() {
             viewport={{ once: true, amount: 0.5 }}
           >
             {tier.isFeatured && (
-               <div className="absolute -top-3 right-5 bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full shadow-lg -rotate-12 transform">
+               <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full shadow-lg">
                  Best Value
                </div>
             )}
