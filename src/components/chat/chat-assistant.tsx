@@ -134,11 +134,7 @@ export function ChatAssistant() {
   }, [handleOpen]);
 
   useEffect(() => {
-    const container = scrollAreaRef.current;
-    if (!container) return;
-
-    // The actual scrollable element is the viewport within the Radix ScrollArea
-    const viewport = container.querySelector<HTMLDivElement>('div[data-radix-scroll-area-viewport]');
+    const viewport = scrollAreaRef.current;
     if (!viewport) return;
 
     const handleUserScroll = () => {
@@ -156,13 +152,8 @@ export function ChatAssistant() {
   useEffect(() => {
     if (!isOpen || !scrollLocked) return;
     
-    const container = scrollAreaRef.current;
-    if (!container) return;
-    
-    // The actual scrollable element is the viewport within the Radix ScrollArea
-    const viewport = container.querySelector<HTMLDivElement>('div[data-radix-scroll-area-viewport]');
+    const viewport = scrollAreaRef.current;
     if (!viewport) return;
-
 
     const scrollToBottom = () => {
       viewport.scrollTo({
@@ -171,7 +162,6 @@ export function ChatAssistant() {
       });
     };
 
-    // Using requestAnimationFrame ensures the scroll happens after the new message has been rendered to the DOM.
     const rafId = requestAnimationFrame(scrollToBottom);
 
     return () => cancelAnimationFrame(rafId);
@@ -279,16 +269,14 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="relative flex-1 p-0 overflow-hidden">
+          <CardContent className="relative flex-1 p-0 overflow-y-auto" ref={scrollAreaRef}>
             <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
-            <ScrollArea className="h-full w-full" ref={scrollAreaRef}>
               <div className="p-3 space-y-4">
                 {messages.map((msg, index) => (
                   <ChatMessage key={index} sender={msg.sender} text={msg.text} />
                 ))}
                 {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
               </div>
-            </ScrollArea>
           </CardContent>
           <CardFooter className="border-t pt-4 border-white/10">
             <form onSubmit={handleSubmit} className="relative flex w-full items-center">
