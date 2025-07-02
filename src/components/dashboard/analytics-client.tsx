@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -20,6 +20,15 @@ const formatDuration = (totalSeconds: number) => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = Math.round(totalSeconds % 60);
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
+
+const formatCurrency = (amount: number | null | undefined) => {
+  if (amount === null || typeof amount === 'undefined') return '';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
 };
 
 const formatTimestamp = (timestamp: string) => {
@@ -42,8 +51,8 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
-            <p className="whitespace-pre-wrap">{message.text}</p>
+          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm font-medium shadow', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
+            <p className="whitespace-pre-wrap break-words">{message.text}</p>
           </div>
           {message.sender === 'user' && (
             <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-foreground flex items-center justify-center flex-shrink-0">
@@ -339,9 +348,16 @@ export function AnalyticsDashboardClient() {
                                             <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
                                             <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
                                         </div>
-                                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                        <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
                                             <Clock className="w-3 h-3" />
-                                            {formatDuration(call.duration)}
+                                            <span>{formatDuration(call.duration)}</span>
+                                            {typeof call.cost !== 'undefined' && call.cost > 0 && (
+                                                <>
+                                                    <span className="mx-1 text-muted-foreground/50">|</span>
+                                                    <DollarSign className="w-3 h-3" />
+                                                    <span>{formatCurrency(call.cost)}</span>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </AccordionTrigger>

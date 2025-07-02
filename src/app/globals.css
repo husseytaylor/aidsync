@@ -71,18 +71,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: hsl(var(--card));
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: hsl(var(--primary));
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--accent));
+    background-color: hsl(var(--secondary));
   }
 }
 
