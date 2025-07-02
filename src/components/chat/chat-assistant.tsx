@@ -271,9 +271,9 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="relative flex-1 p-0">
+          <CardContent className="relative flex-1 overflow-y-auto p-0">
             <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
-            <ScrollArea className="h-full" ref={scrollAreaRef}>
+            <ScrollArea className="h-full w-full" ref={scrollAreaRef}>
               <div className="p-3 space-y-4">
                 {messages.map((msg, index) => (
                   <ChatMessage key={index} sender={msg.sender} text={msg.text} />
