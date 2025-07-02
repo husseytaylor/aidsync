@@ -15,6 +15,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <AnalyticsProvider>
       <div className="dashboard-wrapper">
         <div className="fixed inset-0 -z-10 h-full w-full bg-[url('/rough.png')] bg-cover bg-center bg-no-repeat" />
+        <div className="fixed inset-0 -z-10 h-full w-full bg-black/50" />
         {children}
       </div>
     </AnalyticsProvider>

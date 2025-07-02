@@ -10,6 +10,8 @@ interface AnalyticsData {
       total_calls: number;
       average_duration_seconds: number;
       total_duration_seconds: number;
+      total_cost: number;
+      average_cost: number;
     };
     recent_calls: {
       started_at: string;

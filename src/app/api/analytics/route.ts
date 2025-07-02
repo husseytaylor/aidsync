@@ -4,7 +4,7 @@ import { ANALYTICS_WEBHOOK_URL } from "@/config";
 
 async function getAnalyticsData() {
   const defaultState = {
-    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0 }, recent_calls: [] },
+    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0, total_cost: 0, average_cost: 0 }, recent_calls: [] },
     chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
     voiceChartData: [],
     chatChartData: [],
@@ -42,7 +42,6 @@ async function getAnalyticsData() {
     let voice_analytics = { ...defaultState.voice_analytics };
     let chat_analytics = { ...defaultState.chat_analytics };
     
-    // Ensure summaries are objects and recent data is initialized as arrays
     voice_analytics.summary = { ...defaultState.voice_analytics.summary };
     voice_analytics.recent_calls = [];
     chat_analytics.summary = { ...defaultState.chat_analytics.summary };
@@ -67,7 +66,6 @@ async function getAnalyticsData() {
         }
     });
 
-    // Deduplicate, sort, and slice recent calls/sessions
     const uniqueCalls = Array.from(new Map(voice_analytics.recent_calls.map(call => [call.id || call.started_at, call])).values());
     voice_analytics.recent_calls = uniqueCalls.sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()).slice(0, 5);
     
@@ -101,6 +99,10 @@ async function getAnalyticsData() {
     if (voice_analytics.summary && !voice_analytics.summary.total_duration_seconds && voice_analytics.recent_calls.length > 0) {
         voice_analytics.summary.total_duration_seconds = voice_analytics.recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
     }
+    
+    const totalCost = voice_analytics.recent_calls.reduce((sum, call) => sum + (call.cost || 0), 0);
+    voice_analytics.summary.total_cost = totalCost;
+    voice_analytics.summary.average_cost = voice_analytics.summary.total_calls > 0 ? totalCost / voice_analytics.summary.total_calls : 0;
       
     const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
         if (!data) return [];
