@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -334,7 +335,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                         )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
                     </div>
                 </CardContent>
-            </MotionC>
+            </MotionCard>
         </div>
     </section>
   );
