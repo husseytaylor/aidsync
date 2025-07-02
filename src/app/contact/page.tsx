@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AnimatedSection } from '@/components/animated-section';
@@ -19,7 +20,7 @@ export default function ContactPage() {
     <div className="container py-24 sm:py-32">
         <AnimatedSection>
             <div className="text-center max-w-3xl mx-auto">
-                <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6">
+                <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4">
                     Contact AidSync
                 </h1>
                 <MotionDivider />
@@ -81,7 +82,7 @@ export default function ContactPage() {
         </div>
 
         <ClientOnly>
-          <AnimatedSection delay={400} id="calendly">
+          <AnimatedSection delay={400} id="calendly" className="mb-12">
               <div className="text-center max-w-3xl mx-auto">
                   <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-foreground mb-4">
                     Schedule a Discovery Call
@@ -92,16 +93,14 @@ export default function ContactPage() {
                   </p>
               </div>
 
-              <div
-                  className="max-w-4xl mx-auto mt-12 rounded-3xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl p-4 sm:p-8"
-              >
+              <Card className="max-w-4xl mx-auto mt-12 p-2 sm:p-4">
                   <iframe
-                  src="https://calendly.com/cthussey2/new-meeting?primary_color=00ffd0"
+                  src="https://calendly.com/cthussey2/new-meeting?primary_color=48D1CC"
                   className="w-full h-[800px] rounded-2xl border-none bg-transparent"
                   frameBorder="0"
                   scrolling="no"
                   ></iframe>
-              </div>
+              </Card>
           </AnimatedSection>
         </ClientOnly>
     </div>
