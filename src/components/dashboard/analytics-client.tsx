@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Timer, Calendar, Bot, User, BarChart3, Users, Clock, RefreshCw, Download } from 'lucide-react';
+import { Phone, MessageSquare, Timer, Calendar, Bot, User, BarChart3, Users, Clock, RefreshCw, Download, FileText } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -310,7 +310,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 <CardHeader className="p-0">
                     <CardTitle className="text-xl font-semibold text-white">Recent Chat Sessions</CardTitle>
                     <CardDescription className="text-gray-300">Review dialogues from the latest sessions.</CardDescription>
-                </CardHeader>
+                </Header>
                 <CardContent className="p-0 mt-4">
                     <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
                         {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
@@ -339,3 +339,5 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
     </section>
   );
 }
+
+    
