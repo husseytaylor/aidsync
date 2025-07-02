@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { MotionDivider } from '../motion-divider';
 
 const tiers = [
   {
@@ -80,6 +81,7 @@ export function Pricing() {
         className="max-w-2xl mx-auto text-center mb-16"
       >
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Pricing Plans</h2>
+        <MotionDivider />
         <p className="mt-4 text-lg text-muted-foreground">
           Choose the right tier for your business. All plans include hosting, updates, and dashboard access.
         </p>

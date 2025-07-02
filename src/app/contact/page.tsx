@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Phone, MessageSquare, Mail } from 'lucide-react';
 import { ClientOnly } from '@/components/client-only';
+import { MotionDivider } from '@/components/motion-divider';
 
 export default function ContactPage() {
   const handleStartChat = () => {
@@ -21,7 +22,8 @@ export default function ContactPage() {
                 <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6">
                     Contact AidSync
                 </h1>
-                <p className="max-w-xl mx-auto text-lg text-muted-foreground mb-12">
+                <MotionDivider />
+                <p className="max-w-xl mx-auto text-lg text-muted-foreground mt-8 mb-12">
                     Choose the most convenient way to reach us. We're here to help.
                 </p>
             </div>
@@ -84,7 +86,8 @@ export default function ContactPage() {
                   <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-foreground mb-4">
                     Schedule a Discovery Call
                   </h2>
-                  <p className="text-lg text-muted-foreground">
+                   <MotionDivider />
+                  <p className="text-lg text-muted-foreground mt-8">
                     Ready to build? Book a free discovery call to explore how AidSync can streamline your workflows.
                   </p>
               </div>

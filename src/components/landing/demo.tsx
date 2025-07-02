@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MotionDivider } from '../motion-divider';
 
 export function Demo() {
   const handleStartChat = () => {
@@ -29,6 +30,7 @@ export function Demo() {
         className="max-w-2xl mx-auto text-center mb-16"
       >
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Demo AidSync AI</h2>
+        <MotionDivider />
         <p className="mt-4 text-lg text-muted-foreground">
           Experience our AI firsthand. Interact with our chat and phone agents to see their capabilities in real-time.
         </p>

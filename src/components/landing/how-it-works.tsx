@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { FileText, PhoneCall, Rocket, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { MotionDivider } from '../motion-divider';
 
 const steps = [
   {
@@ -39,6 +40,7 @@ export function HowItWorks() {
     >
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Your Automation Journey</h2>
+        <MotionDivider />
         <p className="mt-4 text-lg text-muted-foreground">
           From initial call to full deployment in just a few weeks. Here’s our streamlined onboarding process.
         </p>

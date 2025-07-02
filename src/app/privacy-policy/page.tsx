@@ -1,4 +1,5 @@
 import { AnimatedSection } from '@/components/animated-section';
+import { MotionDivider } from '@/components/motion-divider';
 import { Card } from '@/components/ui/card';
 import { ClientOnly } from '@/components/client-only';
 
@@ -8,10 +9,11 @@ export default function PrivacyPolicyPage() {
       <ClientOnly>
         <AnimatedSection>
           <Card className="max-w-3xl mx-auto p-6 sm:p-8 md:p-12">
-            <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-12 text-center">
+            <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4 text-center">
               Privacy Policy
             </h1>
-            <div className="prose prose-invert lg:prose-xl text-muted-foreground space-y-6 mx-auto">
+            <MotionDivider />
+            <div className="prose prose-invert lg:prose-xl text-muted-foreground space-y-6 mx-auto mt-8">
               <p>Effective Date: June 6, 2025</p>
 
               <p>

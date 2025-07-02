@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Layers, DollarSign, MessageSquare, Clock, Pencil, Bot } from 'lucide-react';
 import { Card } from '../ui/card';
+import { MotionDivider } from '../motion-divider';
 
 const faqs = [
   {
@@ -52,6 +53,7 @@ export function Faq() {
       <Card className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10">
          <div className="text-center mb-12">
            <h2 className="font-headline text-4xl font-extrabold">Frequently Asked Questions</h2>
+           <MotionDivider />
            <p className="mt-4 text-lg text-muted-foreground">
              Find quick answers to common questions about our services, pricing, and process.
            </p>

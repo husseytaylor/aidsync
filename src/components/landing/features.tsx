@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Bot, Globe, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MotionDivider } from '../motion-divider';
 
 const features = [
   {
@@ -34,6 +35,7 @@ export function Features() {
     >
       <div className="text-center mb-12">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Everything Your Business Needs to Automate & Scale</h2>
+        <MotionDivider />
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
           AidSync provides a comprehensive suite of tools designed to replace manual workflows and enhance client experiences.
         </p>

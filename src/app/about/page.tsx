@@ -4,6 +4,7 @@ import { Users, Rocket, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { FounderCard } from '@/components/founder-card';
 import { ClientOnly } from '@/components/client-only';
+import { MotionDivider } from '@/components/motion-divider';
 
 export default function AboutPage() {
   return (
@@ -13,7 +14,7 @@ export default function AboutPage() {
           <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4">
             About AidSync
           </h1>
-          <div className="w-24 h-1 bg-accent/80 mt-3 mx-auto rounded-full animate-pulse"></div>
+          <MotionDivider />
           <p className="max-w-xl mx-auto text-lg text-muted-foreground mt-8 mb-12">
             We are a team of technologists and problem-solvers dedicated to empowering businesses with intelligent automation.
           </p>
@@ -66,6 +67,7 @@ export default function AboutPage() {
       <AnimatedSection delay={600}>
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="font-headline text-3xl sm:text-4xl font-extrabold text-foreground">Meet the Founder</h2>
+          <MotionDivider />
         </div>
         <ClientOnly>
           <FounderCard />
