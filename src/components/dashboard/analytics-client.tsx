@@ -11,38 +11,9 @@ import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock } fro
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import React from "react";
-
-interface AnalyticsData {
-  voice_analytics: {
-    summary: {
-      total_calls: number;
-      average_duration_seconds: number;
-      total_duration_seconds: number;
-    };
-    recent_calls: {
-      started_at: string;
-      duration: number;
-      transcript: string;
-      status: string;
-      from_number: string;
-    }[];
-  };
-  chat_analytics: {
-    summary: {
-      total_sessions: number;
-      average_duration_seconds: number;
-      average_message_count: number;
-    };
-    recent_sessions: {
-      started_at: string;
-      duration: number;
-      dialogue: { sender: string; text: string }[];
-    }[];
-  };
-  voiceChartData: { date: string; calls: number }[];
-  chatChartData: { date: string; sessions: number }[];
-}
+import React, { useEffect } from "react";
+import { useAnalytics } from "@/context/analytics-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formatDuration = (totalSeconds: number) => {
   if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00';
@@ -97,26 +68,75 @@ const cardHover = {
   boxShadow: '0 12px 30px rgba(72,209,204,0.2)'
 };
 
-export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: AnalyticsData }) {
-  const router = useRouter();
-  const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analyticsData;
+const DashboardSkeleton = () => (
+  <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16">
+    <motion.div
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      transition={{ duration: 0.6, delay: 0.1 }}
+      className="text-center"
+    >
+      <Skeleton className="h-12 w-3/4 mx-auto" />
+      <Skeleton className="h-6 w-1/2 mx-auto mt-4" />
+      <div className="mt-6 flex justify-center gap-4">
+        <Skeleton className="h-10 w-36" />
+        <Skeleton className="h-10 w-36" />
+      </div>
+    </motion.div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <Skeleton className="h-48 w-full rounded-2xl" />
+      <Skeleton className="h-48 w-full rounded-2xl" />
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <Skeleton className="h-80 w-full rounded-2xl" />
+      <Skeleton className="h-80 w-full rounded-2xl" />
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <Skeleton className="h-96 w-full rounded-2xl" />
+      <Skeleton className="h-96 w-full rounded-2xl" />
+    </div>
+  </section>
+);
 
-  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
-  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
+
+export function AnalyticsDashboardClient() {
+  const { analytics, isLoading, fetchAnalytics } = useAnalytics();
+
+  useEffect(() => {
+    if (!analytics) {
+      fetchAnalytics();
+    }
+  }, [analytics, fetchAnalytics]);
 
   const handleRefresh = () => {
-    router.refresh();
+    fetchAnalytics();
   };
 
   const handleExport = () => {
     alert("Export functionality coming soon!");
   };
 
-  const isDataEmpty =
+  if (isLoading && !analytics) {
+    return <DashboardSkeleton />;
+  }
+  
+  const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analytics || {
+    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0 }, recent_calls: [] },
+    chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
+    voiceChartData: [],
+    chatChartData: [],
+  };
+
+  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
+  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
+
+  const isDataEmpty = !analytics || (
     voice_analytics.summary.total_calls === 0 &&
     chat_analytics.summary.total_sessions === 0 &&
     voice_analytics.recent_calls.length === 0 &&
-    chat_analytics.recent_sessions.length === 0;
+    chat_analytics.recent_sessions.length === 0
+  );
 
   if (isDataEmpty) {
     return (
@@ -130,17 +150,20 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         >
           <Card className="p-8">
             <div className="flex justify-center mb-4">
-              <Info className="w-12 h-12 text-accent animate-pulse" />
+              {isLoading ? <RefreshCw className="w-12 h-12 text-accent animate-spin" /> : <Info className="w-12 h-12 text-accent" />}
             </div>
             <h2 className="font-headline text-3xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
-              Awaiting Your First Interaction
+              {isLoading ? "Fetching Latest Data..." : "Awaiting Your First Interaction"}
             </h2>
             <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
-              Your analytics dashboard is live. As soon as your AI agents handle their first calls or chats, this page will populate with insights.
+              {isLoading 
+                ? "Hold on while we gather the latest analytics for you."
+                : "Your analytics dashboard is live. As soon as your AI agents handle their first calls or chats, this page will populate with insights."
+              }
             </p>
             <div className="mt-6">
-                <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
-                    <RefreshCw className="w-4 h-4 mr-2" />
+                <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
+                    <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
                     Check for New Data
                 </Button>
             </div>
@@ -166,8 +189,8 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             Live metrics from your customer-facing AI chat and voice agents.
           </p>
           <div className="mt-6 flex justify-center gap-4">
-              <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
-                  <RefreshCw className="w-4 h-4 mr-2" />
+              <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
+                  <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
                   Refresh Data
               </Button>
               <Button onClick={handleExport} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
@@ -372,5 +395,3 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
     </section>
   );
 }
-
-    
