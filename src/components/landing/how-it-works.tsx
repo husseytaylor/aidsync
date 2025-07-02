@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FileText, PhoneCall, Rocket, ClipboardCheck } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const steps = [
   {
@@ -30,31 +31,58 @@ export function HowItWorks() {
   return (
     <motion.section 
       id="how-it-works"
-      className="container py-24 sm:py-32 scroll-mt-20"
-      initial={{ opacity: 0, x: -40 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      className="container py-24 sm:py-32 scroll-mt-20 relative"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={{ once: true, amount: 0.2 }}
     >
-      <div className="max-w-2xl mx-auto text-center">
+      <div className="max-w-3xl mx-auto text-center">
         <h2 className="font-headline text-3xl font-extrabold sm:text-4xl">Your Automation Journey</h2>
         <p className="mt-4 text-lg text-muted-foreground">
           From initial call to full deployment in just a few weeks. Here’s our streamlined onboarding process.
         </p>
       </div>
       
-      <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
+      <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-16">
         {steps.map((step, index) => (
-          <div key={index} className="h-full">
-            <div className="h-full text-center md:text-left flex flex-col items-center md:items-start rounded-2xl p-4 sm:p-6 bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl transition-all duration-500 hover:scale-[1.015] hover:shadow-glow-accent">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
-                {step.icon}
-              </div>
-              <h3 className="font-headline text-xl font-bold text-foreground">{step.title}</h3>
-              <p className="mt-2 text-muted-foreground text-sm flex-grow">{step.description}</p>
-            </div>
-          </div>
+          <motion.div 
+            key={index} 
+            className="relative"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.15 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
+            <Card className="h-full text-center">
+              <CardContent className="p-6 flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 ring-8 ring-accent/5">
+                  {step.icon}
+                </div>
+                <h3 className="font-headline text-xl font-bold text-foreground">{step.title}</h3>
+                <p className="mt-2 text-muted-foreground text-sm flex-grow">{step.description}</p>
+              </CardContent>
+            </Card>
+
+            {/* Timeline Connector */}
+            {index < steps.length - 1 && (
+              <div className="hidden lg:block absolute top-14 left-full w-10 h-px -translate-y-1/2 bg-gradient-to-r from-accent/50 via-accent/25 to-transparent" aria-hidden="true" />
+            )}
+          </motion.div>
         ))}
+      </div>
+
+      <div className="absolute -bottom-16 left-0 w-full h-32" aria-hidden="true">
+        <svg className="w-full h-full" viewBox="0 0 1440 128" fill="none" preserveAspectRatio="none">
+            <path d="M0 120C480 0 960 0 1440 120" stroke="url(#how-it-works-divider-gradient)" strokeWidth="2" />
+            <defs>
+                <linearGradient id="how-it-works-divider-gradient" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#48D1CC" stopOpacity="0"/>
+                    <stop offset="0.5" stopColor="#48D1CC"/>
+                    <stop offset="1" stopColor="#48D1CC" stopOpacity="0"/>
+                </linearGradient>
+            </defs>
+        </svg>
       </div>
     </motion.section>
   );
