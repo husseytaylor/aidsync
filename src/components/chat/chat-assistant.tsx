@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
@@ -91,18 +92,16 @@ export function ChatAssistant() {
     const durationSeconds = Math.round((endedAt.getTime() - sessionStartTime.getTime()) / 1000);
 
     const payload = {
-      body: {
-        sessionId: sessionId,
-        chatHistory: currentMessages.map(msg => ({
-          sender: msg.sender,
-          text: msg.text,
-          timestamp: msg.timestamp.toISOString(),
-        })),
-        messageCount: currentMessages.length,
-        durationSeconds: durationSeconds,
-        endedByUser: true,
-        domain: window.location.hostname,
-      }
+      sessionId: sessionId,
+      chatHistory: currentMessages.map(msg => ({
+        sender: msg.sender,
+        text: msg.text,
+        timestamp: msg.timestamp.toISOString(),
+      })),
+      messageCount: currentMessages.length,
+      durationSeconds: durationSeconds,
+      endedByUser: true,
+      domain: window.location.hostname,
     };
 
     try {
