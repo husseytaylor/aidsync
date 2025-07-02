@@ -43,7 +43,17 @@ async function getAnalyticsData() {
     let chat_analytics = defaultState.chat_analytics;
 
     externalData.forEach(item => {
-        const itemData = item.json || item; // Handle potential nesting
+        let itemData = item.json || item;
+        // Handle cases where the actual data is in a stringified `json` property
+        if (typeof itemData === 'string') {
+            try {
+                itemData = JSON.parse(itemData);
+            } catch (e) {
+                console.error("[Analytics Page] Failed to parse nested JSON string from item:", itemData);
+                return; // skip this item
+            }
+        }
+
         if (itemData.voice_analytics) {
             voice_analytics = itemData.voice_analytics;
         }
