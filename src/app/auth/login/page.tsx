@@ -58,7 +58,6 @@ export default function LoginPage() {
                 type="email"
                 placeholder="personnel@aidsync.com"
                 required
-                className="w-full rounded-md px-4 py-2 bg-background/50 border border-white/20 focus:ring-2 focus:ring-accent focus:outline-none text-white placeholder:text-muted-foreground"
               />
             </div>
             <div className="grid gap-2">
@@ -68,7 +67,6 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
-                className="w-full rounded-md px-4 py-2 bg-background/50 border border-white/20 focus:ring-2 focus:ring-accent focus:outline-none text-white"
               />
             </div>
 

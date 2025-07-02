@@ -18,7 +18,7 @@ const AccordionItem = React.forwardRef<
     className={cn(
         "rounded-xl border transition-all duration-300 overflow-hidden",
         "data-[state=closed]:bg-gradient-to-br data-[state=closed]:from-primary data-[state=closed]:to-accent data-[state=closed]:text-white",
-        "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:border-accent/40 data-[state=open]:shadow-inner",
+        "data-[state=open]:bg-accent data-[state=open]:text-black data-[state=open]:border-accent/40 data-[state=open]:shadow-inner",
         className
     )}
     {...props}
