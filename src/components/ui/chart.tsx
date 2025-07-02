@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -179,7 +180,7 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-xl border border-primary/30 bg-card/80 p-2.5 text-xs shadow-glow-accent backdrop-blur-md",
+          "grid min-w-[8rem] items-start gap-1.5 rounded-xl border border-accent/20 bg-black/50 p-2.5 text-xs shadow-lg backdrop-blur-lg",
           className
         )}
       >

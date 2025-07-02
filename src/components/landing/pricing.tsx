@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Check } from 'lucide-react';
@@ -34,7 +35,6 @@ const tiers = [
       'Email + 2 live support calls/mo',
     ],
     cta: 'Get Started',
-    popular: true,
   },
   {
     name: 'Command Suite',

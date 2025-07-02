@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Timer, Calendar, Bot, User, BarChart3, Users, Clock, RefreshCw, Download, FileText } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, FileText } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -92,9 +92,6 @@ const cardHover = {
   boxShadow: '0 12px 30px rgba(72,209,204,0.2)'
 };
 
-const transition = { type: 'spring', stiffness: 200, damping: 20 };
-
-
 export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: AnalyticsData }) {
   const router = useRouter();
   const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analyticsData;
@@ -107,7 +104,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
   };
 
   const handleExport = () => {
-    // Placeholder for CSV export functionality
     alert("Export functionality coming soon!");
   };
 
@@ -141,7 +137,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Voice Analytics Summary */}
           <MotionCard
-            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest"
+            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -169,7 +165,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           
           {/* Chat Analytics Summary */}
           <MotionCard
-            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest"
+            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -203,7 +199,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Voice Chart */}
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full"
+                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -231,7 +227,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             
             {/* Chat Chart */}
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full"
+                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -261,7 +257,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Recent Calls List */}
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest"
+                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -283,12 +279,12 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                                         <button className="text-[#48D1CC] hover:text-primary text-sm font-medium">View</button>
                                     </div>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-2xl bg-black/70 backdrop-blur-lg border-accent/20">
+                                <DialogContent className="max-w-2xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
                                     <DialogHeader>
                                         <DialogTitle className="flex items-center gap-2 text-white"><FileText /> Call Transcript</DialogTitle>
                                         <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
                                     </DialogHeader>
-                                    <ScrollArea className="h-[50vh] mt-4">
+                                    <ScrollArea className="h-[50vh] mt-4 pr-4">
                                         <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-body p-4 bg-black/20 rounded-md">{call.transcript || "No transcript available."}</pre>
                                     </ScrollArea>
                                 </DialogContent>
@@ -300,7 +296,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             
             {/* Recent Chats List */}
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest"
+                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -322,7 +318,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                                         <button className="text-[#48D1CC] hover:text-primary text-sm font-medium">View</button>
                                     </div>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-xl bg-black/70 backdrop-blur-lg border-accent/20">
+                                <DialogContent className="max-w-xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
                                     <DialogHeader>
                                         <DialogTitle className="flex items-center gap-2 text-white"><MessageSquare /> Chat Dialogue</DialogTitle>
                                         <CardDescription>{formatTimestamp(session.started_at)} &bull; {formatDuration(session.duration)}</CardDescription>
