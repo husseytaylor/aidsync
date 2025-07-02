@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         The root layout provides the main structure (<Header>, <main>, etc.),
         and this layout's primary jobs are to enforce authentication and set the correct background.
       */}
-      <div className="fixed inset-0 -z-10 h-full w-full bg-[url('/dash.png')] bg-cover bg-center bg-no-repeat" />
+      <div className="fixed inset-0 -z-10 h-full w-full bg-[url('/rough.png')] bg-cover bg-center bg-no-repeat" />
       {children}
     </>
   );
