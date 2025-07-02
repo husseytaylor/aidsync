@@ -271,14 +271,14 @@ export function ChatAssistant() {
             </Button>
           </CardHeader>
           
-          <CardContent className="flex-1 min-h-0 p-0 relative overflow-hidden">
-            <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
-            <div className="flex-1 overflow-y-auto p-3 space-y-4" ref={scrollAreaRef}>
-              {messages.map((msg, index) => (
-                <ChatMessage key={index} sender={msg.sender} text={msg.text} />
-              ))}
-              {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
-            </div>
+          <CardContent 
+            ref={scrollAreaRef}
+            className="flex-1 p-3 space-y-4 overflow-y-auto"
+          >
+            {messages.map((msg, index) => (
+              <ChatMessage key={index} sender={msg.sender} text={msg.text} />
+            ))}
+            {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
           </CardContent>
           
           <CardFooter className="border-t pt-4 border-white/10">
