@@ -270,8 +270,8 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-y-auto" ref={scrollAreaRef}>
-            <div className="p-3 space-y-4">
+          <CardContent className="flex-1 p-0 flex flex-col overflow-hidden">
+            <div className="flex-1 p-3 space-y-4 overflow-y-auto" ref={scrollAreaRef}>
               {messages.map((msg, index) => (
                 <ChatMessage key={index} sender={msg.sender} text={msg.text} />
               ))}
