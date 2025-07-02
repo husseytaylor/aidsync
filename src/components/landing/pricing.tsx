@@ -120,7 +120,7 @@ export function Pricing() {
             viewport={{ once: true, amount: 0.5 }}
           >
             {tier.isFeatured && (
-               <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full shadow-lg">
+               <div className="absolute -top-5 left-1/2 z-10 -translate-x-1/2 transform bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full shadow-lg">
                  Best Value
                </div>
             )}
@@ -168,7 +168,7 @@ export function Pricing() {
                   })}
                 </ul>
               </CardContent>
-              <CardFooter className="p-4 sm:p-6 pt-0">
+              <CardFooter className="p-4 sm:p-6 pt-0 mt-auto">
                  <Button
                     asChild
                     className="w-full"
