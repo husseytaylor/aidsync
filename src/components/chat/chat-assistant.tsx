@@ -19,7 +19,8 @@ interface Message {
   timestamp: Date;
 }
 
-const WEBHOOK_SESSION_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-7adf-4014-93b7-daad66d8df28';
+const RESPONSE_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+const SESSION_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-7adf-4014-93b7-daad66d8df28';
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
@@ -71,10 +72,7 @@ export function ChatAssistant() {
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
   const endChatSession = async (currentMessages: Message[]) => {
-    if (!currentMessages.length || !sessionId || !sessionStartTime) return;
-    
-    // Don't log sessions that only have the initial bot prompt
-    if (currentMessages.length <= 1) return;
+    if (!currentMessages.length || !sessionId || !sessionStartTime || currentMessages.length <= 1) return;
 
     const endedAt = new Date();
     const durationSeconds = Math.round((endedAt.getTime() - sessionStartTime.getTime()) / 1000);
@@ -95,7 +93,7 @@ export function ChatAssistant() {
     };
 
     try {
-      await fetch(WEBHOOK_SESSION_URL, {
+      await fetch(SESSION_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -155,39 +153,40 @@ export function ChatAssistant() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isPending) return;
+    const currentInput = input.trim();
+    if (!currentInput || isPending) return;
 
-    const userMessage: Message = { sender: 'user', text: input.trim(), timestamp: new Date() };
-    const currentInput = input;
+    const userMessage: Message = { sender: 'user', text: currentInput, timestamp: new Date() };
     
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsPending(true);
     
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(RESPONSE_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: currentInput }),
       });
       
       if (!response.ok) {
-        throw new Error(`API responded with status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Webhook failed with status: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      const botOutput = result.response;
+      const botOutput = result[0]?.output;
       
       if (botOutput) {
         const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
         setMessages((prev) => [...prev, botMessage]);
       } else {
-        console.error("Invalid response from /api/chat:", result);
+        console.error("Invalid response from webhook:", result);
         throw new Error('AI assistant returned an empty or invalid response.');
       }
 
     } catch (error: any) {
-      console.error('[Chat Widget] AI chat error:', error);
+      console.error('[Chat Widget] AI chat error:', error.message);
       const errorMessage: Message = { sender: 'bot', text: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
