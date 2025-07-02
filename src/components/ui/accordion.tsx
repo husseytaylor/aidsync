@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -16,9 +15,9 @@ const AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     className={cn(
-        "rounded-xl border transition-all duration-300 overflow-hidden",
-        "data-[state=closed]:bg-gradient-to-br data-[state=closed]:from-primary data-[state=closed]:to-accent data-[state=closed]:text-white",
-        "data-[state=open]:bg-accent data-[state=open]:text-black data-[state=open]:border-accent/40 data-[state=open]:shadow-inner",
+        "rounded-2xl border border-white/10 transition-all duration-300 overflow-hidden",
+        "data-[state=closed]:bg-black/20 data-[state=closed]:hover:bg-white/5",
+        "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:shadow-glow-accent",
         className
     )}
     {...props}
@@ -34,7 +33,7 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "group flex w-full flex-1 items-center justify-between text-left p-4 text-lg font-medium transition-all hover:no-underline",
+        "group flex w-full flex-1 items-center justify-between p-4 text-left text-lg font-medium transition-all",
         className
       )}
       {...props}
@@ -54,10 +53,10 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="overflow-hidden text-base transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("p-4 text-sm leading-relaxed border-t border-white/10 bg-black/10", className)}>{children}</div>
+    <div className={cn("px-4 pb-4 pt-2 leading-relaxed border-t border-accent-foreground/20 bg-black/10", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ))
 
