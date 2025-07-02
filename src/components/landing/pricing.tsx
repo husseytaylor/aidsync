@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Check } from 'lucide-react';
+import { Check, Network, Settings, BrainCircuit, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
@@ -28,6 +28,7 @@ const tiers = [
     setupFee: '$4,500',
     monthlyFee: '$1,500',
     description: 'Automate interactions with AI-powered chat and voice agents.',
+    isFeatured: true,
     features: [
       'Everything in Starter, plus:',
       'AI chat widget (web-only)',
@@ -67,6 +68,14 @@ const tiers = [
   },
 ];
 
+const customIcons: { [key: string]: React.ElementType } = {
+  'AI-Driven Sales Pipelines': Network,
+  'Inventory & Supply Chain AI': BrainCircuit,
+  'Automated Bid Generation': Settings,
+  'Dedicated support channel': LifeBuoy,
+};
+
+
 export function Pricing() {
   return (
     <motion.section 
@@ -87,17 +96,22 @@ export function Pricing() {
         </p>
       </div>
 
-      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier, index) => (
           <motion.div
             key={index}
-            className="h-full"
+            className="h-full relative"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true, amount: 0.5 }}
           >
-            <Card className="flex flex-col h-full">
+            {tier.isFeatured && (
+               <div className="absolute -top-3 right-5 bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full shadow-lg -rotate-12 transform">
+                 Best Value
+               </div>
+            )}
+            <Card className="flex flex-col h-full hover:-translate-y-1">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-foreground"
@@ -124,12 +138,17 @@ export function Pricing() {
               </CardHeader>
               <CardContent className="flex-1 p-4 sm:p-6 pt-0">
                 <ul className="space-y-4">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                      <span className="text-sm text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
+                  {tier.features.map((feature) => {
+                    const isCustomTier = tier.name === 'Custom AI';
+                    const IconComponent = isCustomTier ? (customIcons[feature] || Check) : Check;
+                    
+                    return (
+                      <li key={feature} className="flex items-start gap-3">
+                        <IconComponent className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">{feature}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </CardContent>
               <CardFooter className="p-4 sm:p-6 pt-0">
