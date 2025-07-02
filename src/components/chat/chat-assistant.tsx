@@ -19,7 +19,7 @@ interface Message {
   timestamp: Date;
 }
 
-const RESPONSE_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
+const RESPONSE_WEBHOOK_URL = '/api/chat';
 const SESSION_WEBHOOK_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-7adf-4014-93b7-daad66d8df28';
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
@@ -43,12 +43,12 @@ export function ChatAssistant() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const messagesRef = useRef(messages);
+  const [scrollLocked, setScrollLocked] = useState(true);
 
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
 
-  // Handle session persistence on mount
   useEffect(() => {
     setIsMounted(true);
     const storedSessionId = localStorage.getItem('chat_session_id');
@@ -111,11 +111,13 @@ export function ChatAssistant() {
   
   const handleOpen = useCallback(() => {
     if (messages.length === 0) {
-      let currentSessionId = sessionId;
+      let currentSessionId = localStorage.getItem('chat_session_id');
       if (!currentSessionId) {
         currentSessionId = crypto.randomUUID();
         setSessionId(currentSessionId);
         localStorage.setItem('chat_session_id', currentSessionId);
+      } else {
+        setSessionId(currentSessionId);
       }
       setSessionStartTime(new Date());
       setMessages([
@@ -123,7 +125,7 @@ export function ChatAssistant() {
       ]);
     }
     setIsOpen(true);
-  }, [messages.length, sessionId]);
+  }, [messages.length]);
 
   useEffect(() => {
     const eventHandler = () => handleOpen();
@@ -132,17 +134,40 @@ export function ChatAssistant() {
   }, [handleOpen]);
 
   useEffect(() => {
-    if (isOpen && scrollAreaRef.current) {
-      setTimeout(() => {
-        if (scrollAreaRef.current) {
-         scrollAreaRef.current.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: 'smooth',
-          });
+    const container = scrollAreaRef.current;
+    if (!container) return;
+
+    const handleUserScroll = () => {
+        if (!scrollAreaRef.current) return;
+        const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+        setScrollLocked(isAtBottom);
+    };
+
+    container.addEventListener('scroll', handleUserScroll);
+    return () => {
+        if (container) {
+            container.removeEventListener('scroll', handleUserScroll);
         }
-      }, 100);
-    }
-  }, [messages, isOpen]);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !scrollAreaRef.current || !scrollLocked) return;
+
+    const scrollToBottom = () => {
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({
+                top: scrollAreaRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    };
+
+    const rafId = requestAnimationFrame(scrollToBottom);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [messages, isOpen, scrollLocked]);
   
   if (!isMounted) {
     return null;
@@ -155,7 +180,6 @@ export function ChatAssistant() {
   const handleClose = () => {
     endChatSession(messagesRef.current);
     setIsOpen(false);
-    // Reset for next conversation and clear session from storage
     setMessages([]);
     setSessionId(null);
     setSessionStartTime(null);
@@ -180,18 +204,17 @@ export function ChatAssistant() {
           body: JSON.stringify({ 
             message: currentInput,
             session_id: sessionId,
-            domain: window.location.hostname,
-            timestamp: new Date().toISOString()
           }),
       });
       
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Webhook failed with status: ${response.status} - ${errorText}`);
+        throw new Error(`[API /chat] Webhook failed with status: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      const botOutput = Array.isArray(result) ? result[0]?.output : result.output;
+      
+      const botOutput = Array.isArray(result) ? result[0]?.output : result.response;
       
       if (botOutput) {
         const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
@@ -248,7 +271,8 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="flex-1 p-0">
+          <CardContent className="relative flex-1 p-0">
+            <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
             <ScrollArea className="h-full" ref={scrollAreaRef}>
               <div className="p-3 space-y-4">
                 {messages.map((msg, index) => (
