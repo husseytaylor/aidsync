@@ -39,6 +39,7 @@ export function ChatAssistant() {
   const [input, setInput] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const messagesRef = useRef(messages);
@@ -71,20 +72,27 @@ export function ChatAssistant() {
   const restrictedPaths = ['/auth', '/dashboard', '/login', '/signup', '/reset'];
 
   const endChatSession = async (currentMessages: Message[]) => {
-    if (!currentMessages.length || !sessionId) return;
+    if (!currentMessages.length || !sessionId || !sessionStartTime) return;
     
     // Don't log sessions that only have the initial bot prompt
     if (currentMessages.length <= 1) return;
 
-    const messagesForApi = currentMessages.map(msg => ({
-      sender: msg.sender,
-      text: msg.text,
-    }));
+    const endedAt = new Date();
+    const durationSeconds = Math.round((endedAt.getTime() - sessionStartTime.getTime()) / 1000);
 
     const payload = {
-      session_id: sessionId,
-      messages: messagesForApi,
-      ended_at: new Date().toISOString(),
+      body: {
+        sessionId: sessionId,
+        chatHistory: currentMessages.map(msg => ({
+          sender: msg.sender,
+          text: msg.text,
+          timestamp: msg.timestamp.toISOString(),
+        })),
+        messageCount: currentMessages.length,
+        durationSeconds: durationSeconds,
+        endedByUser: true,
+        domain: window.location.hostname,
+      }
     };
 
     try {
@@ -102,6 +110,7 @@ export function ChatAssistant() {
   const handleOpen = () => {
     if (messages.length === 0) {
       setSessionId(crypto.randomUUID());
+      setSessionStartTime(new Date());
       setMessages([
         { sender: 'bot', text: FIRST_ASSISTANT_PROMPT, timestamp: new Date() }
       ]);
@@ -142,6 +151,7 @@ export function ChatAssistant() {
     // Reset for next conversation
     setMessages([]);
     setSessionId(null);
+    setSessionStartTime(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
