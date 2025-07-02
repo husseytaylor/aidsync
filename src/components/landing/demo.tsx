@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -37,7 +38,7 @@ export function Demo() {
       </div>
 
       <div 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
       >
         {/* Left Column (Image) */}
         <motion.div
@@ -62,18 +63,18 @@ export function Demo() {
         <div className="flex flex-col gap-8">
           {/* Chat Agent Box */}
           <div>
-            <Card className="h-full">
+            <Card className="h-full group">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-accent/10 p-3 rounded-full">
-                    <MessageSquare className="w-6 h-6 text-accent" />
+                  <div className="bg-accent/10 p-3 rounded-full transition-all duration-300 group-hover:bg-accent/20 group-hover:ring-4 group-hover:ring-accent/10">
+                    <MessageSquare className="w-6 h-6 text-accent transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <CardTitle className="font-headline text-2xl text-foreground">Try Our Chat Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  See how AidSync handles client support and quoting instantly. Engage with our AI to get your questions answered.
+                  Experience how our AI handles quoting & support instantly.
                 </CardDescription>
               </CardContent>
               <CardFooter>
@@ -84,18 +85,18 @@ export function Demo() {
 
           {/* Phone Agent Box */}
           <div>
-             <Card className="h-full">
+             <Card className="h-full group">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <div className="bg-accent/10 p-3 rounded-full">
-                    <Phone className="w-6 h-6 text-accent" />
+                  <div className="bg-accent/10 p-3 rounded-full transition-all duration-300 group-hover:bg-accent/20 group-hover:ring-4 group-hover:ring-accent/10">
+                    <Phone className="w-6 h-6 text-accent transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <CardTitle className="font-headline text-2xl text-foreground">Talk to the Phone Agent</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Call our AI assistant and hear how it handles real-time voice conversations and provides instant support.
+                  Hear it respond in real-time with natural speech.
                 </CardDescription>
               </CardContent>
               <CardFooter>
