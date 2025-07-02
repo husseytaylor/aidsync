@@ -10,15 +10,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <>
-      {/* 
-        This div applies the specific dashboard background. 
-        It overlays the root layout's background, which is the intended effect.
-        The root layout provides the main structure (<Header>, <main>, etc.),
-        and this layout's primary jobs are to enforce authentication and set the correct background.
-      */}
+    <div className="dashboard-wrapper">
       <div className="fixed inset-0 -z-10 h-full w-full bg-[url('/rough.png')] bg-cover bg-center bg-no-repeat" />
       {children}
-    </>
+    </div>
   );
 }
