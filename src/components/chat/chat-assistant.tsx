@@ -19,7 +19,6 @@ interface Message {
   timestamp: Date;
 }
 
-const WEBHOOK_MESSAGE_URL = 'https://bridgeboost.app.n8n.cloud/webhook/51cb5fe7-c357-4517-ba28-b0609ec75fcf';
 const WEBHOOK_SESSION_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-7adf-4014-93b7-daad66d8df28';
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
@@ -166,23 +165,24 @@ export function ChatAssistant() {
     setIsPending(true);
     
     try {
-      const response = await fetch(WEBHOOK_MESSAGE_URL, {
+      const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: currentInput, session_id: sessionId }),
+          body: JSON.stringify({ message: currentInput }),
       });
       
       if (!response.ok) {
-        throw new Error(`Webhook responded with status: ${response.status}`);
+        throw new Error(`API responded with status: ${response.status}`);
       }
 
       const result = await response.json();
-      const botOutput = result[0]?.output;
+      const botOutput = result.response;
       
       if (botOutput) {
         const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
         setMessages((prev) => [...prev, botMessage]);
       } else {
+        console.error("Invalid response from /api/chat:", result);
         throw new Error('AI assistant returned an empty or invalid response.');
       }
 
