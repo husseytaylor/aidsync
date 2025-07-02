@@ -64,7 +64,7 @@ export function ChatAssistant() {
       viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
     }, 10);
     return () => clearTimeout(timeout);
-  }, [isMounted]);
+  }, [isMounted, isOpen]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -164,7 +164,7 @@ export function ChatAssistant() {
     if (!viewport) return;
     const timeoutId = setTimeout(() => {
       viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
-    }, 0);
+    }, 50);
     return () => clearTimeout(timeoutId);
   }, [messages, isOpen, scrollLocked]);
   
@@ -270,9 +270,8 @@ export function ChatAssistant() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="relative flex-1 overflow-hidden flex flex-col">
-            <div className="pointer-events-none absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/60 to-transparent z-10" />
-            <div className="p-3 space-y-4 overflow-y-auto flex-1" ref={scrollAreaRef}>
+          <CardContent className="flex-1 p-0 overflow-y-auto" ref={scrollAreaRef}>
+            <div className="p-3 space-y-4">
               {messages.map((msg, index) => (
                 <ChatMessage key={index} sender={msg.sender} text={msg.text} />
               ))}
