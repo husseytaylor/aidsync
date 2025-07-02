@@ -20,7 +20,7 @@ export function ChatMessage({ sender, text }: ChatMessageProps) {
       className={cn('flex items-start gap-3', isUser && 'justify-end')}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2, ease: "easeIn" }}
     >
       {!isUser && (
         <Avatar className="w-8 h-8">
@@ -31,10 +31,10 @@ export function ChatMessage({ sender, text }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'relative max-w-xs md:max-w-sm rounded-xl px-4 py-2 text-sm shadow-lg',
+          'relative max-w-xs md:max-w-sm rounded-2xl px-3.5 py-2 shadow-md',
           isUser
-            ? 'bg-accent text-accent-foreground'
-            : 'bg-card text-card-foreground shadow-glow-accent'
+            ? 'bg-accent text-accent-foreground font-medium text-sm'
+            : 'bg-gradient-to-br from-card to-secondary/80 text-card-foreground text-base'
         )}
       >
         {typeof text === 'string' ? <p className="whitespace-pre-wrap">{text}</p> : text}

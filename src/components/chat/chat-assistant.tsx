@@ -23,10 +23,10 @@ const WEBHOOK_SESSION_URL = 'https://bridgeboost.app.n8n.cloud/webhook/cdbe668e-
 const FIRST_ASSISTANT_PROMPT = "Hi there! I’m AidSync’s AI Assistant — how can I help today?";
 
 const TypingIndicator = () => (
-  <div className="flex items-center space-x-1.5 p-2 bg-foreground/10 rounded-full w-fit">
-    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-    <span className="h-2 w-2 bg-foreground rounded-full animate-pulse"></span>
+  <div className="flex items-center space-x-1 p-2">
+    <span className="h-1.5 w-1.5 bg-accent rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+    <span className="h-1.5 w-1.5 bg-accent rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+    <span className="h-1.5 w-1.5 bg-accent rounded-full animate-pulse"></span>
   </div>
 );
 
@@ -221,19 +221,21 @@ export function ChatAssistant() {
         transition={{ duration: 0.3, ease: "easeOut" }}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       >
-        <Card className="h-[70vh] flex flex-col rounded-2xl border-accent/20 bg-black/70 backdrop-blur-lg shadow-glow-accent">
+        <Card className="h-[70vh] flex flex-col rounded-2xl border-accent/20 bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(72,209,204,0.25)]">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
-              <Logo className="w-8 h-8" />
+              <div className={cn("relative", isPending && "after:absolute after:inset-0 after:rounded-full after:ring-2 after:ring-accent after:animate-pulse")}>
+                 <Logo className="w-7 h-7" />
+              </div>
               <CardTitle className="font-headline text-lg text-secondary-foreground">AidSync AI Assistant</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary-foreground hover:bg-white/10 focus-visible:ring-ring">
+            <Button variant="ghost" size="icon" onClick={handleClose} className="text-secondary-foreground hover:bg-accent/10 hover:text-accent focus-visible:ring-ring">
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
           <CardContent className="flex-1 p-0">
             <ScrollArea className="h-full" ref={scrollAreaRef}>
-              <div className="p-4 space-y-4">
+              <div className="p-3 space-y-4">
                 {messages.map((msg, index) => (
                   <ChatMessage key={index} sender={msg.sender} text={msg.text} />
                 ))}
@@ -242,15 +244,22 @@ export function ChatAssistant() {
             </ScrollArea>
           </CardContent>
           <CardFooter className="border-t pt-4 border-white/10">
-            <form onSubmit={handleSubmit} className="flex w-full items-center space-x-2">
+            <form onSubmit={handleSubmit} className="relative flex w-full items-center">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask a question..."
                 disabled={isPending}
                 autoFocus
+                className="pr-12 rounded-full"
               />
-              <Button type="submit" size="icon" disabled={isPending || !input.trim()}>
+              <Button 
+                type="submit" 
+                size="icon" 
+                variant="ghost"
+                disabled={isPending || !input.trim()}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-transform hover:scale-110 hover:bg-accent/20"
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </form>
