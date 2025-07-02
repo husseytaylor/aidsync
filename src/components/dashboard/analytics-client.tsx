@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, FileText, Info } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -18,11 +18,14 @@ interface AnalyticsData {
     summary: {
       total_calls: number;
       average_duration_seconds: number;
+      total_duration_seconds: number;
     };
     recent_calls: {
       started_at: string;
       duration: number;
       transcript: string;
+      status: string;
+      from_number: string;
     }[];
   };
   chat_analytics: {
@@ -68,7 +71,7 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-aidsync-gradient-green text-primary-foreground' : 'bg-foreground/10 text-foreground/90')}>
+          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-muted/50 text-foreground' : 'bg-accent/20 text-accent-foreground')}>
             <p className="whitespace-pre-wrap">{message.text}</p>
           </div>
           {message.sender === 'user' && (
@@ -188,10 +191,14 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 Voice Analytics
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0 mt-8 grid grid-cols-2 gap-8">
+            <CardContent className="p-0 mt-8 grid grid-cols-3 gap-8">
                 <div>
                     <dt className="text-sm text-gray-300">Total Calls</dt>
                     <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{voice_analytics.summary.total_calls}</dd>
+                </div>
+                <div>
+                    <dt className="text-sm text-gray-300">Total Duration</dt>
+                    <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{formatDuration(voice_analytics.summary.total_duration_seconds)}</dd>
                 </div>
                 <div>
                     <dt className="text-sm text-gray-300">Avg. Duration</dt>
@@ -308,13 +315,16 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                             <Dialog key={index}>
                                 <DialogTrigger asChild>
                                     <div className="flex justify-between items-center rounded-lg p-3 hover:bg-white/5 border-b border-[#1F2A30] cursor-pointer transition-colors">
-                                        <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
+                                        <div>
+                                            <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
+                                            <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
+                                        </div>
                                         <button className="text-[#48D1CC] hover:text-primary text-sm font-medium">View</button>
                                     </div>
                                 </DialogTrigger>
                                 <DialogContent className="max-w-2xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
                                     <DialogHeader>
-                                        <DialogTitle className="flex items-center gap-2 text-white"><FileText /> Call Transcript</DialogTitle>
+                                        <DialogTitle className="flex items-center gap-2 text-white"><MessageSquare /> Call Transcript</DialogTitle>
                                         <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
                                     </DialogHeader>
                                     <ScrollArea className="h-[50vh] mt-4 pr-4">

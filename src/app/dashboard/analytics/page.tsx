@@ -1,9 +1,10 @@
+
 import { AnalyticsDashboardClient } from "@/components/dashboard/analytics-client";
 import { ANALYTICS_WEBHOOK_URL } from "@/config";
 
 async function getAnalyticsData() {
   const defaultState = {
-    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0 }, recent_calls: [] },
+    voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0 }, recent_calls: [] },
     chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
     voiceChartData: [],
     chatChartData: [],
@@ -24,7 +25,6 @@ async function getAnalyticsData() {
     }
     
     const responseText = await response.text();
-    // A successful response with an empty body is valid (e.g., no data to report), so just return the default state.
     if (!responseText) {
         return defaultState;
     }
@@ -37,47 +37,50 @@ async function getAnalyticsData() {
       return defaultState;
     }
     
-    const externalData = Array.isArray(rawData) ? rawData[0] : rawData;
+    const externalData = Array.isArray(rawData) ? rawData : [rawData];
     
-    if (!externalData) {
-        console.error("[Analytics Page] Webhook data is empty or in an unexpected format.");
-        return defaultState;
-    }
+    let voice_analytics = defaultState.voice_analytics;
+    let chat_analytics = defaultState.chat_analytics;
 
-    const voice_analytics = externalData.voice_analytics || defaultState.voice_analytics;
-    const chat_analytics = externalData.chat_analytics || defaultState.chat_analytics;
-    
-    const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => {
-      if (!session.dialogue) {
-        return { ...session, dialogue: [] };
-      }
-
-      if (Array.isArray(session.dialogue)) {
-        return { ...session };
-      }
-
-      // Handle cases where dialogue is a stringified JSON array
-      if (typeof session.dialogue === 'string') {
-        try {
-          const parsed = JSON.parse(session.dialogue);
-          return { ...session, dialogue: Array.isArray(parsed) ? parsed : [] };
-        } catch (e) {
-          // Handle cases where dialogue is a simple string log
-          const parsedFromText = session.dialogue.split('\n').filter(line => line.trim() !== '').map(line => {
-            const parts = line.split(': ');
-            const sender = parts.shift()?.trim() || 'unknown';
-            const text = parts.join(': ').trim();
-            return {
-              sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
-              text: text,
-            };
-          });
-          return { ...session, dialogue: parsedFromText };
+    externalData.forEach(item => {
+        const itemData = item.json || item; // Handle potential nesting
+        if (itemData.voice_analytics) {
+            voice_analytics = itemData.voice_analytics;
         }
-      }
-      
-      return { ...session, dialogue: [] };
-    }).slice(0, 5);
+        if (itemData.chat_analytics) {
+            chat_analytics = itemData.chat_analytics;
+        }
+    });
+
+    const parseDialogue = (dialogue: any): { sender: string; text: string }[] => {
+        if (!dialogue) return [];
+        if (Array.isArray(dialogue)) return dialogue; // Already parsed
+        if (typeof dialogue !== 'string') return [];
+
+        try {
+            // Try parsing as JSON first for backward compatibility
+            const parsed = JSON.parse(dialogue);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            // If not JSON, parse as multi-line string
+            return dialogue.split('\n')
+                .filter(line => line.trim() !== '')
+                .map(line => {
+                    const parts = line.split(': ');
+                    const sender = parts.shift()?.trim() || 'unknown';
+                    const text = parts.join(': ').trim();
+                    return {
+                        sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
+                        text,
+                    };
+                });
+        }
+    };
+
+    const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => ({
+      ...session,
+      dialogue: parseDialogue(session.dialogue),
+    })).slice(0, 5);
       
     const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
         if (!data) return [];
@@ -105,11 +108,11 @@ async function getAnalyticsData() {
 
     return {
       voice_analytics: {
-        ...voice_analytics,
+        summary: voice_analytics.summary || defaultState.voice_analytics.summary,
         recent_calls: (voice_analytics.recent_calls || []).slice(0, 5),
       },
       chat_analytics: {
-        ...chat_analytics,
+        summary: chat_analytics.summary || defaultState.chat_analytics.summary,
         recent_sessions: parsedChatSessions,
       },
       voiceChartData,
