@@ -45,10 +45,31 @@ export function ChatAssistant() {
 
   useEffect(() => {
     messagesRef.current = messages;
-  }, [messages]);
+    if (messages.length > 0 && sessionId) {
+        try {
+            const sessionToStore = { messages, sessionId, sessionStartTime };
+            localStorage.setItem('aidsync-chat-session', JSON.stringify(sessionToStore));
+        } catch (e) {
+            console.error("Failed to save chat session to localStorage", e);
+        }
+    }
+  }, [messages, sessionId, sessionStartTime]);
 
   useEffect(() => {
     setIsMounted(true);
+    try {
+        const storedSession = localStorage.getItem('aidsync-chat-session');
+        if (storedSession) {
+            const { messages: storedMessages, sessionId: storedSessionId, sessionStartTime: storedSessionStartTime } = JSON.parse(storedSession);
+            const parsedMessages = storedMessages.map((msg: any) => ({ ...msg, timestamp: new Date(msg.timestamp) }));
+            setMessages(parsedMessages);
+            setSessionId(storedSessionId);
+            setSessionStartTime(storedSessionStartTime ? new Date(storedSessionStartTime) : new Date());
+        }
+    } catch (e) {
+        console.error("Failed to load chat session from localStorage", e);
+        localStorage.removeItem('aidsync-chat-session');
+    }
   }, []);
 
   useEffect(() => {
@@ -98,7 +119,6 @@ export function ChatAssistant() {
     };
 
     try {
-      // Fire-and-forget this request
       fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -155,6 +175,7 @@ export function ChatAssistant() {
     setMessages([]);
     setSessionId(null);
     setSessionStartTime(null);
+    localStorage.removeItem('aidsync-chat-session');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -182,14 +203,13 @@ export function ChatAssistant() {
         
         const result = await response.json();
         
-        // The API route now provides a `response` field even on error.
         const assistantContent = result.response || result.message;
 
         if (assistantContent) {
           const assistantMessage: Message = { role: 'assistant', content: assistantContent, timestamp: new Date() };
           setMessages((prev) => [...prev, assistantMessage]);
         } else {
-          throw new Error('AI assistant returned an empty or invalid response from webhook proxy.');
+          throw new Error('AI assistant returned an empty or invalid response.');
         }
 
       } catch (error: any) {
@@ -223,7 +243,7 @@ export function ChatAssistant() {
           "fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-md transition-all duration-300 ease-in-out",
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
       )}>
-        <Card className="h-[70vh] flex flex-col shadow-2xl rounded-2xl border-[1.5px] border-white/10 bg-gradient-to-br from-[#1d3226] to-[#052a1a]/70 backdrop-blur-lg">
+        <Card className="h-[70vh] flex flex-col rounded-xl border-accent/20 bg-card/80 backdrop-blur-md shadow-glow-accent">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
@@ -251,7 +271,6 @@ export function ChatAssistant() {
                 placeholder="Ask a question..."
                 disabled={isPending}
                 autoFocus
-                className="bg-black/20 backdrop-blur-sm border-white/20"
               />
               <Button type="submit" size="icon" disabled={isPending || !input.trim()}>
                 <Send className="h-4 w-4" />

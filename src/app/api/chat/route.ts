@@ -1,32 +1,23 @@
+
 import { NextResponse } from 'next/server';
-import { AGENT_LOGGING_WEBHOOK_URL } from '@/config';
+import { aiChatAssistant } from '@/ai/flows/ai-chat-assistant';
 
 export async function POST(request: Request) {
-  const webhookUrl = AGENT_LOGGING_WEBHOOK_URL;
-
   try {
-    const body = await request.json();
+    const { message } = await request.json();
 
-    const agentResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    
-    // If the webhook call itself fails, we pass that status along.
-    if (!agentResponse.ok) {
-      const errorText = await agentResponse.text();
-      console.error(`[API /chat] Webhook responded with error. Status: ${agentResponse.status}. Body: ${errorText}`);
-      return NextResponse.json({ response: `I'm having trouble connecting to my brain right now. Please try again later.` }, { status: agentResponse.status });
+    if (!message) {
+      return NextResponse.json({ response: 'Message is required.' }, { status: 400 });
     }
 
-    const responseData = await agentResponse.json();
-
-    // Pass through the successful response from the webhook
-    return NextResponse.json(responseData);
+    // Directly call the Genkit flow
+    const result = await aiChatAssistant({ message });
+    
+    // The flow returns an object with a `response` property, which is what the client expects.
+    return NextResponse.json(result);
 
   } catch (error: any) {
-    console.error('[API /chat] Internal error:', error);
+    console.error('[API /chat] Genkit flow error:', error);
     return NextResponse.json({ response: 'An internal error occurred. Please try again later.' }, { status: 500 });
   }
 }
