@@ -66,9 +66,12 @@ async function getAnalyticsData() {
             return dialogue.split('\n')
                 .filter(line => line.trim() !== '')
                 .map(line => {
-                    const parts = line.split(': ');
-                    const sender = parts.shift()?.trim() || 'unknown';
-                    const text = parts.join(': ').trim();
+                    const colonIndex = line.indexOf(':');
+                    if (colonIndex === -1) {
+                        return { sender: 'unknown', text: line.trim() };
+                    }
+                    const sender = line.substring(0, colonIndex).trim();
+                    const text = line.substring(colonIndex + 1).trim();
                     return {
                         sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
                         text,
