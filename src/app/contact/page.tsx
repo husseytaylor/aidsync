@@ -40,7 +40,7 @@ export default function ContactPage() {
                         <CardTitle className="font-headline text-2xl font-bold text-foreground">Chat with AI</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Get instant answers from our AI assistant, available 24/7 for your questions.</p>
+                        <p className="text-muted-foreground">Get answers from our AI assistant, available 24/7 for your questions.</p>
                     </CardContent>
                     <div className="p-6 pt-0">
                         <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
