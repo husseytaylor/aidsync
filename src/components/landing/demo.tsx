@@ -53,7 +53,6 @@ export function Demo() {
             className="w-full h-auto rounded-2xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="network node"
-            unoptimized
           />
         </motion.div>
 

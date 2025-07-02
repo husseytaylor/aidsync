@@ -7,10 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, FileText } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, FileText, Info } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import React from "react";
 
 interface AnalyticsData {
   voice_analytics: {
@@ -58,7 +59,7 @@ const formatTimestamp = (timestamp: string) => {
   });
 };
 
-const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
+const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
     <div className="space-y-4">
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
@@ -78,7 +79,8 @@ const ChatDialogue = ({ dialogue }: { dialogue: { sender: string; text: string }
         </div>
       )) : <p className="text-muted-foreground text-center">No dialogue found.</p>}
     </div>
-);
+));
+ChatDialogue.displayName = 'ChatDialogue';
 
 const MotionCard = motion(Card);
 
@@ -106,6 +108,42 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
   const handleExport = () => {
     alert("Export functionality coming soon!");
   };
+
+  const isDataEmpty =
+    voice_analytics.summary.total_calls === 0 &&
+    chat_analytics.summary.total_sessions === 0 &&
+    voice_analytics.recent_calls.length === 0 &&
+    chat_analytics.recent_sessions.length === 0;
+
+  if (isDataEmpty) {
+    return (
+      <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16 flex flex-col items-center justify-center min-h-[60vh]">
+        <motion.div
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-center p-8 bg-black/50 backdrop-blur-md rounded-2xl"
+        >
+          <div className="flex justify-center mb-4">
+            <Info className="w-12 h-12 text-accent animate-pulse" />
+          </div>
+          <h2 className="font-headline text-3xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
+            Awaiting Your First Interaction
+          </h2>
+          <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
+            Your analytics dashboard is live. As soon as your AI agents handle their first calls or chats, this page will populate with insights.
+          </p>
+          <div className="mt-6">
+              <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Check for New Data
+              </Button>
+          </div>
+        </motion.div>
+      </section>
+    );
+  }
 
   return (
     <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16">

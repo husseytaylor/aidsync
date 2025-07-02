@@ -56,7 +56,6 @@ export function Hero() {
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="AI head"
             priority
-            unoptimized
           />
         </motion.div>
       </div>

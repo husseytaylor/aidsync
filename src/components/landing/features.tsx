@@ -57,7 +57,6 @@ export function Features() {
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="human AI partnership"
             priority
-            unoptimized
           />
         </motion.div>
 

@@ -11,6 +11,7 @@ export function Logo({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
         fill
         className="object-contain"
         priority
+        unoptimized={false}
       />
     </div>
   );
