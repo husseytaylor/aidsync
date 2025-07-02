@@ -28,6 +28,8 @@ const mainNavLinks = [
   { href: '/contact', label: 'Contact' },
 ];
 
+const publicNavLinks = [...landingNavLinks, ...mainNavLinks];
+
 const dashboardNavLinks = [
   { href: '/dashboard/analytics', label: 'Analytics' },
 ]
@@ -55,7 +57,11 @@ export function Header({ user }: { user: User | null }) {
       const offset = window.scrollY;
       setIsScrolled(offset > 50);
 
-      if (!isLandingPage) return;
+      // Scroll spy only on landing page
+      if (!isLandingPage) {
+        setActiveLink('');
+        return;
+      };
 
       const scrollSpyOffset = 80;
       let currentSectionId = '';
@@ -88,10 +94,13 @@ export function Header({ user }: { user: User | null }) {
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
+    const finalHref = isAnchor && !isLandingPage ? `/${link.href}` : link.href;
     
     const clickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (isMobile) setIsSheetOpen(false);
-        if (isAnchor) {
+        if (isMobile) {
+            setIsSheetOpen(false);
+        }
+        if (isAnchor && isLandingPage) {
             e.preventDefault();
             const targetId = link.href.substring(1);
             const targetElement = document.getElementById(targetId);
@@ -106,18 +115,18 @@ export function Header({ user }: { user: User | null }) {
     const navLinkClasses = cn(
       "relative transition-colors after:absolute after:bg-accent after:bottom-[-4px] after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
       'text-foreground/80 hover:text-accent',
-      (activeLink === link.href.substring(1) || pathname === link.href) && "text-accent after:scale-x-100",
+      ((isAnchor && activeLink === link.href.substring(1)) || (!isAnchor && pathname === link.href)) && "text-accent after:scale-x-100",
       isMobile ? "block text-lg font-medium" : "text-sm font-medium"
     );
 
     return (
-        <Link href={link.href} key={link.href} onClick={isAnchor ? clickHandler : () => {if(isMobile) setIsSheetOpen(false)}} className={navLinkClasses}>
+        <Link href={finalHref} key={link.href} onClick={clickHandler} className={navLinkClasses}>
             {link.label}
         </Link>
     );
   };
 
-  const navLinksToRender = isDashboard ? dashboardNavLinks : (isLandingPage ? [...landingNavLinks, ...mainNavLinks] : mainNavLinks);
+  const navLinksToRender = isDashboard ? dashboardNavLinks : publicNavLinks;
 
   return (
     <motion.header 
@@ -141,9 +150,7 @@ export function Header({ user }: { user: User | null }) {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-            {!isDashboard && isLandingPage && landingNavLinks.map((link) => renderNavLink(link))}
-            {!isDashboard && mainNavLinks.map((link) => renderNavLink(link))}
-            {isDashboard && dashboardNavLinks.map((link) => renderNavLink(link))}
+            {navLinksToRender.map((link) => renderNavLink(link))}
         </nav>
         
         <div className="flex flex-1 items-center justify-end">
@@ -213,9 +220,7 @@ export function Header({ user }: { user: User | null }) {
                       <Logo className="w-8 h-8 transition-transform group-hover:scale-105" />
                       <span className="font-headline text-xl font-bold tracking-tight text-primary">AidSync</span>
                     </Link>
-                    {!isDashboard && isLandingPage && landingNavLinks.map((link) => renderNavLink(link, true))}
-                    {!isDashboard && mainNavLinks.map((link) => renderNavLink(link, true))}
-                    {isDashboard && dashboardNavLinks.map((link) => renderNavLink(link, true))}
+                    {navLinksToRender.map((link) => renderNavLink(link, true))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (

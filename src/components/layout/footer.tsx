@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -23,7 +24,7 @@ export function Footer() {
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true }}
     >
-      <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 items-center py-10 text-foreground/80 tracking-wide text-sm">
+      <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 items-center py-10 pb-24 text-foreground/80 tracking-wide text-sm">
         {/* Left Column */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <Link href="/" className="flex items-center space-x-2 mb-2">
@@ -50,10 +51,10 @@ export function Footer() {
 
         {/* Right Column */}
         <div className="flex justify-center md:justify-end">
-            <Button asChild>
+            <Button asChild size="sm" className="rounded-full font-bold">
                 <Link href="/contact#calendly">
                     <Calendar />
-                    Discovery Call
+                    <span>Discovery Call</span>
                 </Link>
             </Button>
         </div>
