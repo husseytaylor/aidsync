@@ -310,7 +310,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 <CardHeader className="p-0">
                     <CardTitle className="text-xl font-semibold text-white">Recent Chat Sessions</CardTitle>
                     <CardDescription className="text-gray-300">Review dialogues from the latest sessions.</CardDescription>
-                </Header>
+                </CardHeader>
                 <CardContent className="p-0 mt-4">
                     <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
                         {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
@@ -334,10 +334,8 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                         )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
                     </div>
                 </CardContent>
-            </MotionCard>
+            </MotionC>
         </div>
     </section>
   );
 }
-
-    
