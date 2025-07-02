@@ -53,9 +53,7 @@
     --color-sessions: hsl(var(--accent));
     --color-duration: hsl(var(--primary));
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -64,5 +62,32 @@
   }
   .dashboard-wrapper {
     background: radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+  }
+
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary));
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--accent));
+  }
+}
+
+@layer utilities {
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 6px;
   }
 }

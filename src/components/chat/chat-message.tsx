@@ -30,13 +30,13 @@ export function ChatMessage({ sender, text }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'relative max-w-xs md:max-w-sm rounded-2xl px-3.5 py-2 shadow-md',
+          'relative max-w-xs md:max-w-sm rounded-2xl px-3.5 py-2 shadow-md font-medium text-sm whitespace-pre-wrap break-words',
           isUser
-            ? 'bg-accent text-accent-foreground font-medium text-sm'
-            : 'bg-gradient-to-br from-card to-secondary/80 text-card-foreground text-base'
+            ? 'bg-accent text-accent-foreground'
+            : 'bg-gradient-to-br from-card to-secondary/80 text-card-foreground'
         )}
       >
-        {typeof text === 'string' ? <p className="whitespace-pre-wrap break-words">{text}</p> : text}
+        {text}
       </div>
       {isUser && (
         <Avatar className="w-8 h-8">
