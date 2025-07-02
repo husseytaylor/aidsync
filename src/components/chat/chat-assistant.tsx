@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 import { Logo } from '../logo';
@@ -258,7 +258,7 @@ export function ChatAssistant() {
         transition={{ duration: 0.3, ease: "easeOut" }}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       >
-        <div className="h-[70vh] flex flex-col rounded-2xl border border-accent/20 bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(72,209,204,0.25)] overflow-hidden">
+        <div className="h-[70vh] flex flex-col rounded-2xl border-accent/20 bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(72,209,204,0.25)] overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className={cn("relative", isPending && "after:absolute after:inset-0 after:rounded-full after:ring-2 after:ring-accent after:animate-pulse")}>
@@ -271,14 +271,16 @@ export function ChatAssistant() {
             </Button>
           </CardHeader>
           
-          <CardContent 
-            ref={scrollAreaRef}
-            className="flex-1 p-3 space-y-4 overflow-y-auto"
-          >
-            {messages.map((msg, index) => (
-              <ChatMessage key={index} sender={msg.sender} text={msg.text} />
-            ))}
-            {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
+          <CardContent className="flex-1 min-h-0 p-0 overflow-hidden flex flex-col">
+            <div
+              className="flex-1 overflow-y-auto p-3 space-y-4"
+              ref={scrollAreaRef}
+            >
+              {messages.map((msg, index) => (
+                <ChatMessage key={index} sender={msg.sender} text={msg.text} />
+              ))}
+              {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
+            </div>
           </CardContent>
           
           <CardFooter className="border-t pt-4 border-white/10">
