@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ReactNode } from 'react';
@@ -37,7 +36,7 @@ export function ChatMessage({ sender, text }: ChatMessageProps) {
             : 'bg-gradient-to-br from-card to-secondary/80 text-card-foreground text-base'
         )}
       >
-        {typeof text === 'string' ? <p className="whitespace-pre-wrap">{text}</p> : text}
+        {typeof text === 'string' ? <p className="whitespace-pre-wrap break-words">{text}</p> : text}
       </div>
       {isUser && (
         <Avatar className="w-8 h-8">
