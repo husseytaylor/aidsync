@@ -39,61 +39,68 @@ async function getAnalyticsData() {
     
     const externalData = Array.isArray(rawData) ? rawData : [rawData];
     
-    let voice_analytics = defaultState.voice_analytics;
-    let chat_analytics = defaultState.chat_analytics;
+    let voice_analytics = { ...defaultState.voice_analytics };
+    let chat_analytics = { ...defaultState.chat_analytics };
+    
+    // Ensure summaries are objects and recent data is initialized as arrays
+    voice_analytics.summary = { ...defaultState.voice_analytics.summary };
+    voice_analytics.recent_calls = [];
+    chat_analytics.summary = { ...defaultState.chat_analytics.summary };
+    chat_analytics.recent_sessions = [];
 
     externalData.forEach(item => {
         let itemData = item.json || item;
-        // Handle cases where the actual data is in a stringified `json` property
         if (typeof itemData === 'string') {
-            try {
-                itemData = JSON.parse(itemData);
-            } catch (e) {
+            try { itemData = JSON.parse(itemData); } catch (e) { 
                 console.error("[Analytics API] Failed to parse nested JSON string from item:", itemData);
-                return; // skip this item
+                return;
             }
         }
 
         if (itemData.voice_analytics) {
-            voice_analytics = itemData.voice_analytics;
+            Object.assign(voice_analytics.summary, itemData.voice_analytics.summary);
+            voice_analytics.recent_calls.push(...(itemData.voice_analytics.recent_calls || []));
         }
         if (itemData.chat_analytics) {
-            chat_analytics = itemData.chat_analytics;
+            Object.assign(chat_analytics.summary, itemData.chat_analytics.summary);
+            chat_analytics.recent_sessions.push(...(itemData.chat_analytics.recent_sessions || []));
         }
     });
 
+    // Deduplicate, sort, and slice recent calls/sessions
+    const uniqueCalls = Array.from(new Map(voice_analytics.recent_calls.map(call => [call.id || call.started_at, call])).values());
+    voice_analytics.recent_calls = uniqueCalls.sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()).slice(0, 5);
+    
+    const uniqueSessions = Array.from(new Map(chat_analytics.recent_sessions.map(session => [session.id || session.started_at, session])).values());
+    chat_analytics.recent_sessions = uniqueSessions.sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()).slice(0, 5);
+      
     const parseDialogue = (dialogue: any): { sender: string; text: string }[] => {
-        if (!dialogue) return [];
-        if (Array.isArray(dialogue)) return dialogue; // Already parsed
-        if (typeof dialogue !== 'string') return [];
-
-        try {
-            // Try parsing as JSON first for backward compatibility
-            const parsed = JSON.parse(dialogue);
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            // If not JSON, parse as multi-line string
-            return dialogue.split('\n')
-                .filter(line => line.trim() !== '')
-                .map(line => {
-                    const colonIndex = line.indexOf(':');
-                    if (colonIndex === -1) {
-                        return { sender: 'unknown', text: line.trim() };
-                    }
-                    const sender = line.substring(0, colonIndex).trim();
-                    const text = line.substring(colonIndex + 1).trim();
-                    return {
-                        sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
-                        text,
-                    };
-                });
-        }
+      if (!dialogue || typeof dialogue !== 'string') return [];
+      
+      return dialogue.split('\n')
+          .filter(line => line.trim() !== '')
+          .map(line => {
+              const colonIndex = line.indexOf(':');
+              if (colonIndex === -1) {
+                  return { sender: 'unknown', text: line.trim() };
+              }
+              const sender = line.substring(0, colonIndex).trim();
+              const text = line.substring(colonIndex + 1).trim();
+              return {
+                  sender: sender.toLowerCase().includes('user') ? 'user' : 'assistant',
+                  text,
+              };
+          });
     };
 
-    const parsedChatSessions = (chat_analytics.recent_sessions || []).map((session: any) => ({
+    const parsedChatSessions = chat_analytics.recent_sessions.map((session: any) => ({
       ...session,
       dialogue: parseDialogue(session.dialogue),
-    })).slice(0, 5);
+    }));
+
+    if (voice_analytics.summary && !voice_analytics.summary.total_duration_seconds && voice_analytics.recent_calls.length > 0) {
+        voice_analytics.summary.total_duration_seconds = voice_analytics.recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
+    }
       
     const processDataForChart = (data: { started_at: string }[], valueKey: string) => {
         if (!data) return [];
@@ -121,11 +128,11 @@ async function getAnalyticsData() {
 
     return {
       voice_analytics: {
-        summary: voice_analytics.summary || defaultState.voice_analytics.summary,
-        recent_calls: (voice_analytics.recent_calls || []).slice(0, 5),
+        summary: voice_analytics.summary,
+        recent_calls: voice_analytics.recent_calls,
       },
       chat_analytics: {
-        summary: chat_analytics.summary || defaultState.chat_analytics.summary,
+        summary: chat_analytics.summary,
         recent_sessions: parsedChatSessions,
       },
       voiceChartData,

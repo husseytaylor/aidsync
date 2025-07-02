@@ -7,9 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, PieChart as PieChartIcon } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import React, { useEffect } from "react";
 import { useAnalytics } from "@/context/analytics-context";
@@ -23,7 +23,7 @@ const formatDuration = (totalSeconds: number) => {
 };
 
 const formatCurrency = (amount: number | null | undefined) => {
-  if (amount === null || typeof amount === 'undefined') return '';
+  if (amount === null || typeof amount === 'undefined') return '$0.00';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -51,8 +51,8 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm font-medium shadow', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
-            <p className="whitespace-pre-wrap break-words">{message.text}</p>
+          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm font-medium shadow whitespace-pre-wrap break-words', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
+            <p>{message.text}</p>
           </div>
           {message.sender === 'user' && (
             <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-foreground flex items-center justify-center flex-shrink-0">
@@ -93,7 +93,9 @@ const DashboardSkeleton = () => (
         <Skeleton className="h-10 w-36" />
       </div>
     </motion.div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <Skeleton className="h-48 w-full rounded-2xl" />
+      <Skeleton className="h-48 w-full rounded-2xl" />
       <Skeleton className="h-48 w-full rounded-2xl" />
       <Skeleton className="h-48 w-full rounded-2xl" />
     </div>
@@ -137,9 +139,6 @@ export function AnalyticsDashboardClient() {
     chatChartData: [],
   };
 
-  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
-  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
-
   const isDataEmpty = !analytics || (
     voice_analytics.summary.total_calls === 0 &&
     chat_analytics.summary.total_sessions === 0 &&
@@ -182,8 +181,24 @@ export function AnalyticsDashboardClient() {
     );
   }
 
+  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
+  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
+
+  const totalCost = (voice_analytics.recent_calls || []).reduce((sum, call) => sum + (call.cost || 0), 0);
+  const avgCost = voice_analytics.summary.total_calls > 0 ? totalCost / voice_analytics.summary.total_calls : 0;
+
+  const pieChartData = [
+    { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
+    { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
+  ];
+  const pieChartConfig = {
+    calls: { label: 'Voice Calls', color: 'hsl(var(--primary))' },
+    chats: { label: 'Chat Sessions', color: 'hsl(var(--accent))' },
+  } satisfies ChartConfig;
+
+
   return (
-    <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16">
+    <section className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 space-y-16">
         <motion.div
             variants={cardVariants}
             initial="hidden"
@@ -209,77 +224,61 @@ export function AnalyticsDashboardClient() {
           </div>
         </motion.div>
       
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <MotionCard
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={cardHover}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl md:text-3xl font-semibold text-white">
-                <Phone className="text-primary"/>
-                Voice Analytics
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-8">
-                <div>
-                    <dt className="text-sm text-gray-300">Total Calls</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{voice_analytics.summary.total_calls}</dd>
-                </div>
-                <div>
-                    <dt className="text-sm text-gray-300">Total Duration</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{formatDuration(voice_analytics.summary.total_duration_seconds)}</dd>
-                </div>
-                <div>
-                    <dt className="text-sm text-gray-300">Avg. Duration</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-primary mt-1">{formatDuration(voice_analytics.summary.average_duration_seconds)}</dd>
-                </div>
-            </CardContent>
-          </MotionCard>
-          
-          <MotionCard
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            whileHover={cardHover}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl md:text-3xl font-semibold text-white">
-                <MessageSquare className="text-accent"/>
-                Chat Analytics
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-4">
-                <div>
-                    <dt className="text-sm text-gray-300">Total</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-accent mt-1">{chat_analytics.summary.total_sessions}</dd>
-                </div>
-                <div>
-                    <dt className="text-sm text-gray-300">Avg. Time</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-accent mt-1">{formatDuration(chat_analytics.summary.average_duration_seconds)}</dd>
-                </div>
-                <div>
-                    <dt className="text-sm text-gray-300">Avg. Msgs</dt>
-                    <dd className="text-4xl md:text-5xl font-bold text-accent mt-1">{Math.round(chat_analytics.summary.average_message_count)}</dd>
-                </div>
-            </CardContent>
-          </MotionCard>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} whileHover={cardHover}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
+                    <Phone className="h-5 w-5 text-primary" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-3xl font-bold">{voice_analytics.summary.total_calls}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Duration: {formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
+                </CardContent>
+            </MotionCard>
+             <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }} whileHover={cardHover}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
+                    <MessageSquare className="h-5 w-5 text-accent" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-3xl font-bold">{chat_analytics.summary.total_sessions}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Messages: {Math.round(chat_analytics.summary.average_message_count)}</p>
+                </CardContent>
+            </MotionCard>
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }} whileHover={cardHover}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Call Cost</CardTitle>
+                    <DollarSign className="h-5 w-5 text-primary" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-3xl font-bold">{formatCurrency(totalCost)}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Cost/Call: {formatCurrency(avgCost)}</p>
+                </CardContent>
+            </MotionCard>
+             <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }} whileHover={cardHover}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Interaction Ratio</CardTitle>
+                    <PieChartIcon className="h-5 w-5 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="h-24 pt-2">
+                    <ChartContainer config={pieChartConfig} className="h-full w-full">
+                        <ResponsiveContainer>
+                            <PieChart>
+                                <Tooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
+                                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
+                                    {pieChartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </ChartContainer>
+                </CardContent>
+            </MotionCard>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <MotionCard
-                variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                whileHover={cardHover}
-            >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }} whileHover={cardHover}>
               <CardHeader>
                 <CardTitle>Call Volume (Last 30 Days)</CardTitle>
               </CardHeader>
@@ -298,14 +297,7 @@ export function AnalyticsDashboardClient() {
               </CardContent>
             </MotionCard>
             
-            <MotionCard
-                variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                whileHover={cardHover}
-            >
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }} whileHover={cardHover}>
               <CardHeader>
                 <CardTitle>Chat Volume (Last 30 Days)</CardTitle>
               </CardHeader>
@@ -326,14 +318,7 @@ export function AnalyticsDashboardClient() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <MotionCard
-                variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                whileHover={cardHover}
-            >
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }} whileHover={cardHover}>
                 <CardHeader>
                     <CardTitle>Recent Calls</CardTitle>
                     <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -372,14 +357,7 @@ export function AnalyticsDashboardClient() {
                 </CardContent>
             </MotionCard>
             
-            <MotionCard
-                variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                whileHover={cardHover}
-            >
+            <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }} whileHover={cardHover}>
                 <CardHeader>
                     <CardTitle>Recent Chat Sessions</CardTitle>
                     <CardDescription>Review dialogues from the latest sessions.</CardDescription>
