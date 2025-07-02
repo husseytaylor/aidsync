@@ -24,8 +24,8 @@ async function getAnalyticsData() {
     }
     
     const responseText = await response.text();
+    // A successful response with an empty body is valid (e.g., no data to report), so just return the default state.
     if (!responseText) {
-        console.error("[Analytics Page] Webhook returned empty response.");
         return defaultState;
     }
 
