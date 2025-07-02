@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Check, Network, Settings, BrainCircuit, LifeBuoy } from 'lucide-react';
+import { Check, Network, Settings, BrainCircuit, LifeBuoy, Globe, Server, Mail, Smartphone, MessageSquare, Phone, Bot, Users, BarChart3, ShieldCheck, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
@@ -68,7 +68,20 @@ const tiers = [
   },
 ];
 
-const customIcons: { [key: string]: React.ElementType } = {
+const featureIcons: { [key: string]: React.ElementType } = {
+  'Branded client-facing website': Globe,
+  'Custom domain + hosting': Server,
+  'Basic contact form': Mail,
+  'Mobile-responsive design': Smartphone,
+  'Email support': LifeBuoy,
+  'AI chat widget (web-only)': MessageSquare,
+  '24/7 voice agent (6,000 mins/mo)': Phone,
+  'Custom assistant persona': Bot,
+  'Email + 2 live support calls/mo': ShieldCheck,
+  'Internal assistant for your team': Users,
+  'Full analytics dashboard': BarChart3,
+  'Backend optimization': Settings,
+  'Priority email, live chat & voice': ShieldCheck,
   'AI-Driven Sales Pipelines': Network,
   'Inventory & Supply Chain AI': BrainCircuit,
   'Automated Bid Generation': Settings,
@@ -111,7 +124,7 @@ export function Pricing() {
                  Best Value
                </div>
             )}
-            <Card className="flex flex-col h-full hover:-translate-y-1">
+            <Card className="flex flex-col h-full">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
                   className="font-headline font-bold text-[22px] text-foreground"
@@ -121,17 +134,15 @@ export function Pricing() {
                 <CardDescription className="text-sm min-h-[40px] pt-2">{tier.description}</CardDescription>
                 <div className="pt-4 min-h-[100px]">
                   <div className="flex items-baseline gap-2">
-                    <span 
-                      className="text-4xl font-extrabold font-headline text-foreground"
-                    >
+                    <span className="text-4xl font-extrabold font-headline text-foreground">
                       {tier.setupFee}
                     </span>
-                    {tier.setupFee !== 'Upon Request' && <span className="text-muted-foreground">Setup</span>}
+                    {tier.setupFee !== 'Upon Request' && <span className="text-muted-foreground/80">Setup</span>}
                   </div>
                   {tier.monthlyFee !== 'Custom' && (
                      <div className="flex items-baseline gap-1 mt-1">
-                      <p className="text-xl font-semibold text-foreground">{tier.monthlyFee}</p>
-                      <span className="text-sm font-normal text-muted-foreground">/ month</span>
+                      <p className="text-2xl font-semibold text-foreground">{tier.monthlyFee}</p>
+                      <span className="text-sm font-normal text-muted-foreground/80">/ month</span>
                     </div>
                   )}
                 </div>
@@ -139,9 +150,15 @@ export function Pricing() {
               <CardContent className="flex-1 p-4 sm:p-6 pt-0">
                 <ul className="space-y-4">
                   {tier.features.map((feature) => {
-                    const isCustomTier = tier.name === 'Custom AI';
-                    const IconComponent = isCustomTier ? (customIcons[feature] || Check) : Check;
-                    
+                    if (feature.startsWith('Everything in')) {
+                      return (
+                        <li key={feature} className="flex items-start gap-3 pt-2">
+                          <Plus className="w-5 h-5 text-primary/70 mt-1 flex-shrink-0" />
+                          <span className="text-sm font-semibold text-muted-foreground">{feature}</span>
+                        </li>
+                      )
+                    }
+                    const IconComponent = featureIcons[feature] || Check;
                     return (
                       <li key={feature} className="flex items-start gap-3">
                         <IconComponent className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
