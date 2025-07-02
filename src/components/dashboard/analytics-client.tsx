@@ -4,10 +4,10 @@
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, FileText } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -307,30 +307,29 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                     <CardDescription>Review transcripts from the latest calls.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
+                    <Accordion type="single" collapsible className="w-full space-y-2 max-h-[300px] overflow-y-auto pr-2">
                         {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
-                            <Dialog key={index}>
-                                <DialogTrigger asChild>
-                                    <div className="flex justify-between items-center rounded-lg p-3 hover:bg-white/5 border-b border-[#1F2A30] cursor-pointer transition-colors">
+                            <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                                <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                    <div className="flex justify-between items-center w-full">
                                         <div>
                                             <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
                                             <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
                                         </div>
-                                        <button className="text-[#48D1CC] hover:text-primary text-sm font-medium">View</button>
+                                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                            <Clock className="w-3 h-3" />
+                                            {formatDuration(call.duration)}
+                                        </div>
                                     </div>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-2xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
-                                    <DialogHeader>
-                                        <DialogTitle className="flex items-center gap-2 text-white"><FileText /> Call Transcript</DialogTitle>
-                                        <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
-                                    </DialogHeader>
-                                    <ScrollArea className="h-[50vh] mt-4 pr-4">
-                                        <pre className="whitespace-pre-wrap text-sm text-muted-foreground font-mono p-4 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 pt-0">
+                                    <ScrollArea className="h-48 mt-2 pr-4">
+                                        <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap p-4 rounded-md bg-white/5 backdrop-blur-lg shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                     </ScrollArea>
-                                </DialogContent>
-                            </Dialog>
+                                </AccordionContent>
+                            </AccordionItem>
                         )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
-                    </div>
+                    </Accordion>
                 </CardContent>
             </MotionCard>
             
@@ -347,30 +346,31 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                     <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-1 max-h-[260px] overflow-y-auto pr-2">
+                    <Accordion type="single" collapsible className="w-full space-y-2 max-h-[300px] overflow-y-auto pr-2">
                         {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
-                            <Dialog key={index}>
-                                <DialogTrigger asChild>
-                                    <div className="flex justify-between items-center rounded-lg p-3 hover:bg-white/5 border-b border-[#1F2A30] cursor-pointer transition-colors">
+                            <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                                <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                    <div className="flex justify-between items-center w-full">
                                         <div className="text-sm text-gray-300">{formatTimestamp(session.started_at)}</div>
-                                        <button className="text-[#48D1CC] hover:text-primary text-sm font-medium">View</button>
+                                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                            <Clock className="w-3 h-3" />
+                                            {formatDuration(session.duration)}
+                                        </div>
                                     </div>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-xl bg-black/70 backdrop-blur-lg border-accent/20 rounded-xl">
-                                    <DialogHeader>
-                                        <DialogTitle className="flex items-center gap-2 text-white"><MessageSquare /> Chat Dialogue</DialogTitle>
-                                        <CardDescription>{formatTimestamp(session.started_at)} &bull; {formatDuration(session.duration)}</CardDescription>
-                                    </DialogHeader>
-                                    <ScrollArea className="h-[60vh] mt-4 pr-4">
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 pt-0">
+                                    <ScrollArea className="h-60 mt-2 pr-4">
                                         <ChatDialogue dialogue={session.dialogue} />
                                     </ScrollArea>
-                                </DialogContent>
-                            </Dialog>
+                                </AccordionContent>
+                            </AccordionItem>
                         )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
-                    </div>
+                    </Accordion>
                 </CardContent>
             </MotionCard>
         </div>
     </section>
   );
 }
+
+    
