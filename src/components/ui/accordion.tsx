@@ -1,8 +1,9 @@
+
 "use client"
 
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { Plus } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -14,7 +15,12 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("border-b-0", className)}
+    className={cn(
+        "rounded-xl border transition-all duration-300 overflow-hidden",
+        "data-[state=closed]:bg-gradient-to-br data-[state=closed]:from-primary data-[state=closed]:to-accent data-[state=closed]:text-white",
+        "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:border-accent/40 data-[state=open]:shadow-inner",
+        className
+    )}
     {...props}
   />
 ))
@@ -28,14 +34,14 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "group flex w-full flex-1 items-center justify-between text-left font-medium transition-all hover:no-underline",
+        "group flex w-full flex-1 items-center justify-between text-left p-4 text-lg font-medium transition-all hover:no-underline",
         className
       )}
       {...props}
     >
       {children}
-      <Plus
-        className="h-5 w-5 shrink-0 text-accent transition-transform duration-300 ease-out group-data-[state=open]:rotate-45"
+      <ChevronDown
+        className="h-5 w-5 shrink-0 transition-transform duration-300 ease-out group-data-[state=open]:rotate-180"
       />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
@@ -51,7 +57,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+    <div className={cn("p-4 text-sm leading-relaxed border-t border-white/10 bg-black/10", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ))
 

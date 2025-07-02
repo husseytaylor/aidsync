@@ -174,7 +174,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <MotionCard
-            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
+            className="p-8"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -201,7 +201,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
           </MotionCard>
           
           <MotionCard
-            className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
+            className="p-8"
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -234,7 +234,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
+                className="h-full p-6"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -261,7 +261,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </MotionCard>
             
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
+                className="h-full p-6"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -290,7 +290,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
+                className="p-8"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -318,7 +318,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                                         <CardDescription>{formatTimestamp(call.started_at)} &bull; {formatDuration(call.duration)}</CardDescription>
                                     </DialogHeader>
                                     <ScrollArea className="h-[50vh] mt-4 pr-4">
-                                        <pre className="text-sm text-foreground font-body whitespace-pre-wrap p-4 rounded-md bg-white/10 backdrop-blur-lg shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                        <pre className="whitespace-pre-wrap text-sm text-muted-foreground font-mono p-4 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                     </ScrollArea>
                                 </DialogContent>
                             </Dialog>
@@ -328,7 +328,7 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </MotionCard>
             
             <MotionCard
-                className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
+                className="p-8"
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"

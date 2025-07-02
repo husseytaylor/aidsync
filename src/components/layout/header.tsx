@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -126,7 +127,7 @@ export function Header({ user }: { user: User | null }) {
       className={cn(
         "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
         isMounted && (isScrolled || isDashboard)
-          ? 'bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90 border-white/10 shadow-md'
+          ? 'bg-black/30 backdrop-blur-lg border-b border-white/10 shadow-md'
           : 'bg-transparent border-transparent'
       )}
       initial={{ y: -64, opacity: 0 }}

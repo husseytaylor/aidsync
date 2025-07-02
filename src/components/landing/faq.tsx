@@ -1,8 +1,10 @@
+
 "use client";
 
 import { motion } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Layers, DollarSign, MessageSquare, Clock, Pencil, Bot } from 'lucide-react';
+import { Card } from '../ui/card';
 
 const faqs = [
   {
@@ -47,7 +49,7 @@ export function Faq() {
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <div className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10 rounded-2xl bg-gradient-card backdrop-blur-md border border-primary/30 shadow-xl">
+      <Card className="max-w-3xl mx-auto p-6 sm:p-8 md:p-10">
          <div className="text-center mb-12">
            <h2 className="font-headline text-4xl font-extrabold">Frequently Asked Questions</h2>
            <p className="mt-4 text-lg text-muted-foreground">
@@ -59,21 +61,20 @@ export function Faq() {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-black/20 border border-accent/20 rounded-xl hover:shadow-glow-accent overflow-hidden"
             >
-              <AccordionTrigger className="p-6 font-semibold text-lg hover:no-underline text-accent">
-                <div className="flex items-center gap-4">
+              <AccordionTrigger>
+                <div className="flex items-center gap-4 text-left">
                   {faq.icon}
-                  <span className="text-left">{faq.question}</span>
+                  <span>{faq.question}</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-base text-muted-foreground">
+              <AccordionContent>
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
+      </Card>
     </motion.section>
   );
 }
