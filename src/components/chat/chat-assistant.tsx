@@ -191,7 +191,7 @@ export function ChatAssistant() {
       }
 
       const result = await response.json();
-      const botOutput = result[0]?.output;
+      const botOutput = Array.isArray(result) ? result[0]?.output : result.output;
       
       if (botOutput) {
         const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
