@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,8 +48,13 @@ export function ChatAssistant() {
     messagesRef.current = messages;
   }, [messages]);
 
+  // Handle session persistence on mount
   useEffect(() => {
     setIsMounted(true);
+    const storedSessionId = localStorage.getItem('chat_session_id');
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    }
   }, []);
 
   useEffect(() => {
@@ -97,29 +102,34 @@ export function ChatAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        keepalive: true, // Ensures the request is sent even if the page is closing
+        keepalive: true,
       });
     } catch (error) {
       console.error('[Chat Widget] Failed to send full chat session:', error);
     }
   };
   
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     if (messages.length === 0) {
-      setSessionId(crypto.randomUUID());
+      let currentSessionId = sessionId;
+      if (!currentSessionId) {
+        currentSessionId = crypto.randomUUID();
+        setSessionId(currentSessionId);
+        localStorage.setItem('chat_session_id', currentSessionId);
+      }
       setSessionStartTime(new Date());
       setMessages([
         { sender: 'bot', text: FIRST_ASSISTANT_PROMPT, timestamp: new Date() }
       ]);
     }
     setIsOpen(true);
-  };
+  }, [messages.length, sessionId]);
 
   useEffect(() => {
     const eventHandler = () => handleOpen();
     window.addEventListener('open-aidsync-chat', eventHandler);
     return () => window.removeEventListener('open-aidsync-chat', eventHandler);
-  }, []);
+  }, [handleOpen]);
 
   useEffect(() => {
     if (isOpen && scrollAreaRef.current) {
@@ -145,16 +155,17 @@ export function ChatAssistant() {
   const handleClose = () => {
     endChatSession(messagesRef.current);
     setIsOpen(false);
-    // Reset for next conversation
+    // Reset for next conversation and clear session from storage
     setMessages([]);
     setSessionId(null);
     setSessionStartTime(null);
+    localStorage.removeItem('chat_session_id');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const currentInput = input.trim();
-    if (!currentInput || isPending) return;
+    if (!currentInput || isPending || !sessionId) return;
 
     const userMessage: Message = { sender: 'user', text: currentInput, timestamp: new Date() };
     
@@ -166,7 +177,12 @@ export function ChatAssistant() {
       const response = await fetch(RESPONSE_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: currentInput }),
+          body: JSON.stringify({ 
+            message: currentInput,
+            session_id: sessionId,
+            domain: window.location.hostname,
+            timestamp: new Date().toISOString()
+          }),
       });
       
       if (!response.ok) {
