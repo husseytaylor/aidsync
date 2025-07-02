@@ -11,7 +11,7 @@ export function Hero() {
   return (
     <motion.section
       id="hero"
-      className="container pt-16 md:pt-24 lg:pt-32 scroll-mt-20 relative z-10"
+      className="container pt-16 md:pt-24 lg:pt-32 scroll-mt-20 relative"
       initial={{ opacity: 0, x: -40 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}

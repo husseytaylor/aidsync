@@ -71,11 +71,11 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-muted/50 text-foreground' : 'bg-accent/20 text-accent-foreground')}>
+          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm shadow', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
             <p className="whitespace-pre-wrap">{message.text}</p>
           </div>
           {message.sender === 'user' && (
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-foreground flex items-center justify-center flex-shrink-0">
               <User className="w-5 h-5" />
             </div>
           )}

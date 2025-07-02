@@ -85,8 +85,6 @@ export function Header({ user }: { user: User | null }) {
   const getInitials = (email?: string | null) => {
     return email?.substring(0, 2).toUpperCase() || "AD";
   }
-  
-  const buttonStyle = isMounted && isScrolled ? '' : 'bg-white/10 hover:bg-white/20 text-white';
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
@@ -181,19 +179,19 @@ export function Header({ user }: { user: User | null }) {
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
+                <Button asChild size="sm" className="rounded-full font-bold">
                   <Link href="tel:6624986621">
                     <Phone />
                     <span>Call Agent</span>
                   </Link>
                 </Button>
-                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
+                <Button asChild size="sm" className="rounded-full font-bold">
                     <Link href="/contact#calendly">
                         <Calendar />
                         <span>Discovery Call</span>
                     </Link>
                 </Button>
-                <Button asChild size="sm" className={cn("rounded-full font-bold", buttonStyle)}>
+                <Button asChild size="sm" variant="outline" className="rounded-full font-bold">
                   <Link href="/auth/login">Log In</Link>
                 </Button>
               </>
