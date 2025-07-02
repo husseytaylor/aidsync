@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -26,6 +27,7 @@ export function FounderCard() {
         <motion.div
           className="relative w-40 h-40 rounded-full shadow-2xl overflow-hidden border-4 border-foreground/10"
           animate={{ y: [0, -10, 0] }}
+          whileHover={{ scale: 1.1 }}
           transition={{
             duration: 5,
             ease: 'easeInOut',
