@@ -87,15 +87,18 @@ export function Pricing() {
 
       <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {tiers.map((tier, index) => (
-          <div
+          <motion.div
             key={index}
             className="h-full"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true, amount: 0.5 }}
           >
             <Card className="flex flex-col h-full">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle 
-                  className="font-headline font-bold text-[22px] text-foreground transition-colors duration-300"
-                  style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }}
+                  className="font-headline font-bold text-[22px] text-foreground"
                 >
                   {tier.name}
                 </CardTitle>
@@ -103,8 +106,7 @@ export function Pricing() {
                 <div className="pt-4 min-h-[100px]">
                   <div className="flex items-baseline gap-2">
                     <span 
-                      className="text-4xl font-extrabold font-headline text-foreground transition-colors duration-300"
-                      style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }}
+                      className="text-4xl font-extrabold font-headline text-foreground"
                     >
                       {tier.setupFee}
                     </span>
@@ -122,7 +124,7 @@ export function Pricing() {
                 <ul className="space-y-4">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-foreground mt-1 flex-shrink-0" style={{ textShadow: "0 0 8px hsl(var(--accent) / 0.5)" }} />
+                      <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
                       <span className="text-sm text-muted-foreground">{feature}</span>
                     </li>
                   ))}
@@ -137,7 +139,7 @@ export function Pricing() {
                   </Button>
               </CardFooter>
             </Card>
-          </div>
+          </motion.div>
         ))}
       </div>
     </motion.section>

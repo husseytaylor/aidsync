@@ -135,7 +135,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         </motion.div>
       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Voice Analytics Summary */}
           <MotionCard
             className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
             variants={cardVariants}
@@ -163,7 +162,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
             </CardContent>
           </MotionCard>
           
-          {/* Chat Analytics Summary */}
           <MotionCard
             className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
             variants={cardVariants}
@@ -197,7 +195,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Voice Chart */}
             <MotionCard
                 className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
                 variants={cardVariants}
@@ -225,7 +222,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 </div>
             </MotionCard>
             
-            {/* Chat Chart */}
             <MotionCard
                 className="bg-black/50 backdrop-blur-md p-6 shadow-card-rest h-full rounded-2xl"
                 variants={cardVariants}
@@ -255,7 +251,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Recent Calls List */}
             <MotionCard
                 className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
                 variants={cardVariants}
@@ -294,7 +289,6 @@ export function AnalyticsDashboardClient({ analyticsData }: { analyticsData: Ana
                 </CardContent>
             </MotionCard>
             
-            {/* Recent Chats List */}
             <MotionCard
                 className="bg-black/50 backdrop-blur-md p-8 shadow-card-rest rounded-2xl"
                 variants={cardVariants}

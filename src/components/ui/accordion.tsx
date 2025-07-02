@@ -14,7 +14,7 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("border-b-0", className)} // Remove default border for card-based styling
+    className={cn("border-b-0", className)}
     {...props}
   />
 ))
@@ -28,7 +28,7 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "group flex w-full flex-1 items-center justify-between py-4 text-left font-medium transition-all hover:no-underline",
+        "group flex w-full flex-1 items-center justify-between text-left font-medium transition-all hover:no-underline",
         className
       )}
       {...props}

@@ -37,11 +37,14 @@ const missing: string[] = [];
 const invalid: string[] = [];
 
 // Note: This validation runs on both server and client.
-// Server-only variables will be undefined on the client, causing this check to fail.
-// This assumes a build process or environment that makes all variables available.
-// If this causes issues on the client, the checks for non-public variables
-// should be wrapped in `if (typeof window === 'undefined') { ... }`
+// Server-only variables will be undefined on the client, so we must
+// guard against validating them on the client.
 for (const spec of SPECS) {
+  // Only validate non-public variables on the server
+  if (!spec.public && typeof window !== 'undefined') {
+    continue;
+  }
+  
   const val = process.env[spec.key];
   if (!val) {
     missing.push(`${spec.key}: ${spec.description}`);
