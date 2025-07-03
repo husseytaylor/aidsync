@@ -35,7 +35,6 @@ export default function LoginPage() {
         alt="Abstract digital flow background"
         fill
         className="object-cover fixed z-[-1] top-0 left-0 w-full h-full"
-        priority
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/80 z-[-1]" />
 

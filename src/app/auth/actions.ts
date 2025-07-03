@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
       return redirect(`/auth/login?message=Authentication is not configured. Please check server logs.`);
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const rawFormData = Object.fromEntries(formData.entries());
   
   const validatedFields = loginSchema.safeParse(rawFormData);
@@ -49,8 +49,9 @@ export async function signup(formData: FormData) {
       return redirect(`/auth/signup?message=Authentication is not configured. Please check server logs.`);
   }
 
-  const origin = headers().get("origin");
-  const supabase = createClient();
+  const hdrs = await headers();
+  const origin = hdrs.get("origin");
+  const supabase = await createClient();
   const rawFormData = Object.fromEntries(formData.entries());
 
   const validatedFields = signupSchema.safeParse(rawFormData);
@@ -76,7 +77,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function logout() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/");
 }

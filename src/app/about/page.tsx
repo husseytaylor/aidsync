@@ -30,7 +30,7 @@ export default function AboutPage() {
                 fill
                 className="rounded-2xl object-cover transition-all duration-700 ease-in-out hover:scale-[1.02] hover:shadow-glow-accent"
                 style={{ backgroundColor: '#0c0c0c' }}
-                priority
+                sizes="(max-width: 1024px) 100vw, 900px"
             />
         </div>
       </AnimatedSection>

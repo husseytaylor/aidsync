@@ -105,22 +105,29 @@ async function getAnalyticsData() {
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
       .slice(0, 10);
 
-    // Finalize summaries with calculated values
-    if (!voiceSummary.total_calls || voiceSummary.total_calls === 0) {
-      voiceSummary.total_calls = recent_calls.length;
-    }
-    if (voiceSummary && !voiceSummary.total_duration_seconds && recent_calls.length > 0) {
-      voiceSummary.total_duration_seconds = recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
-    }
-    const totalCost = recent_calls.reduce((sum, call) => {
+    // Finalize summaries with calculated values (type guard for voice summary)
+    if ('total_calls' in voiceSummary) {
+      if (
+        typeof voiceSummary.total_calls === 'undefined' ||
+        voiceSummary.total_calls === 0
+      ) {
+        voiceSummary.total_calls = recent_calls.length;
+      }
+      if (
+        typeof voiceSummary.total_duration_seconds === 'undefined' &&
+        recent_calls.length > 0
+      ) {
+        voiceSummary.total_duration_seconds = recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
+      }
+      const totalCost = recent_calls.reduce((sum, call) => {
         const cost = typeof call.price === 'string' ? parseFloat(call.price) : (call.price || 0);
         return sum + cost;
-    }, 0);
-
-    voiceSummary.total_cost = parseFloat(totalCost.toFixed(2));
-    voiceSummary.average_cost = voiceSummary.total_calls > 0
-      ? parseFloat((totalCost / voiceSummary.total_calls).toFixed(2))
-      : 0;
+      }, 0);
+      voiceSummary.total_cost = parseFloat(totalCost.toFixed(2));
+      voiceSummary.average_cost = voiceSummary.total_calls > 0
+        ? parseFloat((totalCost / voiceSummary.total_calls).toFixed(2))
+        : 0;
+    }
 
     // Parse chat dialogues and ensure duration is correct
     const recent_sessions = recent_sessions_raw.map((session: any) => ({

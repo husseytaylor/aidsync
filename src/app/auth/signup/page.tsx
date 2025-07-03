@@ -1,3 +1,6 @@
+
+"use client";
+
 import Link from "next/link";
 import { signup } from "../actions";
 import { Button } from "@/components/ui/button";
@@ -5,8 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/logo";
+import { useSearchParams } from 'next/navigation';
 
-export default function SignupPage({ searchParams }: { searchParams: { message: string } }) {
+export default function SignupPage() {
+  const searchParams = useSearchParams();
+  const message = searchParams.get('message');
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm w-full">
@@ -28,9 +34,9 @@ export default function SignupPage({ searchParams }: { searchParams: { message: 
               <Label htmlFor="password">Password</Label>
               <Input id="password" name="password" type="password" required />
             </div>
-            {searchParams.message && (
+            {message && (
               <p className="text-sm text-center p-2 rounded-md bg-muted text-foreground">
-                {searchParams.message}
+                {message}
               </p>
             )}
             <Button formAction={signup} type="submit" className="w-full">

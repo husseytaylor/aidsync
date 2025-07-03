@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { AnalyticsProvider } from "@/context/analytics-context";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

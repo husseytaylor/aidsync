@@ -123,9 +123,18 @@ const DashboardSkeleton = () => (
 );
 
 
+import { ClientOnly } from '@/components/client-only';
+
 export function AnalyticsDashboardClient() {
+  return (
+    <ClientOnly>
+      <AnalyticsDashboardClientInner />
+    </ClientOnly>
+  );
+}
+
+function AnalyticsDashboardClientInner() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
-  const [isMounted, setIsMounted] = useState(false);
   const [fullyExpandedChats, setFullyExpandedChats] = useState<Set<number>>(new Set());
   const [fullyExpandedCalls, setFullyExpandedCalls] = useState<Set<number>>(new Set());
   const [filters, setFilters] = useState({
@@ -196,7 +205,6 @@ export function AnalyticsDashboardClient() {
   };
 
   useEffect(() => {
-    setIsMounted(true);
     const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
     if (savedFilters) {
       try {
@@ -205,19 +213,12 @@ export function AnalyticsDashboardClient() {
         console.error("Failed to parse filters from localStorage", e);
       }
     }
-  }, []);
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   useEffect(() => {
-    if (isMounted) {
-      localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
-    }
-  }, [filters, isMounted]);
-
-  useEffect(() => {
-    if (isMounted) {
-      fetchAnalytics();
-    }
-  }, [fetchAnalytics, isMounted]);
+    localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
+  }, [filters]);
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;
@@ -345,7 +346,7 @@ export function AnalyticsDashboardClient() {
   }, []);
 
 
-  if (!isMounted || (isLoading && !analytics)) {
+  if (isLoading && !analytics) {
     return <DashboardSkeleton />;
   }
   
@@ -577,7 +578,7 @@ export function AnalyticsDashboardClient() {
                             const isExpanded = fullyExpandedCalls.has(index);
                             return (
                               <Accordion type="single" collapsible onValueChange={(value) => handleAccordionChange(value)} key={call.id || index}>
-                                <AccordionItem value={`call-${index}`} ref={el => (callItemRefs.current[index] = el)}>
+                                <AccordionItem value={`call-${index}`} ref={el => { callItemRefs.current[index] = el; }}>
                                     <AccordionTrigger>
                                         <div className="flex justify-between items-center w-full">
                                             <div className="flex items-center gap-3">
@@ -642,7 +643,7 @@ export function AnalyticsDashboardClient() {
                           const isExpanded = fullyExpandedChats.has(index);
                           return (
                             <Accordion type="single" collapsible onValueChange={(value) => handleAccordionChange(value)} key={session.id || index}>
-                              <AccordionItem value={`session-${index}`} ref={el => (chatItemRefs.current[index] = el)}>
+                              <AccordionItem value={`session-${index}`} ref={el => { chatItemRefs.current[index] = el; }}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
                                           <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>

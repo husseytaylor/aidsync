@@ -58,6 +58,7 @@ export function Features() {
             className="w-full h-auto rounded-2xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="human AI partnership"
+            sizes="(max-width: 1024px) 100vw, 600px"
             priority
           />
         </motion.div>

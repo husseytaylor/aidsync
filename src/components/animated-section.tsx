@@ -10,6 +10,7 @@ interface AnimatedSectionProps {
   tag?: keyof typeof motion;
   delay?: number;
   variants?: Variants;
+  [key: string]: any;
 }
 
 const defaultVariants: Variants = {
@@ -17,8 +18,8 @@ const defaultVariants: Variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function AnimatedSection({ children, className, tag = "div", delay = 0, variants = defaultVariants }: AnimatedSectionProps) {
-  const MotionComponent = motion[tag] || motion.div;
+export function AnimatedSection({ children, className, tag = "div", delay = 0, variants = defaultVariants, ...rest }: AnimatedSectionProps) {
+  const MotionComponent = (motion[tag] || motion.div) as any;
 
   return (
     <MotionComponent
@@ -28,6 +29,7 @@ export function AnimatedSection({ children, className, tag = "div", delay = 0, v
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.8, ease: "easeOut", delay: delay / 1000 }}
       className={cn(className)}
+      {...rest}
     >
       {children}
     </MotionComponent>

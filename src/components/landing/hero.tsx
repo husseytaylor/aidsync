@@ -57,6 +57,7 @@ export function Hero() {
             className="rounded-xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="AI head"
+            sizes="(max-width: 1024px) 100vw, 900px"
             priority
           />
         </motion.div>
