@@ -74,7 +74,7 @@ const cardVariants = {
 
 const cardHover = {
   y: -6,
-  boxShadow: '0 12px 30px rgba(72,209,204,0.2)'
+  boxShadow: '0 12px 30px rgba(63, 164, 25, 0.25)'
 };
 
 const DashboardSkeleton = () => (
@@ -188,6 +188,8 @@ export function AnalyticsDashboardClient() {
     { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
     { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
   ].filter(d => d.value > 0);
+  
+  const totalInteractions = pieChartData.reduce((sum, item) => sum + item.value, 0);
 
   const pieChartConfig = {
     calls: { label: 'Voice Calls', color: 'hsl(var(--primary))' },
@@ -276,20 +278,38 @@ export function AnalyticsDashboardClient() {
                             <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
                             <PieChartIcon className="h-5 w-5 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="h-24 pt-2">
+                        <CardContent className="pt-2">
                             {pieChartData.length > 0 ? (
-                                <ChartContainer config={pieChartConfig} className="h-full w-full">
-                                    <ResponsiveContainer>
-                                        <PieChart>
-                                            <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
-                                            <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
-                                                {pieChartData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                                                ))}
-                                            </Pie>
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
+                                <>
+                                    <ChartContainer config={pieChartConfig} className="h-20 w-full">
+                                        <ResponsiveContainer>
+                                            <PieChart>
+                                                <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
+                                                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
+                                                    {pieChartData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                                    ))}
+                                                </Pie>
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </ChartContainer>
+                                    {totalInteractions > 0 && (
+                                        <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
+                                            {pieChartData.map((entry) => (
+                                                <div key={entry.name} className="flex items-center gap-1.5">
+                                                    <span
+                                                        className="h-2 w-2 rounded-full"
+                                                        style={{ backgroundColor: entry.fill }}
+                                                    />
+                                                    <span>{entry.name}</span>
+                                                    <span className="font-semibold text-foreground">
+                                                        {`${Math.round((entry.value / totalInteractions) * 100)}%`}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
                             ) : (<p className="text-xs text-muted-foreground text-center pt-6">No interactions yet.</p>)}
                         </CardContent>
                     </MotionCard>
@@ -303,18 +323,22 @@ export function AnalyticsDashboardClient() {
                 <CardHeader>
                   <CardTitle>Call Volume (Last 30 Days)</CardTitle>
                 </CardHeader>
-                <CardContent className="h-64">
-                  <ChartContainer config={voiceChartConfig} className="h-full w-full">
-                      <ResponsiveContainer>
-                          <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                              <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                              <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                              <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                              <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                          </LineChart>
-                      </ResponsiveContainer>
-                  </ChartContainer>
+                <CardContent className="h-64 flex items-center justify-center">
+                  {voiceChartData && voiceChartData.length > 0 ? (
+                    <ChartContainer config={voiceChartConfig} className="h-full w-full">
+                        <ResponsiveContainer>
+                            <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                                <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </ChartContainer>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No call data available for the selected period.</p>
+                  )}
                 </CardContent>
               </MotionCard>
               
@@ -322,18 +346,22 @@ export function AnalyticsDashboardClient() {
                 <CardHeader>
                   <CardTitle>Chat Volume (Last 30 Days)</CardTitle>
                 </CardHeader>
-                <CardContent className="h-64">
-                  <ChartContainer config={chatChartConfig} className="h-full w-full">
-                      <ResponsiveContainer>
-                          <LineChart data={chatChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                              <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                              <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                              <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                              <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
-                          </LineChart>
-                      </ResponsiveContainer>
-                  </ChartContainer>
+                <CardContent className="h-64 flex items-center justify-center">
+                  {chatChartData && chatChartData.length > 0 ? (
+                    <ChartContainer config={chatChartConfig} className="h-full w-full">
+                        <ResponsiveContainer>
+                            <LineChart data={chatChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                                <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </ChartContainer>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No chat data available for the selected period.</p>
+                  )}
                 </CardContent>
               </MotionCard>
           </div>
