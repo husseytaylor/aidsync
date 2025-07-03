@@ -106,7 +106,10 @@ async function getAnalyticsData() {
     if (voiceSummary && !voiceSummary.total_duration_seconds && recent_calls.length > 0) {
       voiceSummary.total_duration_seconds = recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
     }
-    const totalCost = recent_calls.reduce((sum, call) => sum + (parseFloat(String(call.cost)) || 0), 0);
+    const totalCost = recent_calls.reduce((sum, call) => {
+        const cost = typeof call.cost === 'string' ? parseFloat(call.cost) : (call.cost || 0);
+        return sum + cost;
+    }, 0);
     voiceSummary.total_cost = totalCost;
     voiceSummary.average_cost = voiceSummary.total_calls > 0 ? totalCost / voiceSummary.total_calls : 0;
 

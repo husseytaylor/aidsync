@@ -77,11 +77,6 @@ const cardVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const cardHover = {
-  y: -6,
-  boxShadow: '0 12px 30px hsl(var(--primary) / 0.25)'
-};
-
 const DashboardSkeleton = () => (
   <section className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 space-y-16">
     <motion.div
@@ -230,10 +225,10 @@ export function AnalyticsDashboardClient() {
             </div>
           </motion.div>
         
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <UiTooltip>
                   <TooltipTrigger asChild>
-                      <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} whileHover={cardHover}>
+                      <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
                           <CardHeader className="flex flex-row items-center justify-between pb-2">
                               <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
                               <Phone className="h-5 w-5 text-primary" />
@@ -248,7 +243,7 @@ export function AnalyticsDashboardClient() {
               </UiTooltip>
               <UiTooltip>
                 <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }} whileHover={cardHover}>
+                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
                             <MessageSquare className="h-5 w-5 text-accent" />
@@ -263,7 +258,7 @@ export function AnalyticsDashboardClient() {
               </UiTooltip>
               <UiTooltip>
                 <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }} whileHover={cardHover}>
+                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium">Total Call Cost</CardTitle>
                             <DollarSign className="h-5 w-5 text-primary" />
@@ -276,16 +271,42 @@ export function AnalyticsDashboardClient() {
                 </TooltipTrigger>
                 <UiTooltipContent><p>Total estimated cost for all voice calls.</p></UiTooltipContent>
               </UiTooltip>
-              <UiTooltip>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+                <CardHeader>
+                  <CardTitle>Call Volume (Last 30 Days)</CardTitle>
+                </CardHeader>
+                <CardContent className="h-64 flex items-center justify-center">
+                  {voiceChartData && voiceChartData.length > 0 ? (
+                    <ChartContainer config={voiceChartConfig} className="h-full w-full">
+                        <ResponsiveContainer>
+                            <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
+                                <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </ChartContainer>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No call data available for the selected period.</p>
+                  )}
+                </CardContent>
+              </MotionCard>
+              
+               <UiTooltip>
                   <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }} whileHover={cardHover}>
+                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
                             <PieChartIcon className="h-5 w-5 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="pt-2">
+                        <CardContent className="h-64 flex items-center justify-center">
                             {pieChartData.length > 0 ? (
-                                <ChartContainer config={pieChartConfig} className="h-20 w-full">
+                                <ChartContainer config={pieChartConfig} className="h-full w-full">
                                     <ResponsiveContainer>
                                         <PieChart>
                                             <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
@@ -316,33 +337,8 @@ export function AnalyticsDashboardClient() {
                   </TooltipTrigger>
                   <UiTooltipContent><p>Breakdown of interactions between voice and chat.</p></UiTooltipContent>
               </UiTooltip>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }} whileHover={cardHover}>
-                <CardHeader>
-                  <CardTitle>Call Volume (Last 30 Days)</CardTitle>
-                </CardHeader>
-                <CardContent className="h-64 flex items-center justify-center">
-                  {voiceChartData && voiceChartData.length > 0 ? (
-                    <ChartContainer config={voiceChartConfig} className="h-full w-full">
-                        <ResponsiveContainer>
-                            <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                                <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No call data available for the selected period.</p>
-                  )}
-                </CardContent>
-              </MotionCard>
-              
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }} whileHover={cardHover}>
+              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
                 <CardHeader>
                   <CardTitle>Chat Volume (Last 30 Days)</CardTitle>
                 </CardHeader>
@@ -367,7 +363,7 @@ export function AnalyticsDashboardClient() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }} whileHover={cardHover}>
+              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
                   <CardHeader>
                       <CardTitle>Recent Calls</CardTitle>
                       <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -399,7 +395,7 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                      <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-md border border-white/10 overflow-hidden">
                                         <ScrollArea className="h-60 p-4">
                                             <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
@@ -411,7 +407,7 @@ export function AnalyticsDashboardClient() {
                   </CardContent>
               </MotionCard>
               
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }} whileHover={cardHover}>
+              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }}>
                   <CardHeader>
                       <CardTitle>Recent Chat Sessions</CardTitle>
                       <CardDescription>Review dialogues from the latest sessions.</CardDescription>
@@ -430,7 +426,7 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                    <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-md border border-white/10 overflow-hidden">
                                       <ScrollArea className="h-60 p-4">
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
