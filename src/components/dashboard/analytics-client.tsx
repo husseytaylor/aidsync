@@ -207,15 +207,14 @@ export function AnalyticsDashboardClient() {
     }
   }, [filters, isMounted]);
 
-  // This effect handles fetching the data. It runs on initial mount and
-  // whenever the user changes a filter, ensuring the displayed data is fresh
-  // against the selected criteria, per the latest requirements.
+  // This effect handles fetching the initial, unfiltered data from the webhook.
+  // It runs only once when the component mounts. All filtering is done client-side.
   useEffect(() => {
     // We only fetch on the client after the component has mounted.
     if (isMounted) {
       fetchAnalytics();
     }
-  }, [filters, fetchAnalytics, isMounted]); // Refetch when filters change.
+  }, [fetchAnalytics, isMounted]); // Dependency array ensures this runs only once.
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;
