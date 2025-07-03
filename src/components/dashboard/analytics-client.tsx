@@ -189,6 +189,7 @@ export function AnalyticsDashboardClient() {
     downloadCSV(csvContent, 'aidsync_chat_logs.csv');
   };
 
+  // Effect for initial mount and fetching data
   useEffect(() => {
     setIsMounted(true);
     const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
@@ -199,22 +200,15 @@ export function AnalyticsDashboardClient() {
         console.error("Failed to parse filters from localStorage", e);
       }
     }
-  }, []);
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
+  // Effect for persisting filters to localStorage whenever they change
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
     }
   }, [filters, isMounted]);
-
-  // This effect handles fetching the initial, unfiltered data from the webhook.
-  // It runs only once when the component mounts. All filtering is done client-side.
-  useEffect(() => {
-    // We only fetch on the client after the component has mounted.
-    if (isMounted) {
-      fetchAnalytics();
-    }
-  }, [fetchAnalytics, isMounted]); // Dependency array ensures this runs only once.
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;
@@ -300,19 +294,13 @@ export function AnalyticsDashboardClient() {
     fetchAnalytics();
   }, [fetchAnalytics]);
 
-  if (!isMounted) {
-    return <DashboardSkeleton />;
-  }
-
-  if (isLoading && !analytics) {
+  if (!isMounted || (isLoading && !analytics)) {
     return <DashboardSkeleton />;
   }
   
   const isDataEmpty = !analytics || (
-    voice_analytics.summary.total_calls === 0 &&
-    chat_analytics.summary.total_sessions === 0 &&
-    voice_analytics.recent_calls.length === 0 &&
-    chat_analytics.recent_sessions.length === 0
+    analytics.voice_analytics.recent_calls.length === 0 &&
+    analytics.chat_analytics.recent_sessions.length === 0
   );
 
   if (isDataEmpty) {
