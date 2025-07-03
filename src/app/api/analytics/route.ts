@@ -93,10 +93,12 @@ async function getAnalyticsData() {
     // Deduplicate and sort recent items
     const recent_calls = Array.from(new Map(rawRecentCalls.map(call => [call.id || call.started_at, call])).values())
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
+      // FIX: increased recent_calls slice to 10
       .slice(0, 10);
       
     const recent_sessions_raw = Array.from(new Map(rawRecentSessions.map(session => [session.id || session.started_at, session])).values())
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
+      // FIX: increased recent_sessions slice to 10
       .slice(0, 10);
 
     // Finalize summaries with calculated values
