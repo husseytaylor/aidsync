@@ -384,11 +384,11 @@ export function AnalyticsDashboardClient() {
                                           <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(call.duration)}</span>
-                                              {typeof call.cost !== 'undefined' && call.cost > 0 && (
+                                              {typeof call.price !== 'undefined' && call.price > 0 && (
                                                   <>
                                                       <span className="mx-1 text-muted-foreground/50">|</span>
                                                       <DollarSign className="w-3 h-3" />
-                                                      <span>{formatCurrency(call.cost)}</span>
+                                                      <span>{formatCurrency(call.price)}</span>
                                                   </>
                                               )}
                                           </div>

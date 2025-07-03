@@ -107,11 +107,14 @@ async function getAnalyticsData() {
       voiceSummary.total_duration_seconds = recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
     }
     const totalCost = recent_calls.reduce((sum, call) => {
-        const cost = typeof call.cost === 'string' ? parseFloat(call.cost) : (call.cost || 0);
+        const cost = typeof call.price === 'string' ? parseFloat(call.price) : (call.price || 0);
         return sum + cost;
     }, 0);
-    voiceSummary.total_cost = totalCost;
-    voiceSummary.average_cost = voiceSummary.total_calls > 0 ? totalCost / voiceSummary.total_calls : 0;
+
+    voiceSummary.total_cost = parseFloat(totalCost.toFixed(2));
+    voiceSummary.average_cost = voiceSummary.total_calls > 0
+      ? parseFloat((totalCost / voiceSummary.total_calls).toFixed(2))
+      : 0;
 
     // Parse chat dialogues and ensure duration is correct
     const recent_sessions = recent_sessions_raw.map((session: any) => ({

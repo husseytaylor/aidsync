@@ -19,7 +19,7 @@ interface AnalyticsData {
       transcript: string;
       status: string;
       from_number: string;
-      cost?: number;
+      price?: number;
     }[];
   };
   chat_analytics: {
