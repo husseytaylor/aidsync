@@ -6,14 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, PieChart as PieChartIcon, CheckCircle } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, PieChart as PieChartIcon, CheckCircle, Calendar, ChevronsRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formatDuration = (totalSeconds: number) => {
   if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00';
@@ -43,24 +44,24 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
-            <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-secondary text-accent flex items-center justify-center flex-shrink-0">
               <Bot className="w-5 h-5" />
             </div>
           )}
           <div className={cn(
             'relative max-w-sm rounded-xl px-4 py-2 shadow break-words leading-relaxed text-sm md:text-base', 
             message.sender === 'user' 
-              ? 'bg-primary/20 text-foreground' 
-              : 'bg-white/10 border border-white/10 text-foreground/80'
+              ? 'bg-primary/40 text-foreground' 
+              : 'bg-white/10 border border-accent text-foreground/80 shadow-[0_0_4px_rgba(72,209,204,0.5)]'
           )}>
             {message.text}
           </div>
           {message.sender === 'user' && (
-            <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-foreground flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-gray-300 flex items-center justify-center flex-shrink-0">
               <User className="w-5 h-5" />
             </div>
           )}
@@ -139,6 +140,33 @@ export function AnalyticsDashboardClient() {
     chatChartData: [],
   };
 
+  const combinedChartData = useMemo(() => {
+    const allDates = Array.from(new Set([...(voiceChartData || []).map(d => d.date), ...(chatChartData || []).map(d => d.date)]));
+    
+    // This sorting logic might not be perfect for "Month Day" format without a year,
+    // but for a 30-day view it should generally work. For robustness, a full date object is better.
+    try {
+      allDates.sort((a, b) => new Date(a + `, ${new Date().getFullYear()}`).getTime() - new Date(b + `, ${new Date().getFullYear()}`).getTime());
+    } catch (e) {
+      console.error("Could not sort chart dates:", e);
+    }
+    
+    return allDates.map(date => {
+      const voiceEntry = voiceChartData.find(d => d.date === date);
+      const chatEntry = chatChartData.find(d => d.date === date);
+      return {
+        date,
+        calls: voiceEntry?.calls || 0,
+        sessions: chatEntry?.sessions || 0,
+      };
+    });
+  }, [voiceChartData, chatChartData]);
+
+  const combinedChartConfig = {
+    calls: { label: "Calls", color: "hsl(var(--primary))" },
+    sessions: { label: "Sessions", color: "hsl(var(--accent))" },
+  } satisfies ChartConfig;
+
   const isDataEmpty = !analytics || (
     voice_analytics.summary.total_calls === 0 &&
     chat_analytics.summary.total_sessions === 0 &&
@@ -181,9 +209,6 @@ export function AnalyticsDashboardClient() {
     );
   }
 
-  const voiceChartConfig = { calls: { label: "Calls", color: "hsl(var(--primary))" } } satisfies ChartConfig;
-  const chatChartConfig = { sessions: { label: "Sessions", color: "hsl(var(--accent))" } } satisfies ChartConfig;
-
   const pieChartData = [
     { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
     { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
@@ -199,13 +224,13 @@ export function AnalyticsDashboardClient() {
 
   return (
     <TooltipProvider>
-      <section className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 space-y-16">
+      <section className="max-w-[1600px] mx-auto px-6 md:px-10 py-20 space-y-8">
           <motion.div
               variants={cardVariants}
               initial="hidden"
               animate="visible"
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center"
+              className="text-center mb-8"
           >
             <h1 className="font-headline text-4xl md:text-5xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
               AidSync Agent Insights
@@ -213,8 +238,11 @@ export function AnalyticsDashboardClient() {
             <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
               Live metrics from your customer-facing AI chat and voice agents.
             </p>
-            <div className="mt-6 flex justify-center gap-4">
-                <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
+          </motion.div>
+          
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+             <div className="flex gap-4">
+                 <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
                     <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
                     Refresh Data
                 </Button>
@@ -222,10 +250,32 @@ export function AnalyticsDashboardClient() {
                     <Download className="w-4 h-4 mr-2" />
                     Export CSV
                 </Button>
-            </div>
-          </motion.div>
+             </div>
+             <div className="flex gap-4">
+                <Select disabled>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Last 30 Days" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="today">Today</SelectItem>
+                        <SelectItem value="7d">Last 7 Days</SelectItem>
+                        <SelectItem value="30d">Last 30 Days</SelectItem>
+                    </SelectContent>
+                </Select>
+                 <Select disabled>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="All Interactions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Interactions</SelectItem>
+                        <SelectItem value="chat">Chat Only</SelectItem>
+                        <SelectItem value="voice">Voice Only</SelectItem>
+                    </SelectContent>
+                </Select>
+             </div>
+          </div>
         
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
               <UiTooltip>
                   <TooltipTrigger asChild>
                       <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
@@ -271,32 +321,6 @@ export function AnalyticsDashboardClient() {
                 </TooltipTrigger>
                 <UiTooltipContent><p>Total estimated cost for all voice calls.</p></UiTooltipContent>
               </UiTooltip>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
-                <CardHeader>
-                  <CardTitle>Call Volume (Last 30 Days)</CardTitle>
-                </CardHeader>
-                <CardContent className="h-64 flex items-center justify-center">
-                  {voiceChartData && voiceChartData.length > 0 ? (
-                    <ChartContainer config={voiceChartConfig} className="h-full w-full">
-                        <ResponsiveContainer>
-                            <LineChart data={voiceChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                                <Line dataKey="calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No call data available for the selected period.</p>
-                  )}
-                </CardContent>
-              </MotionCard>
-              
                <UiTooltip>
                   <TooltipTrigger asChild>
                     <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
@@ -304,7 +328,7 @@ export function AnalyticsDashboardClient() {
                             <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
                             <PieChartIcon className="h-5 w-5 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="h-64 flex items-center justify-center">
+                        <CardContent className="h-[7.5rem] flex items-center justify-center">
                             {pieChartData.length > 0 ? (
                                 <ChartContainer config={pieChartConfig} className="h-full w-full">
                                     <ResponsiveContainer>
@@ -337,32 +361,34 @@ export function AnalyticsDashboardClient() {
                   </TooltipTrigger>
                   <UiTooltipContent><p>Breakdown of interactions between voice and chat.</p></UiTooltipContent>
               </UiTooltip>
-
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
-                <CardHeader>
-                  <CardTitle>Chat Volume (Last 30 Days)</CardTitle>
-                </CardHeader>
-                <CardContent className="h-64 flex items-center justify-center">
-                  {chatChartData && chatChartData.length > 0 ? (
-                    <ChartContainer config={chatChartConfig} className="h-full w-full">
-                        <ResponsiveContainer>
-                            <LineChart data={chatChartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                                <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" hideLabel />} />
-                                <Line dataKey="sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No chat data available for the selected period.</p>
-                  )}
-                </CardContent>
-              </MotionCard>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+            <CardHeader>
+              <CardTitle>Interaction Volume (Last 30 Days)</CardTitle>
+            </CardHeader>
+            <CardContent className="h-80 flex items-center justify-center">
+              {combinedChartData && combinedChartData.length > 0 ? (
+                <ChartContainer config={combinedChartConfig} className="h-full w-full">
+                    <ResponsiveContainer>
+                        <LineChart data={combinedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" />} />
+                            <Legend />
+                            <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                             <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+              ) : (
+                <p className="text-sm text-muted-foreground">No interaction data available for the selected period.</p>
+              )}
+            </CardContent>
+          </MotionCard>
+
+          <div className="grid grid-cols-1 gap-10 mt-8">
               <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
                   <CardHeader>
                       <CardTitle>Recent Calls</CardTitle>
@@ -374,8 +400,8 @@ export function AnalyticsDashboardClient() {
                               <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
                                   <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="flex items-center gap-2">
-                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary" />}
+                                          <div className="flex items-center gap-3">
+                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
                                               <div>
                                                   <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
                                                   <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
@@ -400,6 +426,9 @@ export function AnalyticsDashboardClient() {
                                             <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
                                       </div>
+                                      <div className="mt-2 flex justify-end">
+                                        <Button variant="ghost" size="sm" disabled><ChevronsRight className="mr-2 h-4 w-4" /> View Full Transcript</Button>
+                                      </div>
                                   </AccordionContent>
                               </AccordionItem>
                           )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
@@ -421,7 +450,10 @@ export function AnalyticsDashboardClient() {
                                           <div className="text-sm text-gray-300">{formatTimestamp(session.started_at)}</div>
                                           <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
-                                              {formatDuration(session.duration)}
+                                              <span>{formatDuration(session.duration)}</span>
+                                                <span className="mx-1 text-muted-foreground/50">|</span>
+                                              <MessageSquare className="w-3 h-3" />
+                                              <span>{session.dialogue.length} msgs</span>
                                           </div>
                                       </div>
                                   </AccordionTrigger>
@@ -430,6 +462,9 @@ export function AnalyticsDashboardClient() {
                                       <ScrollArea className="h-60 p-4">
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
+                                    </div>
+                                    <div className="mt-2 flex justify-end">
+                                        <Button variant="ghost" size="sm" disabled><ChevronsRight className="mr-2 h-4 w-4" /> View Full Transcript</Button>
                                     </div>
                                   </AccordionContent>
                               </AccordionItem>
