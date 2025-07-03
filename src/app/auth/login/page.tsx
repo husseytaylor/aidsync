@@ -11,13 +11,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/logo";
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from "react";
 
 const MotionCard = motion(Card);
 
 export default function LoginPage() {
+  const [isMounted, setIsMounted] = useState(false);
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
   
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="relative min-h-screen w-full">
       <Image

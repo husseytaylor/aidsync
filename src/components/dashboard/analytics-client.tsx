@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -48,15 +48,15 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
-            <div className="w-8 h-8 rounded-full bg-secondary text-accent flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center flex-shrink-0">
               <Bot className="w-5 h-5" />
             </div>
           )}
           <div className={cn(
             'relative max-w-sm rounded-xl px-4 py-2 shadow break-words leading-relaxed text-sm md:text-base', 
             message.sender === 'user' 
-              ? 'bg-primary/40 text-foreground' 
-              : 'bg-white/10 border border-accent text-foreground/80 shadow-[0_0_4px_rgba(72,209,204,0.5)]'
+              ? 'bg-primary/20 text-foreground' 
+              : 'bg-white/10 border border-accent/70 text-foreground/80 shadow-[0_0_4px_rgba(72,209,204,0.5)]'
           )}>
             {message.text}
           </div>
@@ -114,8 +114,10 @@ const DashboardSkeleton = () => (
 
 export function AnalyticsDashboardClient() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!analytics) {
       fetchAnalytics();
     }
@@ -128,6 +130,10 @@ export function AnalyticsDashboardClient() {
   const handleExport = () => {
     alert("Export functionality coming soon!");
   };
+
+  if (!isMounted) {
+    return <DashboardSkeleton />;
+  }
 
   if (isLoading && !analytics) {
     return <DashboardSkeleton />;
@@ -274,129 +280,165 @@ export function AnalyticsDashboardClient() {
                 </Select>
              </div>
           </div>
-        
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-              <UiTooltip>
-                  <TooltipTrigger asChild>
-                      <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
-                          <CardHeader className="flex flex-row items-center justify-between pb-2">
-                              <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
-                              <Phone className="h-5 w-5 text-primary" />
-                          </CardHeader>
-                          <CardContent>
-                              <div className="text-3xl font-bold">{voice_analytics.summary.total_calls}</div>
-                              <p className="text-xs text-muted-foreground">Avg. Duration: {formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
-                          </CardContent>
-                      </MotionCard>
-                  </TooltipTrigger>
-                  <UiTooltipContent><p>Total number of voice agent calls handled.</p></UiTooltipContent>
-              </UiTooltip>
-              <UiTooltip>
-                <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
-                            <MessageSquare className="h-5 w-5 text-accent" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold">{chat_analytics.summary.total_sessions}</div>
-                            <p className="text-xs text-muted-foreground">Avg. Messages: {Math.round(chat_analytics.summary.average_message_count)}</p>
-                        </CardContent>
-                    </MotionCard>
-                </TooltipTrigger>
-                <UiTooltipContent><p>Total number of chat agent sessions handled.</p></UiTooltipContent>
-              </UiTooltip>
-              <UiTooltip>
-                <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium">Total Call Cost</CardTitle>
-                            <DollarSign className="h-5 w-5 text-primary" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold">{formatCurrency(voice_analytics.summary.total_cost)}</div>
-                            <p className="text-xs text-muted-foreground">Avg. Cost/Call: {formatCurrency(voice_analytics.summary.average_cost)}</p>
-                        </CardContent>
-                    </MotionCard>
-                </TooltipTrigger>
-                <UiTooltipContent><p>Total estimated cost for all voice calls.</p></UiTooltipContent>
-              </UiTooltip>
-               <UiTooltip>
-                  <TooltipTrigger asChild>
-                    <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
-                            <PieChartIcon className="h-5 w-5 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent className="h-[7.5rem] flex items-center justify-center">
-                            {pieChartData.length > 0 ? (
-                                <ChartContainer config={pieChartConfig} className="h-full w-full">
-                                    <ResponsiveContainer>
-                                        <PieChart>
-                                            <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
-                                            <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
-                                                {pieChartData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                                                ))}
-                                            </Pie>
-                                            <Legend content={({ payload }) => (
-                                                <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
-                                                {payload?.map((entry, index) => (
-                                                    <div key={`item-${index}`} className="flex items-center gap-1.5">
-                                                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                                    <span>{entry.value}</span>
-                                                    <span className="font-semibold text-foreground">
-                                                        {`${Math.round(((entry.payload?.value || 0) / totalInteractions) * 100)}%`}
-                                                    </span>
-                                                    </div>
-                                                ))}
-                                                </div>
-                                            )} />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            ) : (<p className="text-xs text-muted-foreground text-center pt-6">No interactions yet.</p>)}
-                        </CardContent>
-                    </MotionCard>
-                  </TooltipTrigger>
-                  <UiTooltipContent><p>Breakdown of interactions between voice and chat.</p></UiTooltipContent>
-              </UiTooltip>
+            <UiTooltip>
+              <TooltipTrigger asChild>
+                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
+                    <Phone className="h-5 w-5 text-primary" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{voice_analytics.summary.total_calls}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Duration: {formatDuration(voice_analytics.summary.average_duration_seconds)}</p>
+                  </CardContent>
+                </MotionCard>
+              </TooltipTrigger>
+              <UiTooltipContent><p>Total number of voice agent calls handled.</p></UiTooltipContent>
+            </UiTooltip>
+            <UiTooltip>
+              <TooltipTrigger asChild>
+                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
+                    <MessageSquare className="h-5 w-5 text-accent" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{chat_analytics.summary.total_sessions}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Messages: {Math.round(chat_analytics.summary.average_message_count)}</p>
+                  </CardContent>
+                </MotionCard>
+              </TooltipTrigger>
+              <UiTooltipContent><p>Total number of chat agent sessions handled.</p></UiTooltipContent>
+            </UiTooltip>
+            <UiTooltip>
+              <TooltipTrigger asChild>
+                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Total Call Cost</CardTitle>
+                    <DollarSign className="h-5 w-5 text-primary" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{formatCurrency(voice_analytics.summary.total_cost)}</div>
+                    <p className="text-xs text-muted-foreground">Avg. Cost/Call: {formatCurrency(voice_analytics.summary.average_cost)}</p>
+                  </CardContent>
+                </MotionCard>
+              </TooltipTrigger>
+              <UiTooltipContent><p>Total estimated cost for all voice calls.</p></UiTooltipContent>
+            </UiTooltip>
+            <UiTooltip>
+              <TooltipTrigger asChild>
+                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
+                    <PieChartIcon className="h-5 w-5 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent className="h-[7.5rem] flex items-center justify-center">
+                    {pieChartData.length > 0 ? (
+                      <ChartContainer config={pieChartConfig} className="h-full w-full">
+                        <ResponsiveContainer>
+                          <PieChart>
+                            <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
+                            <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
+                              {pieChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <Legend content={({ payload }) => (
+                              <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
+                                {payload?.map((entry, index) => (
+                                  <div key={`item-${index}`} className="flex items-center gap-1.5">
+                                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                    <span>{entry.value}</span>
+                                    <span className="font-semibold text-foreground">
+                                      {`${Math.round(((entry.payload?.value || 0) / totalInteractions) * 100)}%`}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    ) : (<p className="text-xs text-muted-foreground text-center pt-6">No interactions yet.</p>)}
+                  </CardContent>
+                </MotionCard>
+              </TooltipTrigger>
+              <UiTooltipContent><p>Breakdown of interactions between voice and chat.</p></UiTooltipContent>
+            </UiTooltip>
           </div>
 
-          <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
-            <CardHeader>
-              <CardTitle>Interaction Volume (Last 30 Days)</CardTitle>
-            </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
-              {combinedChartData && combinedChartData.length > 0 ? (
-                <ChartContainer config={combinedChartConfig} className="h-full w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+              <CardHeader>
+                <CardTitle>Interaction Volume (Last 30 Days)</CardTitle>
+              </CardHeader>
+              <CardContent className="h-80 flex items-center justify-center">
+                {combinedChartData && combinedChartData.length > 0 ? (
+                  <ChartContainer config={combinedChartConfig} className="h-full w-full">
                     <ResponsiveContainer>
-                        <LineChart data={combinedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
-                            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
-                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
-                            <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" />} />
-                            <Legend />
-                            <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                             <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
-                        </LineChart>
+                      <LineChart data={combinedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsla(var(--border), 0.3)" />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} className="text-xs text-slate-300" />
+                        <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
+                        <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" />} />
+                        <Legend />
+                        <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
+                        <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                      </LineChart>
                     </ResponsiveContainer>
-                </ChartContainer>
-              ) : (
-                <p className="text-sm text-muted-foreground">No interaction data available for the selected period.</p>
-              )}
-            </CardContent>
-          </MotionCard>
+                  </ChartContainer>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No interaction data available for the selected period.</p>
+                )}
+              </CardContent>
+            </MotionCard>
+            <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
+              <CardHeader>
+                  <CardTitle>Interaction Mix</CardTitle>
+              </CardHeader>
+              <CardContent className="h-80 flex items-center justify-center">
+                  {pieChartData.length > 0 ? (
+                      <ChartContainer config={pieChartConfig} className="h-full w-full">
+                          <ResponsiveContainer>
+                              <PieChart>
+                                  <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
+                                  <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
+                                      {pieChartData.map((entry, index) => (
+                                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                                      ))}
+                                  </Pie>
+                                  <Legend content={({ payload }) => (
+                                      <div className="flex justify-center items-center gap-4 text-sm mt-4 text-muted-foreground">
+                                      {payload?.map((entry, index) => (
+                                          <div key={`item-${index}`} className="flex items-center gap-1.5">
+                                          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                          <span>{entry.value}</span>
+                                          <span className="font-semibold text-foreground">
+                                              {`${Math.round(((entry.payload?.value || 0) / totalInteractions) * 100)}%`}
+                                          </span>
+                                          </div>
+                                      ))}
+                                      </div>
+                                  )} />
+                              </PieChart>
+                          </ResponsiveContainer>
+                      </ChartContainer>
+                  ) : (<p className="text-sm text-muted-foreground text-center">No interactions yet.</p>)}
+              </CardContent>
+            </MotionCard>
+          </div>
 
-          <div className="grid grid-cols-1 gap-10 mt-8">
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
+          <div className="flex flex-col gap-10 mt-8">
+              <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
                   <CardHeader>
                       <CardTitle>Recent Calls</CardTitle>
                       <CardDescription>Review transcripts from the latest calls.</CardDescription>
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-2">
-                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
+                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
                               <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
                                   <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
                                       <div className="flex justify-between items-center w-full">
@@ -421,7 +463,7 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                      <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
                                         <ScrollArea className="h-60 p-4">
                                             <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
@@ -436,14 +478,14 @@ export function AnalyticsDashboardClient() {
                   </CardContent>
               </MotionCard>
               
-              <MotionCard variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }}>
+              <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }}>
                   <CardHeader>
                       <CardTitle>Recent Chat Sessions</CardTitle>
                       <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-2">
-                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
+                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => (
                               <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
                                   <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
                                       <div className="flex justify-between items-center w-full">
@@ -458,7 +500,7 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                    <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
                                       <ScrollArea className="h-60 p-4">
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
