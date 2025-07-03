@@ -1,6 +1,5 @@
 
 import { NextResponse } from 'next/server';
-import { ANALYTICS_WEBHOOK_URL } from "@/config";
 
 async function getAnalyticsData() {
   const defaultState = {
@@ -10,55 +9,65 @@ async function getAnalyticsData() {
     chatChartData: [],
   };
 
-  const webhookUrl = ANALYTICS_WEBHOOK_URL;
-  if (!webhookUrl) {
-    console.error("[Analytics API] Agent analytics webhook URL is not configured.");
-    return defaultState;
-  }
+  const VOICE_ANALYTICS_URL = "https://bridgeboost.app.n8n.cloud/webhook/38ed3752-371e-49dc-87e6-2a15b0be206f";
+  const CHAT_ANALYTICS_URL = "https://bridgeboost.app.n8n.cloud/webhook/93ef703e-6ddb-4e23-9a49-d23637244075";
 
   try {
-    const response = await fetch(webhookUrl, { cache: 'no-store' });
+    const [voiceRes, chatRes] = await Promise.all([
+      fetch(VOICE_ANALYTICS_URL, { cache: "no-store" }),
+      fetch(CHAT_ANALYTICS_URL, { cache: "no-store" }),
+    ]);
+    
+    let voiceRaw = null;
+    if (voiceRes.ok) {
+        try {
+            const text = await voiceRes.text();
+            if (text) voiceRaw = JSON.parse(text);
+        } catch (e) {
+            console.error("[Analytics API] Failed to parse JSON from voice webhook.");
+        }
+    } else {
+        console.error(`[Analytics API] Failed to fetch voice analytics. Status: ${voiceRes.status} ${voiceRes.statusText}`);
+    }
 
-    if (!response.ok) {
-      console.error(`[Analytics API] Failed to fetch analytics from webhook. Status: ${response.status} ${response.statusText}`);
-      return defaultState;
+    let chatRaw = null;
+    if (chatRes.ok) {
+        try {
+            const text = await chatRes.text();
+            if (text) chatRaw = JSON.parse(text);
+        } catch (e) {
+            console.error("[Analytics API] Failed to parse JSON from chat webhook.");
+        }
+    } else {
+        console.error(`[Analytics API] Failed to fetch chat analytics. Status: ${chatRes.status} ${chatRes.statusText}`);
     }
     
-    const responseText = await response.text();
-    if (!responseText) {
-        return defaultState;
-    }
-
-    let rawData;
-    try {
-      rawData = JSON.parse(responseText);
-    } catch (e) {
-      console.error("[Analytics API] Failed to parse JSON from webhook. Response was:", responseText);
-      return defaultState;
-    }
+    let voice_analytics = { ...defaultState.voice_analytics, summary: { ...defaultState.voice_analytics.summary }, recent_calls: [] };
+    let chat_analytics = { ...defaultState.chat_analytics, summary: { ...defaultState.chat_analytics.summary }, recent_sessions: [] };
     
-    const externalData = Array.isArray(rawData) ? rawData : [rawData];
-    
-    let voice_analytics = { ...defaultState.voice_analytics };
-    let chat_analytics = { ...defaultState.chat_analytics };
-    
-    voice_analytics.summary = { ...defaultState.voice_analytics.summary };
-    voice_analytics.recent_calls = [];
-    chat_analytics.summary = { ...defaultState.chat_analytics.summary };
-    chat_analytics.recent_sessions = [];
-
-    externalData.forEach(item => {
+    const voiceDataItems = voiceRaw ? (Array.isArray(voiceRaw) ? voiceRaw : [voiceRaw]) : [];
+    voiceDataItems.forEach(item => {
         let itemData = item.json || item;
         if (typeof itemData === 'string') {
             try { itemData = JSON.parse(itemData); } catch (e) { 
-                console.error("[Analytics API] Failed to parse nested JSON string from item:", itemData);
+                console.error("[Analytics API] Failed to parse nested JSON string from voice item:", itemData);
                 return;
             }
         }
-
         if (itemData.voice_analytics) {
             Object.assign(voice_analytics.summary, itemData.voice_analytics.summary);
             voice_analytics.recent_calls.push(...(itemData.voice_analytics.recent_calls || []));
+        }
+    });
+
+    const chatDataItems = chatRaw ? (Array.isArray(chatRaw) ? chatRaw : [chatRaw]) : [];
+    chatDataItems.forEach(item => {
+        let itemData = item.json || item;
+        if (typeof itemData === 'string') {
+            try { itemData = JSON.parse(itemData); } catch (e) { 
+                console.error("[Analytics API] Failed to parse nested JSON string from chat item:", itemData);
+                return;
+            }
         }
         if (itemData.chat_analytics) {
             Object.assign(chat_analytics.summary, itemData.chat_analytics.summary);
@@ -96,6 +105,9 @@ async function getAnalyticsData() {
       dialogue: parseDialogue(session.dialogue),
     }));
 
+    if (!voice_analytics.summary.total_calls || voice_analytics.summary.total_calls === 0) {
+        voice_analytics.summary.total_calls = uniqueCalls.length;
+    }
     if (voice_analytics.summary && !voice_analytics.summary.total_duration_seconds && voice_analytics.recent_calls.length > 0) {
         voice_analytics.summary.total_duration_seconds = voice_analytics.recent_calls.reduce((sum, call) => sum + (call.duration || 0), 0);
     }
