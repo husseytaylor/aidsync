@@ -552,7 +552,7 @@ export function AnalyticsDashboardClient() {
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
+                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
                               <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
@@ -602,7 +602,7 @@ export function AnalyticsDashboardClient() {
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
+                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => {
                             const isExpanded = fullyExpandedChats.has(index);
                             return (
                               <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
