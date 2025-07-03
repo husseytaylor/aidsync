@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,8 +60,8 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
           <div className={cn(
             'relative max-w-sm rounded-xl px-4 py-2 shadow break-words leading-relaxed text-sm md:text-base', 
             message.sender === 'user' 
-              ? 'bg-primary/20 text-foreground' 
-              : 'bg-white/10 border border-accent/70 text-foreground/80 shadow-[0_0_4px_rgba(72,209,204,0.5)]'
+              ? 'bg-primary text-primary-foreground' 
+              : 'bg-accent/20 text-foreground'
           )}>
             {message.text}
           </div>
@@ -130,6 +130,10 @@ export function AnalyticsDashboardClient() {
     dateRange: '30d',
     interactionType: 'all',
   });
+  
+  const callItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const chatItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
 
   const downloadCSV = (content: string, fileName: string) => {
     const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
@@ -189,7 +193,6 @@ export function AnalyticsDashboardClient() {
     downloadCSV(csvContent, 'aidsync_chat_logs.csv');
   };
 
-  // Effect for initial mount and fetching data
   useEffect(() => {
     setIsMounted(true);
     const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
@@ -203,7 +206,6 @@ export function AnalyticsDashboardClient() {
     fetchAnalytics();
   }, [fetchAnalytics]);
 
-  // Effect for persisting filters to localStorage whenever they change
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
@@ -220,7 +222,7 @@ export function AnalyticsDashboardClient() {
         if (filters.dateRange === 'today') return isToday(itemDate);
         return true; // for 30d
       } catch(e) {
-        return true; // If date is invalid, don't filter it out
+        return true; 
       }
     };
 
@@ -293,6 +295,22 @@ export function AnalyticsDashboardClient() {
   const handleRefresh = useCallback(() => {
     fetchAnalytics();
   }, [fetchAnalytics]);
+  
+  const handleAccordionChange = useCallback((value: string) => {
+    if (!value) return; 
+
+    const [type, indexStr] = value.split('-');
+    const index = parseInt(indexStr, 10);
+    const refArray = type === 'session' ? chatItemRefs.current : callItemRefs.current;
+    
+    setTimeout(() => {
+        refArray[index]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+        });
+    }, 300);
+  }, []);
+
 
   if (!isMounted || (isLoading && !analytics)) {
     return <DashboardSkeleton />;
@@ -351,7 +369,7 @@ export function AnalyticsDashboardClient() {
   return (
     <TooltipProvider>
       <motion.section 
-        className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-8"
+        className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-8 py-20 space-y-8"
         initial="hidden"
         animate="visible"
         variants={sectionVariants}
@@ -375,9 +393,9 @@ export function AnalyticsDashboardClient() {
                     Refresh Data
                 </Button>
              </div>
-             <div className="flex gap-4">
+             <div className="flex flex-col sm:flex-row gap-4">
                 <Select value={filters.dateRange} onValueChange={(value) => setFilters(f => ({ ...f, dateRange: value }))}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px]">
                         <SelectValue placeholder="Date Range" />
                     </SelectTrigger>
                     <SelectContent>
@@ -387,7 +405,7 @@ export function AnalyticsDashboardClient() {
                     </SelectContent>
                 </Select>
                  <Select value={filters.interactionType} onValueChange={(value) => setFilters(f => ({ ...f, interactionType: value }))}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px]">
                         <SelectValue placeholder="Interaction Type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -521,9 +539,9 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-2">
+                      <Accordion type="single" collapsible className="w-full space-y-2" onValueChange={handleAccordionChange}>
                           {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
-                              <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                              <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30" ref={el => (callItemRefs.current[index] = el)}>
                                   <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
                                       <div className="flex justify-between items-center w-full">
                                           <div className="flex items-center gap-3">
@@ -547,8 +565,8 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
-                                        <ScrollArea className="h-60 p-4">
+                                      <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
+                                        <ScrollArea className="h-60 p-4 branded-scrollbar">
                                             <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
                                       </div>
@@ -571,11 +589,11 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-2">
+                      <Accordion type="single" collapsible className="w-full space-y-2" onValueChange={handleAccordionChange}>
                           {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
                             const isExpanded = fullyExpandedChats.has(index);
                             return (
-                              <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                              <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30" ref={el => (chatItemRefs.current[index] = el)}>
                                   <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
                                       <div className="flex justify-between items-center w-full">
                                           <div className="text-sm text-gray-200">{formatTimestamp(session.started_at)}</div>
@@ -590,7 +608,7 @@ export function AnalyticsDashboardClient() {
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
                                     <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
-                                      <ScrollArea className={cn("p-4", isExpanded ? 'h-auto' : 'h-60')}>
+                                      <ScrollArea className={cn("p-4 branded-scrollbar", isExpanded ? 'h-auto' : 'h-60')}>
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
                                     </div>
