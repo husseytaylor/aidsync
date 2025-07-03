@@ -290,6 +290,14 @@ export function AnalyticsDashboardClient() {
       }
       return newSet;
     });
+
+    // Scroll the item into view after a short delay to allow the DOM to update.
+    setTimeout(() => {
+      chatItemRefs.current[index]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 150);
   };
 
   const handleRefresh = useCallback(() => {
@@ -545,10 +553,10 @@ export function AnalyticsDashboardClient() {
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
                                           <div className="flex items-center gap-3">
-                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />}
+                                              <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
                                               <div>
-                                                  <div className="text-sm group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-muted-foreground/80 group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
+                                                  <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
+                                                  <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
                                               </div>
                                           </div>
                                           <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
@@ -596,7 +604,7 @@ export function AnalyticsDashboardClient() {
                               <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="text-sm group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
+                                          <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
                                           <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(session.duration)}</span>
