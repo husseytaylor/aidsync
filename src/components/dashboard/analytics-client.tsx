@@ -197,7 +197,7 @@ export function AnalyticsDashboardClient() {
         console.error("Failed to parse filters from localStorage", e);
       }
     }
-  }, []);
+  }, [analytics, fetchAnalytics]);
 
   useEffect(() => {
     if(isMounted) {
