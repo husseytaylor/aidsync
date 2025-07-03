@@ -79,6 +79,11 @@ ChatDialogue.displayName = 'ChatDialogue';
 const MotionCard = motion(Card);
 const MotionDiv = motion.div;
 
+const sectionVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
+
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
@@ -148,7 +153,7 @@ export function AnalyticsDashboardClient() {
     const rows = data.map(call => {
       const rowData = [
         call.from_number,
-        'incoming', // Not in data, but requested.
+        'incoming',
         call.status,
         call.duration,
         call.price || 0,
@@ -186,9 +191,6 @@ export function AnalyticsDashboardClient() {
 
   useEffect(() => {
     setIsMounted(true);
-    if (!analytics) {
-      fetchAnalytics();
-    }
     const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
     if (savedFilters) {
       try {
@@ -197,13 +199,19 @@ export function AnalyticsDashboardClient() {
         console.error("Failed to parse filters from localStorage", e);
       }
     }
-  }, [analytics, fetchAnalytics]);
+  }, []);
 
   useEffect(() => {
-    if(isMounted) {
+    if (isMounted) {
       localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
     }
   }, [filters, isMounted]);
+
+  useEffect(() => {
+    if (!analytics) {
+      fetchAnalytics();
+    }
+  }, [analytics, fetchAnalytics]);
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;
@@ -355,7 +363,7 @@ export function AnalyticsDashboardClient() {
         className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-8"
         initial="hidden"
         animate="visible"
-        variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+        variants={sectionVariants}
       >
           <MotionDiv
               variants={cardVariants}
