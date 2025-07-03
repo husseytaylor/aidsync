@@ -126,6 +126,7 @@ export function AnalyticsDashboardClient() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
   const [isMounted, setIsMounted] = useState(false);
   const [fullyExpandedChats, setFullyExpandedChats] = useState<Set<number>>(new Set());
+  const [fullyExpandedCalls, setFullyExpandedCalls] = useState<Set<number>>(new Set());
   const [filters, setFilters] = useState({
     dateRange: '30d',
     interactionType: 'all',
@@ -298,6 +299,25 @@ export function AnalyticsDashboardClient() {
 
     setTimeout(() => {
       chatItemRefs.current[index]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 150);
+  };
+  
+  const handleToggleCallExpansion = (index: number) => {
+    setFullyExpandedCalls(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+
+    setTimeout(() => {
+      callItemRefs.current[index]?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
       });
@@ -552,7 +572,9 @@ export function AnalyticsDashboardClient() {
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
+                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => {
+                            const isExpanded = fullyExpandedCalls.has(index);
+                            return (
                               <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
@@ -577,14 +599,25 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent>
-                                    <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
-                                      <ScrollArea className="h-60 p-4">
-                                          <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
-                                      </ScrollArea>
+                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
+                                        <ScrollArea className={cn("chat-scrollbar", isExpanded ? "h-auto" : "h-60")}>
+                                            <div className="p-4">
+                                              <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                            </div>
+                                        </ScrollArea>
+                                    </div>
+                                    <div className="mt-2 flex justify-end">
+                                        <Button
+                                          size="sm"
+                                          onClick={() => handleToggleCallExpansion(index)}
+                                          className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
+                                        >
+                                          {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
+                                        </Button>
                                     </div>
                                   </AccordionContent>
                               </AccordionItem>
-                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
+                          )}) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
                       </Accordion>
                   </CardContent>
               </MotionCard>}
@@ -602,7 +635,7 @@ export function AnalyticsDashboardClient() {
                   </CardHeader>
                   <CardContent>
                     <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                        {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
+                        {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => {
                           const isExpanded = fullyExpandedChats.has(index);
                           return (
                             <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
