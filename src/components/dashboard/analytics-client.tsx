@@ -49,7 +49,7 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
-    <div className="space-y-3 p-2">
+    <div className="space-y-3 p-2 bg-black/10 rounded-lg">
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
@@ -526,7 +526,7 @@ export function AnalyticsDashboardClient() {
             </MotionCard>}
           </div>
 
-          <div className="flex flex-col gap-10 mt-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 mt-8">
               {filters.interactionType !== 'chat' && <MotionCard variants={cardVariants}>
                   <CardHeader className="flex flex-row items-center justify-between">
                       <div>
@@ -545,18 +545,18 @@ export function AnalyticsDashboardClient() {
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
                                           <div className="flex items-center gap-3">
-                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
+                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />}
                                               <div>
-                                                  <div className="text-sm">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-muted-foreground/80 capitalize">{call.from_number} - {call.status}</div>
+                                                  <div className="text-sm group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
+                                                  <div className="text-xs text-muted-foreground/80 group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
                                               </div>
                                           </div>
-                                          <div className="flex items-center gap-2 text-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(call.duration)}</span>
                                               {typeof call.price !== 'undefined' && call.price > 0 && (
                                                   <>
-                                                      <span className="mx-1 text-muted-foreground/50">|</span>
+                                                      <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
                                                       <DollarSign className="w-3 h-3" />
                                                       <span>{formatCurrency(call.price)}</span>
                                                   </>
@@ -596,11 +596,11 @@ export function AnalyticsDashboardClient() {
                               <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="text-sm">{formatTimestamp(session.started_at)}</div>
-                                          <div className="flex items-center gap-2 text-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="text-sm group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(session.duration)}</span>
-                                                <span className="mx-1 text-muted-foreground/50">|</span>
+                                                <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
                                               <MessageSquare className="w-3 h-3" />
                                               <span>{session.dialogue.length} msgs</span>
                                           </div>
