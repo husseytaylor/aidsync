@@ -49,7 +49,7 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
-    <div className="space-y-3">
+    <div className="space-y-3 p-2">
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
@@ -61,7 +61,7 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
             'relative max-w-sm rounded-xl px-4 py-2 shadow break-words leading-relaxed text-sm md:text-base', 
             message.sender === 'user' 
               ? 'bg-primary text-primary-foreground' 
-              : 'bg-accent/20 text-foreground'
+              : 'bg-card text-foreground border border-accent/50 shadow-md'
           )}>
             {message.text}
           </div>
@@ -539,19 +539,19 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-2" onValueChange={handleAccordionChange}>
+                      <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
                           {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
-                              <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30" ref={el => (callItemRefs.current[index] = el)}>
-                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
+                              <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
+                                  <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
                                           <div className="flex items-center gap-3">
-                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-white flex-shrink-0" />}
+                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
                                               <div>
-                                                  <div className="text-sm text-gray-200">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-white/70 capitalize">{call.from_number} - {call.status}</div>
+                                                  <div className="text-sm">{formatTimestamp(call.started_at)}</div>
+                                                  <div className="text-xs text-muted-foreground/80 capitalize">{call.from_number} - {call.status}</div>
                                               </div>
                                           </div>
-                                          <div className="flex items-center gap-2 text-white/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="flex items-center gap-2 text-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(call.duration)}</span>
                                               {typeof call.price !== 'undefined' && call.price > 0 && (
@@ -564,12 +564,12 @@ export function AnalyticsDashboardClient() {
                                           </div>
                                       </div>
                                   </AccordionTrigger>
-                                  <AccordionContent className="p-4 pt-0">
-                                      <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
-                                        <ScrollArea className="h-60 p-4 branded-scrollbar">
-                                            <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
-                                        </ScrollArea>
-                                      </div>
+                                  <AccordionContent>
+                                    <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
+                                      <ScrollArea className="h-60 p-4">
+                                          <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                      </ScrollArea>
+                                    </div>
                                   </AccordionContent>
                               </AccordionItem>
                           )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
@@ -589,15 +589,15 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-2" onValueChange={handleAccordionChange}>
+                      <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
                           {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
                             const isExpanded = fullyExpandedChats.has(index);
                             return (
-                              <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30" ref={el => (chatItemRefs.current[index] = el)}>
-                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
+                              <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
+                                  <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="text-sm text-gray-200">{formatTimestamp(session.started_at)}</div>
-                                          <div className="flex items-center gap-2 text-white/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="text-sm">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-2 text-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(session.duration)}</span>
                                                 <span className="mx-1 text-muted-foreground/50">|</span>
@@ -606,9 +606,9 @@ export function AnalyticsDashboardClient() {
                                           </div>
                                       </div>
                                   </AccordionTrigger>
-                                  <AccordionContent className="p-4 pt-0">
+                                  <AccordionContent>
                                     <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
-                                      <ScrollArea className={cn("p-4 branded-scrollbar", isExpanded ? 'h-auto' : 'h-60')}>
+                                      <ScrollArea className={cn("chat-scrollbar", isExpanded ? 'h-auto' : 'h-60')}>
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
                                     </div>
@@ -616,7 +616,7 @@ export function AnalyticsDashboardClient() {
                                         <Button
                                           size="sm"
                                           onClick={() => handleToggleChatExpansion(index)}
-                                          className="bg-[#48D1CC] text-[#0B3D2E] hover:bg-[#3FA419] transition rounded-md px-3 py-1 font-medium"
+                                          className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
                                         >
                                           {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
                                         </Button>

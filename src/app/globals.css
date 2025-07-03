@@ -88,11 +88,4 @@
   .chat-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
-  /* New branded scrollbar */
-  .branded-scrollbar::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--primary)); /* Grass Green */
-  }
-  .branded-scrollbar::-webkit-scrollbar-track {
-    background: hsl(var(--secondary)); /* Darker green track */
-  }
 }
