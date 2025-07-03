@@ -4,9 +4,28 @@
 import { AnimatedSection } from '@/components/animated-section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Phone, MessageSquare, Mail } from 'lucide-react';
+import { Phone, MessageSquare, Mail, HelpCircle, Clock, CheckSquare } from 'lucide-react';
 import { ClientOnly } from '@/components/client-only';
 import { MotionDivider } from '@/components/motion-divider';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+const callFaqs = [
+  {
+    icon: <HelpCircle className="h-6 w-6 text-accent flex-shrink-0" />,
+    question: "What will we cover?",
+    answer: "We'll discuss your business goals, current workflows, and identify key areas where AI automation can deliver the most impact. We'll also demo relevant features of the AidSync platform."
+  },
+  {
+    icon: <Clock className="h-6 w-6 text-accent flex-shrink-0" />,
+    question: "How long is the call?",
+    answer: "Discovery calls are typically scheduled for 30 minutes. We aim to be respectful of your time while ensuring we have enough detail to propose a valuable solution."
+  },
+  {
+    icon: <CheckSquare className="h-6 w-6 text-accent flex-shrink-0" />,
+    question: "Do I need to prepare anything?",
+    answer: "No preparation is needed! Just come ready to talk about your business. If you have specific documents or processes you'd like to discuss, feel free to have them handy."
+  }
+];
 
 export default function ContactPage() {
   const handleStartChat = () => {
@@ -82,14 +101,14 @@ export default function ContactPage() {
         </div>
 
         <ClientOnly>
-          <AnimatedSection delay={400} id="calendly" className="mb-12">
+          <AnimatedSection delay={400} id="calendly" className="scroll-mt-20">
               <div className="text-center max-w-3xl mx-auto">
                   <h2 className="text-3xl sm:text-4xl font-headline font-extrabold text-foreground mb-4">
-                    Schedule a Discovery Call
+                    Book Your Free Strategy Call
                   </h2>
                    <MotionDivider />
                   <p className="text-lg text-muted-foreground mt-8">
-                    Ready to build? Book a free discovery call to explore how AidSync can streamline your workflows.
+                    Explore how AidSync can streamline your operations and unlock new growth opportunities.
                   </p>
               </div>
 
@@ -101,6 +120,27 @@ export default function ContactPage() {
                   scrolling="no"
                   ></iframe>
               </Card>
+
+              <div className="max-w-3xl mx-auto mt-16">
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                  {callFaqs.map((faq, index) => (
+                    <AccordionItem
+                      key={index}
+                      value={`item-${index}`}
+                    >
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-4 text-left">
+                          {faq.icon}
+                          <span>{faq.question}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
           </AnimatedSection>
         </ClientOnly>
     </div>

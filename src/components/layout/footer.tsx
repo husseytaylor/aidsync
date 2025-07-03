@@ -32,7 +32,10 @@ export function Footer() {
             <span className="font-bold font-headline text-lg text-primary">AidSync</span>
           </Link>
           <p className="text-sm leading-loose text-muted-foreground max-w-xs">
-            © {new Date().getFullYear()} AidSync. Intelligent Automation for Humanitarian Organizations.
+            © {new Date().getFullYear()} AidSync. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground/70 mt-2">
+            Last Updated: June 26, 2025
           </p>
         </div>
 

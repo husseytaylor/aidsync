@@ -4,14 +4,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function Hero() {
   return (
     <motion.section
       id="hero"
-      className="container pt-16 md:pt-24 lg:pt-32 scroll-mt-20 relative"
+      className="container pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-24 lg:pb-32 scroll-mt-20 relative"
       initial={{ opacity: 0, x: -40 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -61,6 +61,18 @@ export function Hero() {
           />
         </motion.div>
       </div>
+
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        animate={{ y: [0, 10, 0] }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <ArrowDown className="w-6 h-6 text-accent/80" />
+      </motion.div>
     </motion.section>
   );
 }

@@ -1,3 +1,4 @@
+
 import './globals.css';
 import type {Metadata} from 'next';
 import { Toaster } from '@/components/ui/toaster';
@@ -13,10 +14,49 @@ import AidSyncLoading from '@/components/loading-screen';
 // This import triggers the environment variable validation.
 import '@/config';
 
-export const metadata: Metadata = {
-  title: 'AidSync AI Platform',
-  description: 'Intelligent Automation for Humanitarian Organizations.',
+const siteConfig = {
+  name: "AidSync AI Platform",
+  description: "White-Labeled AI Automation for Growing Businesses. Custom-built websites, AI agents, and internal dashboards to replace manual quoting, onboarding, and support.",
+  url: "https://aidsync.ai", // Assuming production URL for metadata
+  ogImage: "/hand.png",
 };
+
+export const metadata: Metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  authors: [{ name: "AidSync", url: siteConfig.url }],
+  creator: "AidSync",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: `${siteConfig.url}${siteConfig.ogImage}`,
+        width: 1200,
+        height: 800,
+        alt: "A human and a robot hand connecting, symbolizing AI partnership.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [`${siteConfig.url}${siteConfig.ogImage}`],
+    creator: "@AidSync", // Placeholder Twitter handle
+  },
+  icons: {
+    icon: "/logo.svg",
+  },
+};
+
 
 export default async function RootLayout({
   children,
