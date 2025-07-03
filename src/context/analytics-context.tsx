@@ -14,6 +14,7 @@ interface AnalyticsData {
       average_cost: number;
     };
     recent_calls: {
+      id?: string;
       started_at: string;
       duration: number;
       transcript: string;
@@ -29,6 +30,7 @@ interface AnalyticsData {
       average_message_count: number;
     };
     recent_sessions: {
+      id?: string;
       started_at: string;
       duration: number;
       dialogue: { sender: string; text: string }[];
@@ -54,9 +56,10 @@ export const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to fetch analytics data from the API
   const fetchAnalytics = useCallback(async () => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
-      const response = await fetch('/api/analytics');
+      const response = await fetch('/api/analytics', { cache: 'no-store' });
       if (!response.ok) {
         throw new Error('Failed to fetch analytics data');
       }
@@ -68,7 +71,7 @@ export const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isLoading]);
 
   const value = { analytics, isLoading, fetchAnalytics };
 

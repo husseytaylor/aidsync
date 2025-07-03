@@ -34,14 +34,18 @@ const formatCurrency = (amount: number | null | undefined) => {
 };
 
 const formatTimestamp = (timestamp: string) => {
-  return new Date(timestamp).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+  try {
+    return new Date(timestamp).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  } catch (e) {
+    return "Invalid Date";
+  }
 };
 
 const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
@@ -81,7 +85,7 @@ const cardVariants = {
 };
 
 const DashboardSkeleton = () => (
-  <section className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 space-y-16">
+  <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-20 space-y-16">
     <motion.div
       variants={cardVariants}
       initial="hidden"
@@ -122,6 +126,64 @@ export function AnalyticsDashboardClient() {
     interactionType: 'all',
   });
 
+  const downloadCSV = (content: string, fileName: string) => {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportCalls = () => {
+    const data = filteredAnalytics?.voice_analytics?.recent_calls;
+    if (!data || data.length === 0) {
+      alert("No call data to export.");
+      return;
+    };
+    
+    const headers = "Caller,Call Type,Status,Duration (s),Cost ($),Transcript";
+    const rows = data.map(call => {
+      const rowData = [
+        call.from_number,
+        'incoming', // Not in data, but requested.
+        call.status,
+        call.duration,
+        call.price || 0,
+        `"${(call.transcript || '').replace(/"/g, '""')}"`
+      ];
+      return rowData.join(',');
+    });
+
+    const csvContent = [headers, ...rows].join('\n');
+    downloadCSV(csvContent, 'aidsync_call_logs.csv');
+  };
+
+  const handleExportChats = () => {
+    const data = filteredAnalytics?.chat_analytics?.recent_sessions;
+    if (!data || data.length === 0) {
+      alert("No chat data to export.");
+      return;
+    }
+    
+    const headers = "Session ID,Start Time,Message Count,Transcript";
+    const rows = data.map(session => {
+      const transcript = session.dialogue.map(msg => `${msg.sender}: ${msg.text}`).join('; ');
+      const rowData = [
+        session.id || 'N/A',
+        formatTimestamp(session.started_at),
+        session.dialogue.length,
+        `"${transcript.replace(/"/g, '""')}"`
+      ];
+      return rowData.join(',');
+    });
+
+    const csvContent = [headers, ...rows].join('\n');
+    downloadCSV(csvContent, 'aidsync_chat_logs.csv');
+  };
+
   useEffect(() => {
     setIsMounted(true);
     if (!analytics) {
@@ -129,9 +191,13 @@ export function AnalyticsDashboardClient() {
     }
     const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
     if (savedFilters) {
-      setFilters(JSON.parse(savedFilters));
+      try {
+        setFilters(JSON.parse(savedFilters));
+      } catch (e) {
+        console.error("Failed to parse filters from localStorage", e);
+      }
     }
-  }, [analytics, fetchAnalytics]);
+  }, []);
 
   useEffect(() => {
     if(isMounted) {
@@ -143,10 +209,14 @@ export function AnalyticsDashboardClient() {
     if (!analytics) return null;
 
     const filterByDate = (item: { started_at: string }) => {
-      const itemDate = parseISO(item.started_at);
-      if (filters.dateRange === '7d') return isThisWeek(itemDate, { weekStartsOn: 1 });
-      if (filters.dateRange === 'today') return isToday(itemDate);
-      return true; // for 30d
+      try {
+        const itemDate = parseISO(item.started_at);
+        if (filters.dateRange === '7d') return isThisWeek(itemDate, { weekStartsOn: 1 });
+        if (filters.dateRange === 'today') return isToday(itemDate);
+        return true; // for 30d
+      } catch(e) {
+        return true; // If date is invalid, don't filter it out
+      }
     };
 
     return {
@@ -160,7 +230,7 @@ export function AnalyticsDashboardClient() {
         recent_sessions: analytics.chat_analytics.recent_sessions.filter(filterByDate),
       },
     };
-  }, [analytics, filters]);
+  }, [analytics, filters.dateRange]);
 
   const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = filteredAnalytics || {
     voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0, total_cost: 0, average_cost: 0 }, recent_calls: [] },
@@ -215,6 +285,10 @@ export function AnalyticsDashboardClient() {
     });
   };
 
+  const handleRefresh = useCallback(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
+
   if (!isMounted) {
     return <DashboardSkeleton />;
   }
@@ -222,14 +296,6 @@ export function AnalyticsDashboardClient() {
   if (isLoading && !analytics) {
     return <DashboardSkeleton />;
   }
-
-  const handleRefresh = () => {
-    fetchAnalytics();
-  };
-
-  const handleExport = () => {
-    alert("Export functionality coming soon!");
-  };
   
   const isDataEmpty = !analytics || (
     voice_analytics.summary.total_calls === 0 &&
@@ -240,7 +306,7 @@ export function AnalyticsDashboardClient() {
 
   if (isDataEmpty) {
     return (
-      <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16 flex flex-col items-center justify-center min-h-[60vh]">
+      <section className="max-w-[1200px] mx-auto px-4 md:px-8 py-20 space-y-16 flex flex-col items-center justify-center min-h-[60vh]">
         <MotionDiv
           variants={cardVariants}
           initial="hidden"
@@ -286,7 +352,7 @@ export function AnalyticsDashboardClient() {
   return (
     <TooltipProvider>
       <motion.section 
-        className="max-w-[1600px] mx-auto px-6 md:px-10 py-20 space-y-8"
+        className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-8"
         initial="hidden"
         animate="visible"
         variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
@@ -308,10 +374,6 @@ export function AnalyticsDashboardClient() {
                  <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
                     <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
                     Refresh Data
-                </Button>
-                <Button onClick={handleExport} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export CSV
                 </Button>
              </div>
              <div className="flex gap-4">
@@ -449,9 +511,15 @@ export function AnalyticsDashboardClient() {
 
           <div className="flex flex-col gap-10 mt-8">
               {filters.interactionType !== 'chat' && <MotionCard variants={cardVariants}>
-                  <CardHeader>
-                      <CardTitle>Recent Calls</CardTitle>
-                      <CardDescription>Review transcripts from the latest calls.</CardDescription>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle>Recent Calls</CardTitle>
+                        <CardDescription>Review transcripts from the latest calls.</CardDescription>
+                      </div>
+                      <Button onClick={handleExportCalls} variant="outline" size="sm" className="bg-black/20 border-white/20 hover:bg-white/30">
+                          <Download className="w-4 h-4 mr-2" />
+                          Export CSV
+                      </Button>
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-2">
@@ -487,15 +555,21 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionContent>
                               </AccordionItem>
-                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
+                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
                       </Accordion>
                   </CardContent>
               </MotionCard>}
               
               {filters.interactionType !== 'voice' && <MotionCard variants={cardVariants}>
-                  <CardHeader>
-                      <CardTitle>Recent Chat Sessions</CardTitle>
-                      <CardDescription>Review dialogues from the latest sessions.</CardDescription>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle>Recent Chat Sessions</CardTitle>
+                        <CardDescription>Review dialogues from the latest sessions.</CardDescription>
+                      </div>
+                      <Button onClick={handleExportChats} variant="outline" size="sm" className="bg-black/20 border-white/20 hover:bg-white/30">
+                          <Download className="w-4 h-4 mr-2" />
+                          Export CSV
+                      </Button>
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-2">
@@ -533,7 +607,7 @@ export function AnalyticsDashboardClient() {
                                   </AccordionContent>
                               </AccordionItem>
                             )
-                          }) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
+                          }) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found for the selected period.</div>}
                       </Accordion>
                   </CardContent>
               </MotionCard>}
