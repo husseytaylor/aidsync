@@ -551,41 +551,43 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
-                              <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
-                                  <AccordionTrigger>
-                                      <div className="flex justify-between items-center w-full">
-                                          <div className="flex items-center gap-3">
-                                              <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
-                                              <div>
-                                                  <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
-                                              </div>
-                                          </div>
-                                          <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
-                                              <Clock className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
-                                              <span className="group-data-[state=open]:text-accent-foreground">{formatDuration(call.duration)}</span>
-                                              {typeof call.price !== 'undefined' && call.price > 0 && (
-                                                  <>
-                                                      <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
-                                                      <DollarSign className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
-                                                      <span className="group-data-[state=open]:text-accent-foreground">{formatCurrency(call.price)}</span>
-                                                  </>
-                                              )}
-                                          </div>
+                      <ScrollArea className="h-[600px] pr-4">
+                        <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
+                            {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
+                                <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
+                                    <AccordionTrigger>
+                                        <div className="flex justify-between items-center w-full">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
+                                                <div>
+                                                    <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
+                                                    <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                                <Clock className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                                <span className="group-data-[state=open]:text-accent-foreground">{formatDuration(call.duration)}</span>
+                                                {typeof call.price !== 'undefined' && call.price > 0 && (
+                                                    <>
+                                                        <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
+                                                        <DollarSign className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                                        <span className="group-data-[state=open]:text-accent-foreground">{formatCurrency(call.price)}</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
+                                        <ScrollArea className="h-60 p-4">
+                                            <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                        </ScrollArea>
                                       </div>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <div className="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden mt-2 p-1">
-                                      <ScrollArea className="h-60 p-4">
-                                          <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
-                                      </ScrollArea>
-                                    </div>
-                                  </AccordionContent>
-                              </AccordionItem>
-                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
-                      </Accordion>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
+                        </Accordion>
+                      </ScrollArea>
                   </CardContent>
               </MotionCard>}
               
@@ -601,8 +603,9 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
+                    <ScrollArea className="h-[600px] pr-4">
                       <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
-                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
+                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => {
                             const isExpanded = fullyExpandedChats.has(index);
                             return (
                               <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
@@ -638,6 +641,7 @@ export function AnalyticsDashboardClient() {
                             )
                           }) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found for the selected period.</div>}
                       </Accordion>
+                    </ScrollArea>
                   </CardContent>
               </MotionCard>}
           </div>
