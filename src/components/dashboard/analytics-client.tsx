@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, PieChart as PieChartIcon, CheckCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import React, { useEffect } from "react";
@@ -43,7 +43,7 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; text: string }[] }) => (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {dialogue && dialogue.length > 0 ? dialogue.map((message, index) => (
         <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' && 'justify-end')}>
           {message.sender === 'assistant' && (
@@ -51,8 +51,13 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
               <Bot className="w-5 h-5" />
             </div>
           )}
-          <div className={cn('relative max-w-sm rounded-xl px-4 py-2 text-sm font-medium shadow whitespace-pre-wrap break-words', message.sender === 'user' ? 'bg-muted text-foreground' : 'bg-accent/20 text-accent-foreground')}>
-            <p>{message.text}</p>
+          <div className={cn(
+            'relative max-w-sm rounded-xl px-4 py-2 shadow break-words leading-relaxed text-sm md:text-base', 
+            message.sender === 'user' 
+              ? 'bg-primary/20 text-foreground' 
+              : 'bg-white/10 border border-white/10 text-foreground/80'
+          )}>
+            {message.text}
           </div>
           {message.sender === 'user' && (
             <div className="w-8 h-8 rounded-full bg-muted-foreground/20 text-foreground flex items-center justify-center flex-shrink-0">
@@ -74,7 +79,7 @@ const cardVariants = {
 
 const cardHover = {
   y: -6,
-  boxShadow: '0 12px 30px rgba(63, 164, 25, 0.25)'
+  boxShadow: '0 12px 30px hsl(var(--primary) / 0.25)'
 };
 
 const DashboardSkeleton = () => (
@@ -280,36 +285,31 @@ export function AnalyticsDashboardClient() {
                         </CardHeader>
                         <CardContent className="pt-2">
                             {pieChartData.length > 0 ? (
-                                <>
-                                    <ChartContainer config={pieChartConfig} className="h-20 w-full">
-                                        <ResponsiveContainer>
-                                            <PieChart>
-                                                <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
-                                                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
-                                                    {pieChartData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                                                    ))}
-                                                </Pie>
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </ChartContainer>
-                                    {totalInteractions > 0 && (
-                                        <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
-                                            {pieChartData.map((entry) => (
-                                                <div key={entry.name} className="flex items-center gap-1.5">
-                                                    <span
-                                                        className="h-2 w-2 rounded-full"
-                                                        style={{ backgroundColor: entry.fill }}
-                                                    />
-                                                    <span>{entry.name}</span>
+                                <ChartContainer config={pieChartConfig} className="h-20 w-full">
+                                    <ResponsiveContainer>
+                                        <PieChart>
+                                            <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
+                                            <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
+                                                {pieChartData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                                ))}
+                                            </Pie>
+                                            <Legend content={({ payload }) => (
+                                                <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
+                                                {payload?.map((entry, index) => (
+                                                    <div key={`item-${index}`} className="flex items-center gap-1.5">
+                                                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                                    <span>{entry.value}</span>
                                                     <span className="font-semibold text-foreground">
-                                                        {`${Math.round((entry.value / totalInteractions) * 100)}%`}
+                                                        {`${Math.round(((entry.payload?.value || 0) / totalInteractions) * 100)}%`}
                                                     </span>
+                                                    </div>
+                                                ))}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </>
+                                            )} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </ChartContainer>
                             ) : (<p className="text-xs text-muted-foreground text-center pt-6">No interactions yet.</p>)}
                         </CardContent>
                     </MotionCard>
@@ -373,41 +373,41 @@ export function AnalyticsDashboardClient() {
                       <CardDescription>Review transcripts from the latest calls.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <ScrollArea className="h-[300px] pr-2">
-                        <Accordion type="single" collapsible className="w-full space-y-2">
-                            {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
-                                <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
-                                    <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
-                                        <div className="flex justify-between items-center w-full">
-                                            <div className="flex items-center gap-2">
-                                                {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary" />}
-                                                <div>
-                                                    <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
-                                                    <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
-                                                <Clock className="w-3 h-3" />
-                                                <span>{formatDuration(call.duration)}</span>
-                                                {typeof call.cost !== 'undefined' && call.cost > 0 && (
-                                                    <>
-                                                        <span className="mx-1 text-muted-foreground/50">|</span>
-                                                        <DollarSign className="w-3 h-3" />
-                                                        <span>{formatCurrency(call.cost)}</span>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="p-4 pt-0">
-                                        <ScrollArea className="h-48 mt-2 pr-4">
-                                            <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap p-4 rounded-md bg-white/5 backdrop-blur-lg shadow-inner leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                      <Accordion type="single" collapsible className="w-full space-y-2">
+                          {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => (
+                              <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                      <div className="flex justify-between items-center w-full">
+                                          <div className="flex items-center gap-2">
+                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary" />}
+                                              <div>
+                                                  <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
+                                                  <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
+                                              </div>
+                                          </div>
+                                          <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
+                                              <Clock className="w-3 h-3" />
+                                              <span>{formatDuration(call.duration)}</span>
+                                              {typeof call.cost !== 'undefined' && call.cost > 0 && (
+                                                  <>
+                                                      <span className="mx-1 text-muted-foreground/50">|</span>
+                                                      <DollarSign className="w-3 h-3" />
+                                                      <span>{formatCurrency(call.cost)}</span>
+                                                  </>
+                                              )}
+                                          </div>
+                                      </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="p-4 pt-0">
+                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                        <ScrollArea className="h-60 p-4">
+                                            <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
-                        </Accordion>
-                      </ScrollArea>
+                                      </div>
+                                  </AccordionContent>
+                              </AccordionItem>
+                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
+                      </Accordion>
                   </CardContent>
               </MotionCard>
               
@@ -417,28 +417,28 @@ export function AnalyticsDashboardClient() {
                       <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <ScrollArea className="h-[300px] pr-2">
-                        <Accordion type="single" collapsible className="w-full space-y-2">
-                            {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
-                                <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
-                                    <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
-                                        <div className="flex justify-between items-center w-full">
-                                            <div className="text-sm text-gray-300">{formatTimestamp(session.started_at)}</div>
-                                            <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
-                                                <Clock className="w-3 h-3" />
-                                                {formatDuration(session.duration)}
-                                            </div>
-                                        </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="p-4 pt-0">
-                                        <ScrollArea className="h-60 mt-2 pr-4">
-                                            <ChatDialogue dialogue={session.dialogue} />
-                                        </ScrollArea>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
-                        </Accordion>
-                      </ScrollArea>
+                      <Accordion type="single" collapsible className="w-full space-y-2">
+                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => (
+                              <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
+                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                      <div className="flex justify-between items-center w-full">
+                                          <div className="text-sm text-gray-300">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
+                                              <Clock className="w-3 h-3" />
+                                              {formatDuration(session.duration)}
+                                          </div>
+                                      </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="p-4 pt-0">
+                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                      <ScrollArea className="h-60 p-4">
+                                          <ChatDialogue dialogue={session.dialogue} />
+                                      </ScrollArea>
+                                    </div>
+                                  </AccordionContent>
+                              </AccordionItem>
+                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
+                      </Accordion>
                   </CardContent>
               </MotionCard>
           </div>

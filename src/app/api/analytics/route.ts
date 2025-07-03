@@ -110,9 +110,10 @@ async function getAnalyticsData() {
     voiceSummary.total_cost = totalCost;
     voiceSummary.average_cost = voiceSummary.total_calls > 0 ? totalCost / voiceSummary.total_calls : 0;
 
-    // Parse chat dialogues
+    // Parse chat dialogues and ensure duration is correct
     const recent_sessions = recent_sessions_raw.map((session: any) => ({
       ...session,
+      duration: session.duration_seconds || session.duration || 0,
       dialogue: parseDialogue(session.dialogue),
     }));
 
