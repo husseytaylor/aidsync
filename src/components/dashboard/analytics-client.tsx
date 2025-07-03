@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, PieChart as PieChartIcon, CheckCircle, Calendar, ChevronsRight } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -90,7 +90,7 @@ const cardVariants = {
 };
 
 const DashboardSkeleton = () => (
-  <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-20 space-y-16">
+  <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-16">
     <motion.div
       variants={cardVariants}
       initial="hidden"
@@ -207,11 +207,15 @@ export function AnalyticsDashboardClient() {
     }
   }, [filters, isMounted]);
 
+  // This effect handles fetching the data. It runs on initial mount and
+  // whenever the user changes a filter, ensuring the displayed data is fresh
+  // against the selected criteria, per the latest requirements.
   useEffect(() => {
-    if (!analytics) {
+    // We only fetch on the client after the component has mounted.
+    if (isMounted) {
       fetchAnalytics();
     }
-  }, [analytics, fetchAnalytics]);
+  }, [filters, fetchAnalytics, isMounted]); // Refetch when filters change.
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;

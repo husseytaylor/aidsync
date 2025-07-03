@@ -56,7 +56,7 @@ export const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to fetch analytics data from the API
   const fetchAnalytics = useCallback(async () => {
-    if (isLoading) return;
+    // isLoading guard is handled by the UI (e.g., disabling a refresh button).
     setIsLoading(true);
     try {
       const response = await fetch('/api/analytics', { cache: 'no-store' });
@@ -71,7 +71,7 @@ export const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading]);
+  }, []); // Empty dependency array makes fetchAnalytics a stable function.
 
   const value = { analytics, isLoading, fetchAnalytics };
 
