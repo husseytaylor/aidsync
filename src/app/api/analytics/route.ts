@@ -90,14 +90,20 @@ async function getAnalyticsData() {
     const { summary: voiceSummary, recent_items: rawRecentCalls } = processWebhookData(voiceRaw, 'voice_analytics');
     const { summary: chatSummary, recent_items: rawRecentSessions } = processWebhookData(chatRaw, 'chat_analytics');
 
-    // Deduplicate and sort recent items
-    const recent_calls = Array.from(new Map(rawRecentCalls.map(call => [call.id || call.started_at, call])).values())
+    // Deduplicate, extract full transcript, and sort recent items
+    const recent_calls = Array.from(new Map(rawRecentCalls.map(call => {
+      const fullCallData = { ...call, transcript: call.json?.transcript || call.transcript };
+      return [fullCallData.id || fullCallData.started_at, fullCallData];
+    })).values())
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
-      .slice(0, 10); // FIX: increased recent_calls slice to 10
+      .slice(0, 10);
       
-    const recent_sessions_raw = Array.from(new Map(rawRecentSessions.map(session => [session.id || session.started_at, session])).values())
+    const recent_sessions_raw = Array.from(new Map(rawRecentSessions.map(session => {
+      const fullSessionData = { ...session, dialogue: session.json?.dialogue || session.dialogue };
+      return [fullSessionData.id || fullSessionData.started_at, fullSessionData];
+    })).values())
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
-      .slice(0, 10); // FIX: increased recent_sessions slice to 10
+      .slice(0, 10);
 
     // Finalize summaries with calculated values
     if (!voiceSummary.total_calls || voiceSummary.total_calls === 0) {
