@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
@@ -122,6 +123,10 @@ export function InternalAssistant() {
   
   const handleClose = () => {
     setIsOpen(false);
+    // Reset state to end the session
+    setMessages([]);
+    setSessionId(null);
+    localStorage.removeItem('internal_chat_session_id');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
