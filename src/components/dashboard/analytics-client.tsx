@@ -116,29 +116,7 @@ export function AnalyticsDashboardClient() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-    if (!analytics) {
-      fetchAnalytics();
-    }
-  }, [analytics, fetchAnalytics]);
-
-  const handleRefresh = () => {
-    fetchAnalytics();
-  };
-
-  const handleExport = () => {
-    alert("Export functionality coming soon!");
-  };
-
-  if (!isMounted) {
-    return <DashboardSkeleton />;
-  }
-
-  if (isLoading && !analytics) {
-    return <DashboardSkeleton />;
-  }
-  
+  // All hooks must be called at the top level, before any conditional returns.
   const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analytics || {
     voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0, total_cost: 0, average_cost: 0 }, recent_calls: [] },
     chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
@@ -147,10 +125,11 @@ export function AnalyticsDashboardClient() {
   };
 
   const combinedChartData = useMemo(() => {
-    const allDates = Array.from(new Set([...(voiceChartData || []).map(d => d.date), ...(chatChartData || []).map(d => d.date)]));
+    // Conditional logic is now *inside* the hook.
+    if (!voiceChartData || !chatChartData) return [];
+
+    const allDates = Array.from(new Set([...voiceChartData.map(d => d.date), ...chatChartData.map(d => d.date)]));
     
-    // This sorting logic might not be perfect for "Month Day" format without a year,
-    // but for a 30-day view it should generally work. For robustness, a full date object is better.
     try {
       allDates.sort((a, b) => new Date(a + `, ${new Date().getFullYear()}`).getTime() - new Date(b + `, ${new Date().getFullYear()}`).getTime());
     } catch (e) {
@@ -168,11 +147,43 @@ export function AnalyticsDashboardClient() {
     });
   }, [voiceChartData, chatChartData]);
 
-  const combinedChartConfig = {
-    calls: { label: "Calls", color: "hsl(var(--primary))" },
-    sessions: { label: "Sessions", color: "hsl(var(--accent))" },
-  } satisfies ChartConfig;
+  const pieChartData = useMemo(() => {
+    if (!analytics) return [];
+    return [
+      { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
+      { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
+    ].filter(d => d.value > 0);
+  }, [analytics, voice_analytics.summary.total_calls, chat_analytics.summary.total_sessions]);
 
+  const totalInteractions = useMemo(() => {
+    return pieChartData.reduce((sum, item) => sum + item.value, 0);
+  }, [pieChartData]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (!analytics) {
+      fetchAnalytics();
+    }
+  }, [analytics, fetchAnalytics]);
+
+
+  // Conditional returns now happen *after* all hooks have been called.
+  if (!isMounted) {
+    return <DashboardSkeleton />;
+  }
+
+  if (isLoading && !analytics) {
+    return <DashboardSkeleton />;
+  }
+
+  const handleRefresh = () => {
+    fetchAnalytics();
+  };
+
+  const handleExport = () => {
+    alert("Export functionality coming soon!");
+  };
+  
   const isDataEmpty = !analytics || (
     voice_analytics.summary.total_calls === 0 &&
     chat_analytics.summary.total_sessions === 0 &&
@@ -215,12 +226,10 @@ export function AnalyticsDashboardClient() {
     );
   }
 
-  const pieChartData = [
-    { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
-    { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
-  ].filter(d => d.value > 0);
-  
-  const totalInteractions = pieChartData.reduce((sum, item) => sum + item.value, 0);
+  const combinedChartConfig = {
+    calls: { label: "Calls", color: "hsl(var(--primary))" },
+    sessions: { label: "Sessions", color: "hsl(var(--accent))" },
+  } satisfies ChartConfig;
 
   const pieChartConfig = {
     calls: { label: 'Voice Calls', color: 'hsl(var(--primary))' },
