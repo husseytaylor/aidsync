@@ -203,14 +203,17 @@ export function AnalyticsDashboardClient() {
         console.error("Failed to parse filters from localStorage", e);
       }
     }
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+  }, []);
 
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
     }
   }, [filters, isMounted]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const filteredAnalytics = useMemo(() => {
     if (!analytics) return null;
@@ -291,7 +294,6 @@ export function AnalyticsDashboardClient() {
       return newSet;
     });
 
-    // Scroll the item into view after a short delay to allow the DOM to update.
     setTimeout(() => {
       chatItemRefs.current[index]?.scrollIntoView({
         behavior: 'smooth',
@@ -560,13 +562,13 @@ export function AnalyticsDashboardClient() {
                                               </div>
                                           </div>
                                           <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
-                                              <Clock className="w-3 h-3" />
-                                              <span>{formatDuration(call.duration)}</span>
+                                              <Clock className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                              <span className="group-data-[state=open]:text-accent-foreground">{formatDuration(call.duration)}</span>
                                               {typeof call.price !== 'undefined' && call.price > 0 && (
                                                   <>
                                                       <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
-                                                      <DollarSign className="w-3 h-3" />
-                                                      <span>{formatCurrency(call.price)}</span>
+                                                      <DollarSign className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                                      <span className="group-data-[state=open]:text-accent-foreground">{formatCurrency(call.price)}</span>
                                                   </>
                                               )}
                                           </div>
