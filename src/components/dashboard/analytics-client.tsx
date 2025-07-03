@@ -4,7 +4,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
@@ -16,6 +15,8 @@ import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { isToday, isThisWeek, parseISO } from "date-fns";
+import { InternalAssistant } from "./internal-assistant";
+import { ScrollArea } from "../ui/scroll-area";
 
 const formatDuration = (totalSeconds: number) => {
   if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00';
@@ -571,54 +572,56 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                      <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
+                      <div className="space-y-4">
                           {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.map((call, index) => {
                             const isExpanded = fullyExpandedCalls.has(index);
                             return (
-                              <AccordionItem value={`call-${index}`} key={call.id || index} ref={el => (callItemRefs.current[index] = el)}>
-                                  <AccordionTrigger>
-                                      <div className="flex justify-between items-center w-full">
-                                          <div className="flex items-center gap-3">
-                                              <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
-                                              <div>
-                                                  <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
-                                              </div>
-                                          </div>
-                                          <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
-                                              <Clock className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
-                                              <span className="group-data-[state=open]:text-accent-foreground">{formatDuration(call.duration)}</span>
-                                              {typeof call.price !== 'undefined' && call.price > 0 && (
-                                                  <>
-                                                      <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
-                                                      <DollarSign className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
-                                                      <span className="group-data-[state=open]:text-accent-foreground">{formatCurrency(call.price)}</span>
-                                                  </>
-                                              )}
-                                          </div>
-                                      </div>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
-                                        <ScrollArea className={cn("chat-scrollbar", isExpanded ? "h-auto" : "h-60")}>
-                                            <div className="p-4">
-                                              <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                              <Accordion type="single" collapsible onValueChange={(value) => handleAccordionChange(value)} key={call.id || index}>
+                                <AccordionItem value={`call-${index}`} ref={el => (callItemRefs.current[index] = el)}>
+                                    <AccordionTrigger>
+                                        <div className="flex justify-between items-center w-full">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
+                                                <div>
+                                                    <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
+                                                    <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
+                                                </div>
                                             </div>
-                                        </ScrollArea>
-                                    </div>
-                                    <div className="mt-2 flex justify-end">
-                                        <Button
-                                          size="sm"
-                                          onClick={() => handleToggleCallExpansion(index)}
-                                          className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
-                                        >
-                                          {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
-                                        </Button>
-                                    </div>
-                                  </AccordionContent>
-                              </AccordionItem>
+                                            <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                                <Clock className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                                <span className="group-data-[state=open]:text-accent-foreground">{formatDuration(call.duration)}</span>
+                                                {typeof call.price !== 'undefined' && call.price > 0 && (
+                                                    <>
+                                                        <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
+                                                        <DollarSign className="w-3 h-3 group-data-[state=open]:text-accent-foreground" />
+                                                        <span className="group-data-[state=open]:text-accent-foreground">{formatCurrency(call.price)}</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
+                                          <ScrollArea className={cn("chat-scrollbar", isExpanded ? "h-auto" : "h-60")}>
+                                              <div className="p-4">
+                                                <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
+                                              </div>
+                                          </ScrollArea>
+                                      </div>
+                                      <div className="mt-2 flex justify-end">
+                                          <Button
+                                            size="sm"
+                                            onClick={() => handleToggleCallExpansion(index)}
+                                            className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
+                                          >
+                                            {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
+                                          </Button>
+                                      </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
                           )}) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found for the selected period.</div>}
-                      </Accordion>
+                      </div>
                   </CardContent>
               </MotionCard>}
               
@@ -634,47 +637,50 @@ export function AnalyticsDashboardClient() {
                       </Button>
                   </CardHeader>
                   <CardContent>
-                    <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
+                    <div className="w-full space-y-4">
                         {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.map((session, index) => {
                           const isExpanded = fullyExpandedChats.has(index);
                           return (
-                            <AccordionItem value={`session-${index}`} key={session.id || index} ref={el => (chatItemRefs.current[index] = el)}>
-                                <AccordionTrigger>
-                                    <div className="flex justify-between items-center w-full">
-                                        <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
-                                        <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
-                                            <Clock className="w-3 h-3" />
-                                            <span>{formatDuration(session.duration)}</span>
-                                              <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
-                                            <MessageSquare className="w-3 h-3" />
-                                            <span>{session.dialogue.length} msgs</span>
-                                        </div>
+                            <Accordion type="single" collapsible onValueChange={(value) => handleAccordionChange(value)} key={session.id || index}>
+                              <AccordionItem value={`session-${index}`} ref={el => (chatItemRefs.current[index] = el)}>
+                                  <AccordionTrigger>
+                                      <div className="flex justify-between items-center w-full">
+                                          <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
+                                              <Clock className="w-3 h-3" />
+                                              <span>{formatDuration(session.duration)}</span>
+                                                <span className="mx-1 text-muted-foreground/50 group-data-[state=open]:text-accent-foreground/50">|</span>
+                                              <MessageSquare className="w-3 h-3" />
+                                              <span>{session.dialogue.length} msgs</span>
+                                          </div>
+                                      </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
+                                      <ScrollArea className={cn("chat-scrollbar", isExpanded ? 'h-auto' : 'h-60')}>
+                                          <ChatDialogue dialogue={session.dialogue} />
+                                      </ScrollArea>
                                     </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
-                                    <ScrollArea className={cn("chat-scrollbar", isExpanded ? 'h-auto' : 'h-60')}>
-                                        <ChatDialogue dialogue={session.dialogue} />
-                                    </ScrollArea>
-                                  </div>
-                                  <div className="mt-2 flex justify-end">
-                                      <Button
-                                        size="sm"
-                                        onClick={() => handleToggleChatExpansion(index)}
-                                        className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
-                                      >
-                                        {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
-                                      </Button>
-                                  </div>
-                                </AccordionContent>
-                            </AccordionItem>
+                                    <div className="mt-2 flex justify-end">
+                                        <Button
+                                          size="sm"
+                                          onClick={() => handleToggleChatExpansion(index)}
+                                          className="bg-accent text-accent-foreground hover:bg-accent/80 transition rounded-md px-3 py-1 font-medium"
+                                        >
+                                          {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
+                                        </Button>
+                                    </div>
+                                  </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
                           )
                         }) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found for the selected period.</div>}
-                    </Accordion>
+                    </div>
                   </CardContent>
               </MotionCard>}
           </div>
       </motion.section>
+      <InternalAssistant />
     </TooltipProvider>
   );
 }
