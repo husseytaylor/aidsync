@@ -1,23 +1,13 @@
-import { createBrowserClient, type SupabaseClient } from '@supabase/ssr'
+import { createBrowserClient } from '@supabase/ssr'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/config';
 
-let client: SupabaseClient | undefined;
-
+// It's crucial to NOT use a singleton pattern here.
+// Creating a new client on every call ensures that the client-side
+// instance always has the most up-to-date session information from cookies.
+// A cached client can lead to stale session data and authentication issues.
 export function createClient() {
-  if (client) {
-    return client;
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Supabase Client] Initializing new singleton instance...');
-    console.log('[Supabase Client] URL:', SUPABASE_URL);
-    console.log('[Supabase Client] Key Loaded:', SUPABASE_ANON_KEY.slice(0, 8) + '...');
-  }
-  
-  client = createBrowserClient(
+  return createBrowserClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
-
-  return client;
 }

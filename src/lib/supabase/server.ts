@@ -5,11 +5,6 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/config';
 export function createClient() {
   const cookieStore = cookies()
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Supabase Server] Initialized with URL:', SUPABASE_URL);
-    console.log('[Supabase Server] Key Loaded:', SUPABASE_ANON_KEY.slice(0, 8) + '...');
-  }
-
   return createServerClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY,
