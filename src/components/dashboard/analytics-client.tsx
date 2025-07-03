@@ -15,6 +15,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { isToday, isThisWeek, parseISO } from "date-fns";
 
 const formatDuration = (totalSeconds: number) => {
   if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00';
@@ -72,10 +73,11 @@ const ChatDialogue = React.memo(({ dialogue }: { dialogue: { sender: string; tex
 ChatDialogue.displayName = 'ChatDialogue';
 
 const MotionCard = motion(Card);
+const MotionDiv = motion.div;
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
 const DashboardSkeleton = () => (
@@ -84,7 +86,6 @@ const DashboardSkeleton = () => (
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      transition={{ duration: 0.6, delay: 0.1 }}
       className="text-center"
     >
       <Skeleton className="h-12 w-3/4 mx-auto" />
@@ -115,9 +116,53 @@ const DashboardSkeleton = () => (
 export function AnalyticsDashboardClient() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
   const [isMounted, setIsMounted] = useState(false);
+  const [fullyExpandedChats, setFullyExpandedChats] = useState<Set<number>>(new Set());
+  const [filters, setFilters] = useState({
+    dateRange: '30d',
+    interactionType: 'all',
+  });
 
-  // All hooks must be called at the top level, before any conditional returns.
-  const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = analytics || {
+  useEffect(() => {
+    setIsMounted(true);
+    if (!analytics) {
+      fetchAnalytics();
+    }
+    const savedFilters = localStorage.getItem("aidsyncDashboardFilters");
+    if (savedFilters) {
+      setFilters(JSON.parse(savedFilters));
+    }
+  }, [analytics, fetchAnalytics]);
+
+  useEffect(() => {
+    if(isMounted) {
+      localStorage.setItem("aidsyncDashboardFilters", JSON.stringify(filters));
+    }
+  }, [filters, isMounted]);
+
+  const filteredAnalytics = useMemo(() => {
+    if (!analytics) return null;
+
+    const filterByDate = (item: { started_at: string }) => {
+      const itemDate = parseISO(item.started_at);
+      if (filters.dateRange === '7d') return isThisWeek(itemDate, { weekStartsOn: 1 });
+      if (filters.dateRange === 'today') return isToday(itemDate);
+      return true; // for 30d
+    };
+
+    return {
+      ...analytics,
+      voice_analytics: {
+        ...analytics.voice_analytics,
+        recent_calls: analytics.voice_analytics.recent_calls.filter(filterByDate),
+      },
+      chat_analytics: {
+        ...analytics.chat_analytics,
+        recent_sessions: analytics.chat_analytics.recent_sessions.filter(filterByDate),
+      },
+    };
+  }, [analytics, filters]);
+
+  const { voice_analytics, chat_analytics, voiceChartData, chatChartData } = filteredAnalytics || {
     voice_analytics: { summary: { total_calls: 0, average_duration_seconds: 0, total_duration_seconds: 0, total_cost: 0, average_cost: 0 }, recent_calls: [] },
     chat_analytics: { summary: { total_sessions: 0, average_duration_seconds: 0, average_message_count: 0 }, recent_sessions: [] },
     voiceChartData: [],
@@ -125,7 +170,6 @@ export function AnalyticsDashboardClient() {
   };
 
   const combinedChartData = useMemo(() => {
-    // Conditional logic is now *inside* the hook.
     if (!voiceChartData || !chatChartData) return [];
 
     const allDates = Array.from(new Set([...voiceChartData.map(d => d.date), ...chatChartData.map(d => d.date)]));
@@ -158,16 +202,19 @@ export function AnalyticsDashboardClient() {
   const totalInteractions = useMemo(() => {
     return pieChartData.reduce((sum, item) => sum + item.value, 0);
   }, [pieChartData]);
+  
+  const handleToggleChatExpansion = (index: number) => {
+    setFullyExpandedChats(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
 
-  useEffect(() => {
-    setIsMounted(true);
-    if (!analytics) {
-      fetchAnalytics();
-    }
-  }, [analytics, fetchAnalytics]);
-
-
-  // Conditional returns now happen *after* all hooks have been called.
   if (!isMounted) {
     return <DashboardSkeleton />;
   }
@@ -194,11 +241,10 @@ export function AnalyticsDashboardClient() {
   if (isDataEmpty) {
     return (
       <section className="max-w-[1200px] mx-auto px-6 md:px-10 py-20 space-y-16 flex flex-col items-center justify-center min-h-[60vh]">
-        <motion.div
+        <MotionDiv
           variants={cardVariants}
           initial="hidden"
           animate="visible"
-          transition={{ duration: 0.6, delay: 0.1 }}
           className="text-center"
         >
           <Card className="p-8">
@@ -221,7 +267,7 @@ export function AnalyticsDashboardClient() {
                 </Button>
             </div>
           </Card>
-        </motion.div>
+        </MotionDiv>
       </section>
     );
   }
@@ -239,12 +285,14 @@ export function AnalyticsDashboardClient() {
 
   return (
     <TooltipProvider>
-      <section className="max-w-[1600px] mx-auto px-6 md:px-10 py-20 space-y-8">
-          <motion.div
+      <motion.section 
+        className="max-w-[1600px] mx-auto px-6 md:px-10 py-20 space-y-8"
+        initial="hidden"
+        animate="visible"
+        variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+      >
+          <MotionDiv
               variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              transition={{ duration: 0.6, delay: 0.1 }}
               className="text-center mb-8"
           >
             <h1 className="font-headline text-4xl md:text-5xl font-semibold text-white tracking-tight" style={{ textShadow: "0 4px 15px rgba(0,0,0,0.2)" }}>
@@ -253,9 +301,9 @@ export function AnalyticsDashboardClient() {
             <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
               Live metrics from your customer-facing AI chat and voice agents.
             </p>
-          </motion.div>
+          </MotionDiv>
           
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <MotionDiv variants={cardVariants} className="flex flex-wrap items-center justify-between gap-4 mb-8">
              <div className="flex gap-4">
                  <Button onClick={handleRefresh} variant="outline" className="bg-black/20 border-white/20 hover:bg-white/30" disabled={isLoading}>
                     <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
@@ -267,19 +315,19 @@ export function AnalyticsDashboardClient() {
                 </Button>
              </div>
              <div className="flex gap-4">
-                <Select disabled>
+                <Select value={filters.dateRange} onValueChange={(value) => setFilters(f => ({ ...f, dateRange: value }))}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Last 30 Days" />
+                        <SelectValue placeholder="Date Range" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="today">Today</SelectItem>
-                        <SelectItem value="7d">Last 7 Days</SelectItem>
                         <SelectItem value="30d">Last 30 Days</SelectItem>
+                        <SelectItem value="7d">Last 7 Days</SelectItem>
+                        <SelectItem value="today">Today</SelectItem>
                     </SelectContent>
                 </Select>
-                 <Select disabled>
+                 <Select value={filters.interactionType} onValueChange={(value) => setFilters(f => ({ ...f, interactionType: value }))}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="All Interactions" />
+                        <SelectValue placeholder="Interaction Type" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Interactions</SelectItem>
@@ -288,12 +336,12 @@ export function AnalyticsDashboardClient() {
                     </SelectContent>
                 </Select>
              </div>
-          </div>
+          </MotionDiv>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          <MotionDiv variants={cardVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             <UiTooltip>
               <TooltipTrigger asChild>
-                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
+                <MotionCard>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
                     <Phone className="h-5 w-5 text-primary" />
@@ -308,7 +356,7 @@ export function AnalyticsDashboardClient() {
             </UiTooltip>
             <UiTooltip>
               <TooltipTrigger asChild>
-                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
+                <MotionCard>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
                     <MessageSquare className="h-5 w-5 text-accent" />
@@ -323,7 +371,7 @@ export function AnalyticsDashboardClient() {
             </UiTooltip>
             <UiTooltip>
               <TooltipTrigger asChild>
-                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+                <MotionCard>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">Total Call Cost</CardTitle>
                     <DollarSign className="h-5 w-5 text-primary" />
@@ -336,50 +384,10 @@ export function AnalyticsDashboardClient() {
               </TooltipTrigger>
               <UiTooltipContent><p>Total estimated cost for all voice calls.</p></UiTooltipContent>
             </UiTooltip>
-            <UiTooltip>
-              <TooltipTrigger asChild>
-                <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Interaction Mix</CardTitle>
-                    <PieChartIcon className="h-5 w-5 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent className="h-[7.5rem] flex items-center justify-center">
-                    {pieChartData.length > 0 ? (
-                      <ChartContainer config={pieChartConfig} className="h-full w-full">
-                        <ResponsiveContainer>
-                          <PieChart>
-                            <ChartTooltip cursor={{}} content={<ChartTooltipContent hideLabel />} />
-                            <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%" strokeWidth={2}>
-                              {pieChartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                              ))}
-                            </Pie>
-                            <Legend content={({ payload }) => (
-                              <div className="flex justify-center items-center gap-4 text-xs mt-2 text-muted-foreground">
-                                {payload?.map((entry, index) => (
-                                  <div key={`item-${index}`} className="flex items-center gap-1.5">
-                                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                    <span>{entry.value}</span>
-                                    <span className="font-semibold text-foreground">
-                                      {`${Math.round(((entry.payload?.value || 0) / totalInteractions) * 100)}%`}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            )} />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </ChartContainer>
-                    ) : (<p className="text-xs text-muted-foreground text-center pt-6">No interactions yet.</p>)}
-                  </CardContent>
-                </MotionCard>
-              </TooltipTrigger>
-              <UiTooltipContent><p>Breakdown of interactions between voice and chat.</p></UiTooltipContent>
-            </UiTooltip>
-          </div>
+          </MotionDiv>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <MotionCard variants={cardVariants} className={cn("lg:col-span-2", filters.interactionType !== 'all' && 'lg:col-span-3')}>
               <CardHeader>
                 <CardTitle>Interaction Volume (Last 30 Days)</CardTitle>
               </CardHeader>
@@ -393,8 +401,8 @@ export function AnalyticsDashboardClient() {
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} allowDecimals={false} className="text-xs text-slate-300" />
                         <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" />} />
                         <Legend />
-                        <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />
-                        <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />
+                        {filters.interactionType !== 'chat' && <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />}
+                        {filters.interactionType !== 'voice' && <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />}
                       </LineChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -403,7 +411,7 @@ export function AnalyticsDashboardClient() {
                 )}
               </CardContent>
             </MotionCard>
-            <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
+            {filters.interactionType === 'all' && <MotionCard variants={cardVariants}>
               <CardHeader>
                   <CardTitle>Interaction Mix</CardTitle>
               </CardHeader>
@@ -436,11 +444,11 @@ export function AnalyticsDashboardClient() {
                       </ChartContainer>
                   ) : (<p className="text-sm text-muted-foreground text-center">No interactions yet.</p>)}
               </CardContent>
-            </MotionCard>
+            </MotionCard>}
           </div>
 
           <div className="flex flex-col gap-10 mt-8">
-              <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.6 }}>
+              {filters.interactionType !== 'chat' && <MotionCard variants={cardVariants}>
                   <CardHeader>
                       <CardTitle>Recent Calls</CardTitle>
                       <CardDescription>Review transcripts from the latest calls.</CardDescription>
@@ -449,16 +457,16 @@ export function AnalyticsDashboardClient() {
                       <Accordion type="single" collapsible className="w-full space-y-2">
                           {voice_analytics.recent_calls.length > 0 ? voice_analytics.recent_calls.slice(0, 10).map((call, index) => (
                               <AccordionItem value={`call-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
-                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
                                       <div className="flex justify-between items-center w-full">
                                           <div className="flex items-center gap-3">
-                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
+                                              {call.status === 'completed' && <CheckCircle className="w-4 h-4 text-white flex-shrink-0" />}
                                               <div>
-                                                  <div className="text-sm text-gray-300">{formatTimestamp(call.started_at)}</div>
-                                                  <div className="text-xs text-muted-foreground capitalize">{call.from_number} - {call.status}</div>
+                                                  <div className="text-sm text-gray-200">{formatTimestamp(call.started_at)}</div>
+                                                  <div className="text-xs text-white/70 capitalize">{call.from_number} - {call.status}</div>
                                               </div>
                                           </div>
-                                          <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="flex items-center gap-2 text-white/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(call.duration)}</span>
                                               {typeof call.price !== 'undefined' && call.price > 0 && (
@@ -472,34 +480,33 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
+                                      <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
                                         <ScrollArea className="h-60 p-4">
                                             <pre className="text-sm text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">{call.transcript || "No transcript available."}</pre>
                                         </ScrollArea>
-                                      </div>
-                                      <div className="mt-2 flex justify-end">
-                                        <Button variant="ghost" size="sm" disabled><ChevronsRight className="mr-2 h-4 w-4" /> View Full Transcript</Button>
                                       </div>
                                   </AccordionContent>
                               </AccordionItem>
                           )) : <div className="p-6 text-center text-sm text-gray-300">No recent calls found.</div>}
                       </Accordion>
                   </CardContent>
-              </MotionCard>
+              </MotionCard>}
               
-              <MotionCard variants={cardVariants} initial="hidden" animate="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.7 }}>
+              {filters.interactionType !== 'voice' && <MotionCard variants={cardVariants}>
                   <CardHeader>
                       <CardTitle>Recent Chat Sessions</CardTitle>
                       <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                   </CardHeader>
                   <CardContent>
                       <Accordion type="single" collapsible className="w-full space-y-2">
-                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => (
+                          {chat_analytics.recent_sessions.length > 0 ? chat_analytics.recent_sessions.slice(0, 10).map((session, index) => {
+                            const isExpanded = fullyExpandedChats.has(index);
+                            return (
                               <AccordionItem value={`session-${index}`} key={index} className="bg-black/20 border-white/10 rounded-lg data-[state=closed]:bg-transparent data-[state=open]:bg-black/30">
-                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left">
+                                  <AccordionTrigger className="p-3 text-sm hover:no-underline hover:bg-white/5 rounded-lg w-full text-left bg-[#3FA419] text-white hover:bg-[#318A17] transition">
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="text-sm text-gray-300">{formatTimestamp(session.started_at)}</div>
-                                          <div className="flex items-center gap-2 text-muted-foreground text-xs bg-black/20 px-2 py-1 rounded-full">
+                                          <div className="text-sm text-gray-200">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-2 text-white/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(session.duration)}</span>
                                                 <span className="mx-1 text-muted-foreground/50">|</span>
@@ -509,22 +516,31 @@ export function AnalyticsDashboardClient() {
                                       </div>
                                   </AccordionTrigger>
                                   <AccordionContent className="p-4 pt-0">
-                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden">
-                                      <ScrollArea className="h-60 p-4">
+                                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-md border border-white/10 overflow-hidden mt-2">
+                                      <ScrollArea className={cn("p-4", isExpanded ? 'h-auto' : 'h-60')}>
                                           <ChatDialogue dialogue={session.dialogue} />
                                       </ScrollArea>
                                     </div>
                                     <div className="mt-2 flex justify-end">
-                                        <Button variant="ghost" size="sm" disabled><ChevronsRight className="mr-2 h-4 w-4" /> View Full Transcript</Button>
+                                        <Button
+                                          size="sm"
+                                          onClick={() => handleToggleChatExpansion(index)}
+                                          className="bg-[#48D1CC] text-[#0B3D2E] hover:bg-[#3FA419] transition rounded-md px-3 py-1 font-medium"
+                                        >
+                                          {isExpanded ? 'Collapse Transcript' : 'View Full Transcript'}
+                                        </Button>
                                     </div>
                                   </AccordionContent>
                               </AccordionItem>
-                          )) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
+                            )
+                          }) : <div className="p-6 text-center text-sm text-gray-300">No recent sessions found.</div>}
                       </Accordion>
                   </CardContent>
-              </MotionCard>
+              </MotionCard>}
           </div>
-      </section>
+      </motion.section>
     </TooltipProvider>
   );
 }
+
+    
