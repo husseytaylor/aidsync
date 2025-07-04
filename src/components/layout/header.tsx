@@ -154,34 +154,41 @@ export function Header({ user }: { user: User | null }) {
         <div className="flex flex-1 items-center justify-end">
           <div className="hidden md:flex items-center space-x-2">
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
-                    <Avatar>
-                        <AvatarImage src={user.user_metadata?.avatar_url} />
-                        <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
-                    </Avatar>
-                    <span className="sr-only">Toggle user menu</span>
+              isDashboard ? (
+                <form action={logout}>
+                  <Button size="sm" className="rounded-full font-bold">
+                    <LogOut />
+                    <span>Logout</span>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {!isDashboard && (
+                </form>
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
+                      <Avatar>
+                          <AvatarImage src={user.user_metadata?.avatar_url} />
+                          <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+                      </Avatar>
+                      <span className="sr-only">Toggle user menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard/analytics"><LayoutDashboard />Dashboard</Link>
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem disabled>Settings</DropdownMenuItem>
-                  <DropdownMenuItem disabled>Support</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <form action={logout}>
-                    <DropdownMenuItem asChild>
-                        <button type="submit" className="w-full text-left"><LogOut />Logout</button>
-                    </DropdownMenuItem>
-                  </form>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+                    <DropdownMenuItem disabled>Support</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <form action={logout}>
+                      <DropdownMenuItem asChild>
+                          <button type="submit" className="w-full text-left"><LogOut />Logout</button>
+                      </DropdownMenuItem>
+                    </form>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
             ) : (
               <>
                 <Button asChild size="sm" className="rounded-full font-bold">
@@ -222,16 +229,23 @@ export function Header({ user }: { user: User | null }) {
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
                    {user ? (
-                      <>
-                        {!isDashboard && 
+                      isDashboard ? (
+                        <form action={logout} className="w-full">
+                           <Button className="w-full justify-center">
+                              <LogOut />
+                              <span>Logout</span>
+                           </Button>
+                        </form>
+                      ) : (
+                        <>
                           <Button asChild className="w-full justify-center">
                             <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
                           </Button>
-                        }
-                        <form action={logout} className="w-full">
-                           <Button className="w-full justify-center" variant="outline">Logout</Button>
-                        </form>
-                      </>
+                          <form action={logout} className="w-full">
+                            <Button className="w-full justify-center" variant="outline">Logout</Button>
+                          </form>
+                        </>
+                      )
                     ) : (
                       <>
                         <Button asChild className="w-full justify-center">
