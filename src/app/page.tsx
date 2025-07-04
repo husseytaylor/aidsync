@@ -7,7 +7,13 @@ import { ClientOnly } from "@/components/client-only";
 import { LandingDynamic } from "@/components/landing/landing-dynamic";
 import { ScrollHandler } from "@/components/scroll-handler";
 
-export default function Home() {
+export default function Home({
+  params,
+  searchParams,
+}: {
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <>
       <ScrollHandler />

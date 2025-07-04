@@ -27,7 +27,13 @@ const callFaqs = [
   }
 ];
 
-export default function ContactPage() {
+export default function ContactPage({
+  params,
+  searchParams,
+}: {
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const handleStartChat = () => {
     // This check is necessary because this could be rendered on the server
     if (typeof window !== 'undefined') {
