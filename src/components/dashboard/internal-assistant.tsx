@@ -94,15 +94,21 @@ export function InternalAssistant() {
     const viewport = scrollAreaRef.current;
     if (!viewport) return;
 
+    let ticking = false;
     const handleUserScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = viewport;
-        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
-        setScrollLocked(isAtBottom);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const { scrollTop, scrollHeight, clientHeight } = viewport;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+          setScrollLocked(isAtBottom);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-
     viewport.addEventListener('scroll', handleUserScroll);
     return () => {
-        viewport.removeEventListener('scroll', handleUserScroll);
+      viewport.removeEventListener('scroll', handleUserScroll);
     };
   }, [isOpen]);
 

@@ -8,12 +8,13 @@ import { Input } from '@/components/ui/input';
 import { CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
+import React from 'react';
 import { Logo } from '../logo';
 import { motion } from 'framer-motion';
 
 interface Message {
   sender: 'user' | 'bot';
-  text: string;
+  text: string | React.ReactNode;
   timestamp: Date;
 }
 
@@ -42,6 +43,14 @@ export function ChatAssistant() {
   const [isWiggling, setIsWiggling] = useState(false);
   const messagesRef = useRef(messages);
   const [scrollLocked, setScrollLocked] = useState(true);
+
+  // Memoize ChatMessage to avoid unnecessary re-renders
+  const MemoChatMessage = React.useMemo(() => React.memo(ChatMessage), []);
+
+  // Stable input change handler
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  }, []);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -143,15 +152,21 @@ export function ChatAssistant() {
     const viewport = scrollAreaRef.current;
     if (!viewport) return;
 
+    let ticking = false;
     const handleUserScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = viewport;
-        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
-        setScrollLocked(isAtBottom);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const { scrollTop, scrollHeight, clientHeight } = viewport;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+          setScrollLocked(isAtBottom);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-
     viewport.addEventListener('scroll', handleUserScroll);
     return () => {
-        viewport.removeEventListener('scroll', handleUserScroll);
+      viewport.removeEventListener('scroll', handleUserScroll);
     };
   }, [isOpen]);
 
@@ -269,11 +284,13 @@ export function ChatAssistant() {
              <div
                 ref={scrollAreaRef}
                 className="flex-1 overflow-y-auto p-3 space-y-4 chat-scrollbar"
+                aria-live="polite"
+                aria-atomic="false"
               >
               {messages.map((msg, index) => (
-                <ChatMessage key={index} sender={msg.sender} text={msg.text} />
+                <MemoChatMessage key={index} sender={msg.sender} text={msg.text} />
               ))}
-              {isPending && <ChatMessage sender="bot" text={<TypingIndicator />} />}
+              {isPending && <MemoChatMessage sender="bot" text={<TypingIndicator />} />}
             </div>
           </CardContent>
           
@@ -281,11 +298,12 @@ export function ChatAssistant() {
             <form onSubmit={handleSubmit} className="relative flex w-full items-center">
               <Input
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={handleInputChange}
                 placeholder="Ask a question..."
                 disabled={isPending}
                 autoFocus
                 className="pr-12 rounded-full"
+                aria-label="Chat input"
               />
               <Button 
                 type="submit" 

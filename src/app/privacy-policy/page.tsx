@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
                 <p className="text-center text-sm">Effective Date: June 6, 2025</p>
 
                 <p>
-                  AidSync ("we," "our," or "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you visit our website.
+                  AidSync (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you visit our website.
                 </p>
 
                 <h2>1. Information We Collect</h2>

@@ -80,11 +80,20 @@ export function Header({ user }: { user: User | null }) {
       setActiveLink(currentSectionId);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    let ticking = false;
+    const debouncedHandleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', debouncedHandleScroll, { passive: true });
     handleScroll();
-
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', debouncedHandleScroll);
     };
   }, [isMounted, isLandingPage]);
   

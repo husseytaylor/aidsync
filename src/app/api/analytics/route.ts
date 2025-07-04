@@ -101,7 +101,7 @@ async function getAnalyticsData() {
       from_number?: string;
       price?: number | string;
       json?: { transcript?: string };
-      [key: string]: any;
+      [key: string]: unknown;
     }
     interface Session {
       id?: string;
@@ -110,7 +110,7 @@ async function getAnalyticsData() {
       duration_seconds?: number;
       dialogue?: string;
       json?: { dialogue?: string };
-      [key: string]: any;
+      [key: string]: unknown;
     }
 
     // Deduplicate, extract full transcript, and sort recent items
@@ -167,10 +167,10 @@ async function getAnalyticsData() {
     }
 
     // Parse chat dialogues and ensure duration is correct
-    const recent_sessions = recent_sessions_raw.map((session: any) => ({
+    const recent_sessions = recent_sessions_raw.map((session) => ({
       ...session,
-      duration: session.duration_seconds || session.duration || 0,
-      dialogue: parseDialogue(session.dialogue),
+      duration: (session as Session).duration_seconds || (session as Session).duration || 0,
+      dialogue: parseDialogue((session as Session).dialogue),
     }));
 
     return {
@@ -190,7 +190,7 @@ async function getAnalyticsData() {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
         const data = await getAnalyticsData();
         return NextResponse.json(data);

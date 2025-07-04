@@ -44,7 +44,7 @@ export default function ContactPage() {
                 </h1>
                 <MotionDivider />
                 <p className="max-w-xl mx-auto text-lg text-muted-foreground mt-8 mb-12">
-                    Choose the most convenient way to reach us. We're here to help.
+                    Choose the most convenient way to reach us. We&apos;re here to help.
                 </p>
             </div>
         </AnimatedSection>
@@ -114,11 +114,14 @@ export default function ContactPage() {
 
               <Card className="max-w-4xl mx-auto mt-12 p-2 sm:p-4">
                   <iframe
-                  src="https://calendly.com/cthussey2/new-meeting?primary_color=48D1CC"
-                  className="w-full h-[800px] rounded-2xl border-none bg-transparent"
-                  frameBorder="0"
-                  scrolling="no"
-                  title="Calendly scheduling form"
+                    src="https://calendly.com/cthussey2/new-meeting?primary_color=48D1CC"
+                    className="w-full h-[800px] rounded-2xl border-none bg-transparent"
+                    frameBorder="0"
+                    scrolling="no"
+                    title="Calendly scheduling form"
+                    width="100%"
+                    height="800"
+                    style={{ aspectRatio: '1/1', minHeight: 400 }}
                   ></iframe>
               </Card>
 

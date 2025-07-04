@@ -21,7 +21,7 @@ export function CalendlyEmbed() {
         height="700"
         frameBorder="0"
         title="Schedule a Discovery Call"
-        style={{ border: 0 }}
+        style={{ border: 0, aspectRatio: '1/1', minHeight: 400 }}
       ></iframe>
     </div>
   );

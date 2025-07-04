@@ -8,8 +8,7 @@ const Link = dynamic(() => import('next/link'), { ssr: false });
 const Image = dynamic(() => import('next/image'), { ssr: false });
 const Button = dynamic(() => import('@/components/ui/button').then(mod => mod.Button), { ssr: false });
 
-const ArrowRight = dynamic(() => import('lucide-react').then(mod => mod.ArrowRight), { ssr: false });
-const ArrowDown = dynamic(() => import('lucide-react').then(mod => mod.ArrowDown), { ssr: false });
+import { ArrowRight, ArrowDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function Hero() {
