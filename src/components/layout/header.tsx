@@ -43,17 +43,8 @@ export function Header({ user }: { user: User | null }) {
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) {
-      return;
-    }
-
     const handleScroll = () => {
       const offset = window.scrollY;
       setIsScrolled(offset > 50);
@@ -87,7 +78,7 @@ export function Header({ user }: { user: User | null }) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isMounted, isLandingPage]);
+  }, [isLandingPage]);
   
   const getInitials = (email?: string | null) => {
     return email?.substring(0, 2).toUpperCase() || "AD";
@@ -140,7 +131,7 @@ export function Header({ user }: { user: User | null }) {
       id="site-header"
       className={cn(
         "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
-        isMounted && (isScrolled || isDashboard)
+        (isScrolled || isDashboard)
           ? 'bg-black/30 backdrop-blur-lg border-b border-white/10 shadow-md'
           : 'bg-transparent border-transparent'
       )}
@@ -215,7 +206,7 @@ export function Header({ user }: { user: User | null }) {
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn((isMounted && isScrolled) || isDashboard ? 'text-foreground' : 'text-white')} aria-label="Open navigation menu">
+                <Button variant="ghost" size="icon" className={cn((isScrolled || isDashboard) ? 'text-foreground' : 'text-white')} aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
