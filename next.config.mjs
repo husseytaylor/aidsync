@@ -1,8 +1,4 @@
-// Enable bundle analyzer for performance insights
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
 
-const nextConfig = require('./src/next.config');
-
-module.exports = withBundleAnalyzer(nextConfig);
+// Enable bundle analyzer for performance insights (ESM)
+import nextConfig from './src/next.config.ts';
+export default nextConfig;

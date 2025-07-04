@@ -1,5 +1,8 @@
 
 import './globals.css';
+import { Inter, Poppins } from 'next/font/google';
+const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '700'], display: 'swap', variable: '--font-body' });
+const poppins = Poppins({ subsets: ['latin'], weight: ['400', '600', '700', '800'], display: 'swap', variable: '--font-headline' });
 import type {Metadata} from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import { ChatAssistant } from '@/components/chat/chat-assistant';
@@ -67,12 +70,9 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+        <meta name="description" content="White-Labeled AI Automation for Growing Businesses. Custom-built websites, AI agents, and dashboards to replace manual quoting, onboarding, and support." />
         <script
           type="text/javascript"
           src="https://assets.calendly.com/assets/external/widget.js"
@@ -81,7 +81,7 @@ export default async function RootLayout({
       </head>
       <body className="font-body antialiased text-foreground">
         {/* Background Layers: These are fixed to the viewport and sit behind all other content. */}
-        <div className="fixed inset-0 -z-10 bg-[url('/green-flow-texture.png')] bg-cover bg-center bg-no-repeat" />
+        <div className="fixed inset-0 -z-10 bg-[url('/green-flow-texture.webp')] bg-cover bg-center bg-no-repeat" />
         <div className="fixed inset-0 -z-10 bg-[#0B3D2E]/40" />
 
         {/* Content Wrapper: This establishes a new stacking context so content appears above the background. */}

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
@@ -139,7 +138,6 @@ export function InternalAssistant() {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsPending(true);
-    
     try {
       const response = await fetch(RESPONSE_WEBHOOK_URL, {
           method: 'POST',
@@ -167,10 +165,13 @@ export function InternalAssistant() {
         throw new Error('AI assistant returned an empty or invalid response.');
       }
 
-    } catch (error: any)
-    {
-      console.error('[Internal Widget] AI chat error:', error.message);
-      const errorMessage: Message = { sender: 'bot', text: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('[Internal Widget] AI chat error:', error.message);
+      } else {
+        console.error('[Internal Widget] Unknown AI chat error:', error);
+      }
+      const errorMessage: Message = { sender: 'bot', text: "I'm having trouble connecting right now. Please try again later.", timestamp: new Date() };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsPending(false);
@@ -195,7 +196,6 @@ export function InternalAssistant() {
           <span>Internal Assistant</span>
         </motion.button>
       </div>
-
       <motion.div
         className="fixed bottom-6 right-6 z-[60] w-[calc(100vw-3rem)] max-w-sm"
         initial={{ opacity: 0, y: 20, scale: 0.95 }}

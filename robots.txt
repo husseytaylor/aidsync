@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block admin and preview endpoints
+Disallow: /admin/
+Disallow: /api/preview/
+
+Sitemap: https://aidsync.ai/sitemap.xml

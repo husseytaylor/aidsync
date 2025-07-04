@@ -54,8 +54,12 @@ export async function POST(request: Request) {
     // 6. Return the formatted response to the client
     return NextResponse.json({ response: botReply });
 
-  } catch (error: any) {
-    console.error('[API /chat] An unexpected error occurred:', error.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('[API /chat] An unexpected error occurred:', error.message);
+    } else {
+      console.error('[API /chat] Unknown error occurred:', error);
+    }
     return NextResponse.json(
       { response: 'An internal error occurred. Please try again later.' },
       { status: 500 }
