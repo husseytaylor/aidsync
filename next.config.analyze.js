@@ -1,10 +1,1 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-  openAnalyzer: false,
-  analyzerMode: 'static',
-  reportFilename: './analyze/client.html',
-});
-
-module.exports = withBundleAnalyzer({
-  // ...existing next.js config
-});
+// This file is not used and has been cleared to avoid configuration conflicts.

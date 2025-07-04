@@ -7,7 +7,13 @@ import { FounderCard } from '@/components/founder-card';
 import { ClientOnly } from '@/components/client-only';
 import { MotionDivider } from '@/components/motion-divider';
 
-export default function AboutPage() {
+export default function AboutPage({
+  params,
+  searchParams,
+}: {
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div className="container py-24 sm:py-32">
       <AnimatedSection>

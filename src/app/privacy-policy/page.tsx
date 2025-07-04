@@ -6,7 +6,13 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-export default function PrivacyPolicyPage() {
+export default function PrivacyPolicyPage({
+  params,
+  searchParams,
+}: {
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div className="container py-24 sm:py-32">
       <ClientOnly>

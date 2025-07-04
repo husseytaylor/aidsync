@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import type { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
@@ -36,6 +36,7 @@ const dashboardNavLinks = [
 
 export function Header({ user }: { user: User | null }) {
   const pathname = usePathname();
+  const router = useRouter();
   const isLandingPage = pathname === '/';
   const isDashboard = pathname.startsWith('/dashboard');
   
@@ -49,10 +50,6 @@ export function Header({ user }: { user: User | null }) {
   }, []);
 
   useEffect(() => {
-    if (!isMounted) {
-      return;
-    }
-
     const handleScroll = () => {
       const offset = window.scrollY;
       setIsScrolled(offset > 50);
@@ -95,7 +92,7 @@ export function Header({ user }: { user: User | null }) {
     return () => {
       window.removeEventListener('scroll', debouncedHandleScroll);
     };
-  }, [isMounted, isLandingPage]);
+  }, [isLandingPage]);
   
   const getInitials = (email?: string | null) => {
     return email?.substring(0, 2).toUpperCase() || "AD";
@@ -103,25 +100,26 @@ export function Header({ user }: { user: User | null }) {
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
-    
-    // FIX: To prevent hydration errors, we generate a consistent href on both server and client.
-    // Anchor links are always prefixed with `/` so they work from any page.
-    // The click handler will manage smooth scrolling on the landing page.
     const finalHref = isAnchor ? `/${link.href}` : link.href;
     
     const clickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (isMobile) {
             setIsSheetOpen(false);
         }
-        // Use `isLandingPage` (which is reliable here in an event handler) to decide on smooth scroll.
-        if (isAnchor && isLandingPage) {
+        
+        if (isAnchor) {
             e.preventDefault();
             const targetId = link.href.substring(1);
-            const targetElement = document.getElementById(targetId);
-            if(targetElement) {
-                const yOffset = -70;
-                const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({top: y, behavior: 'smooth'});
+
+            if (isLandingPage) {
+                const targetElement = document.getElementById(targetId);
+                if(targetElement) {
+                    const yOffset = -70;
+                    const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
+            } else {
+                router.push(`/?scrollTo=${targetId}`);
             }
         }
     };
@@ -142,12 +140,130 @@ export function Header({ user }: { user: User | null }) {
 
   const navLinksToRender = isDashboard ? dashboardNavLinks : publicNavLinks;
 
+  const renderAuthControls = () => {
+    if (!isMounted) {
+      return null; // Render nothing on the server and initial client render to prevent hydration mismatch
+    }
+
+    if (user) {
+      if (isDashboard) {
+        return (
+          <form action={logout}>
+            <Button size="sm" className="rounded-full font-bold">
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </form>
+        );
+      }
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
+              <Avatar>
+                  <AvatarImage src={user.user_metadata?.avatar_url} />
+                  <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+              </Avatar>
+              <span className="sr-only">Toggle user menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/analytics"><LayoutDashboard />Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+            <DropdownMenuItem disabled>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <form action={logout}>
+              <DropdownMenuItem asChild>
+                  <button type="submit" className="w-full text-left"><LogOut />Logout</button>
+              </DropdownMenuItem>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    } else {
+      return (
+        <>
+          <Button asChild size="sm" className="rounded-full font-bold">
+            <Link href="tel:6624986621">
+              <Phone />
+              <span>Call Agent</span>
+            </Link>
+          </Button>
+          <Button asChild size="sm" className="rounded-full font-bold">
+              <Link href="/contact#calendly">
+                  <Calendar />
+                  <span>Discovery Call</span>
+              </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline" className="rounded-full font-bold">
+            <Link href="/auth/login">Log In</Link>
+          </Button>
+        </>
+      );
+    }
+  };
+
+  const renderMobileAuthControls = () => {
+    if (!isMounted) {
+      return null;
+    }
+
+    if (user) {
+      if (isDashboard) {
+        return (
+          <form action={logout} className="w-full">
+            <Button className="w-full justify-center">
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </form>
+        );
+      }
+      return (
+        <>
+          <Button asChild className="w-full justify-center">
+            <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
+          </Button>
+          <form action={logout} className="w-full">
+            <Button className="w-full justify-center" variant="outline">Logout</Button>
+          </form>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button asChild className="w-full justify-center">
+            <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
+                <Phone />
+                <span>Call Voice Agent</span>
+            </Link>
+          </Button>
+            <Button asChild className="w-full justify-center">
+              <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
+                  <Calendar />
+                  <span>Discovery Call</span>
+              </Link>
+          </Button>
+          <Button asChild className="w-full justify-center" variant="outline">
+            <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
+              Log In
+            </Link>
+          </Button>
+        </>
+      );
+    }
+  };
+
   return (
     <motion.header 
       id="site-header"
       className={cn(
         "fixed top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
-        isMounted && (isScrolled || isDashboard)
+        (isScrolled || isDashboard)
           ? 'bg-black/30 backdrop-blur-lg border-b border-white/10 shadow-md'
           : 'bg-transparent border-transparent'
       )}
@@ -169,60 +285,13 @@ export function Header({ user }: { user: User | null }) {
         
         <div className="flex flex-1 items-center justify-end">
           <div className="hidden md:flex items-center space-x-2">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
-                    <Avatar>
-                        <AvatarImage src={user.user_metadata?.avatar_url} />
-                        <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
-                    </Avatar>
-                    <span className="sr-only">Toggle user menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {!isDashboard && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/analytics"><LayoutDashboard />Dashboard</Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem disabled>Settings</DropdownMenuItem>
-                  <DropdownMenuItem disabled>Support</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <form action={logout}>
-                    <DropdownMenuItem asChild>
-                        <button type="submit" className="w-full text-left"><LogOut />Logout</button>
-                    </DropdownMenuItem>
-                  </form>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <>
-                <Button asChild size="sm" className="rounded-full font-bold">
-                  <Link href="tel:6624986621">
-                    <Phone />
-                    <span>Call Agent</span>
-                  </Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full font-bold">
-                    <Link href="/contact#calendly">
-                        <Calendar />
-                        <span>Discovery Call</span>
-                    </Link>
-                </Button>
-                <Button asChild size="sm" variant="outline" className="rounded-full font-bold">
-                  <Link href="/auth/login">Log In</Link>
-                </Button>
-              </>
-            )}
+            {renderAuthControls()}
           </div>
 
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn((isMounted && isScrolled) || isDashboard ? 'text-foreground' : 'text-white')} aria-label="Open navigation menu">
+                <Button variant="ghost" size="icon" className={cn((isScrolled || isDashboard) ? 'text-foreground' : 'text-white')} aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
@@ -237,38 +306,7 @@ export function Header({ user }: { user: User | null }) {
                     {navLinksToRender.map((link) => renderNavLink(link, true))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
-                   {user ? (
-                      <>
-                        {!isDashboard && 
-                          <Button asChild className="w-full justify-center">
-                            <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
-                          </Button>
-                        }
-                        <form action={logout} className="w-full">
-                           <Button className="w-full justify-center" variant="outline">Logout</Button>
-                        </form>
-                      </>
-                    ) : (
-                      <>
-                        <Button asChild className="w-full justify-center">
-                          <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
-                              <Phone />
-                              <span>Call Voice Agent</span>
-                          </Link>
-                        </Button>
-                         <Button asChild className="w-full justify-center">
-                            <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
-                                <Calendar />
-                                <span>Discovery Call</span>
-                            </Link>
-                        </Button>
-                        <Button asChild className="w-full justify-center" variant="outline">
-                          <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
-                            Log In
-                          </Link>
-                        </Button>
-                      </>
-                    )}
+                    {renderMobileAuthControls()}
                   </div>
                 </div>
               </SheetContent>

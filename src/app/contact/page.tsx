@@ -18,12 +18,12 @@ const callFaqs = [
   {
     icon: <Clock className="h-6 w-6 text-accent flex-shrink-0" />,
     question: "How long is the call?",
-    answer: "Discovery calls are typically scheduled for 30 minutes. We aim to be respectful of your time while ensuring we have enough detail to propose a valuable solution."
+    answer: "Discovery calls are scheduled for 45 minutes. We aim to be respectful of your time while ensuring we have enough detail to propose a valuable solution."
   },
   {
     icon: <CheckSquare className="h-6 w-6 text-accent flex-shrink-0" />,
     question: "Do I need to prepare anything?",
-    answer: "No preparation is needed! Just come ready to talk about your business. If you have specific documents or processes you'd like to discuss, feel free to have them handy."
+    answer: "No preparation is needed! After you book, you will be sent a discovery call intake form. Providing these details before our call allows us to have the most productive conversation possible. If you have specific documents or processes you'd like to discuss, feel free to have them handy."
   }
 ];
 
@@ -49,56 +49,58 @@ export default function ContactPage() {
             </div>
         </AnimatedSection>
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
-            <AnimatedSection tag="div" delay={100} className="h-full">
-                 <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <MessageSquare className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Chat with AI</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Get answers from our AI assistant, available 24/7 for your questions.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                        <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-            <AnimatedSection tag="div" delay={200} className="h-full">
-                <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <Phone className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Call Voice Agent</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Speak with our 24/7 AI voice agent for immediate, hands-free support.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                        <Button asChild className="w-full"><a href="tel:6624986621">Call Now</a></Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-            <AnimatedSection tag="div" delay={300} className="h-full">
-                 <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <Mail className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Email Support</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Send us an email for formal inquiries or detailed account-specific issues.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                         <Button asChild className="w-full"><a href="mailto:support@aidsyncai.com">Email Us</a></Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-        </div>
+        <ClientOnly>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
+              <AnimatedSection tag="div" delay={100} className="h-full">
+                   <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <MessageSquare className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Chat with AI</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Get answers from our AI assistant, available 24/7 for your questions.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                          <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+              <AnimatedSection tag="div" delay={200} className="h-full">
+                  <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <Phone className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Call Voice Agent</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Speak with our 24/7 AI voice agent for immediate, hands-free support.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                          <Button asChild className="w-full"><a href="tel:6624986621">Call Now</a></Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+              <AnimatedSection tag="div" delay={300} className="h-full">
+                   <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                           <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <Mail className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Email Support</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Send us an email for formal inquiries or detailed account-specific issues.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                           <Button asChild className="w-full"><a href="mailto:support@aidsyncai.com">Email Us</a></Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+          </div>
+        </ClientOnly>
 
         <ClientOnly>
           <AnimatedSection delay={400} id="calendly" className="scroll-mt-20">
@@ -126,24 +128,32 @@ export default function ContactPage() {
               </Card>
 
               <div className="max-w-3xl mx-auto mt-16">
-                <Accordion type="single" collapsible className="w-full space-y-4">
-                  {callFaqs.map((faq, index) => (
-                    <AccordionItem
-                      key={index}
-                      value={`item-${index}`}
-                    >
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-4 text-left">
-                          {faq.icon}
-                          <span>{faq.question}</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                <Card className="p-6 sm:p-8 md:p-10">
+                  <div className="text-center mb-8">
+                    <h3 className="font-headline text-2xl font-bold text-foreground">
+                      About Your Discovery Call
+                    </h3>
+                    <MotionDivider />
+                  </div>
+                  <Accordion type="single" collapsible className="w-full space-y-4">
+                    {callFaqs.map((faq, index) => (
+                      <AccordionItem
+                        key={index}
+                        value={`item-${index}`}
+                      >
+                        <AccordionTrigger>
+                          <div className="flex items-center gap-4 text-left">
+                            {faq.icon}
+                            <span>{faq.question}</span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </Card>
               </div>
           </AnimatedSection>
         </ClientOnly>

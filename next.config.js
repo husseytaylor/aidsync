@@ -1,5 +1,6 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: process.env.ANALYZE === 'true' });
-module.exports = withBundleAnalyzer({
+/** @type {import('next').NextConfig} */
+const nextConfig = withBundleAnalyzer({
   productionBrowserSourceMaps: true,
   modularizeImports: {
     'lucide-react': { transform: 'lucide-react/dist/esm/icons/{{member}}' }
@@ -44,3 +45,5 @@ module.exports = withBundleAnalyzer({
     ],
   },
 });
+
+module.exports = nextConfig;
