@@ -18,12 +18,12 @@ const callFaqs = [
   {
     icon: <Clock className="h-6 w-6 text-accent flex-shrink-0" />,
     question: "How long is the call?",
-    answer: "Discovery calls are typically scheduled for 30 minutes. We aim to be respectful of your time while ensuring we have enough detail to propose a valuable solution."
+    answer: "Discovery calls are scheduled for 45 minutes. We aim to be respectful of your time while ensuring we have enough detail to propose a valuable solution."
   },
   {
     icon: <CheckSquare className="h-6 w-6 text-accent flex-shrink-0" />,
     question: "Do I need to prepare anything?",
-    answer: "No preparation is needed! Just come ready to talk about your business. If you have specific documents or processes you'd like to discuss, feel free to have them handy."
+    answer: "No preparation is needed! After you book, you will be sent a discovery call intake form. Providing these details before our call allows us to have the most productive conversation possible. If you have specific documents or processes you'd like to discuss, feel free to have them handy."
   }
 ];
 
