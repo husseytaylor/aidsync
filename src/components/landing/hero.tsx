@@ -1,17 +1,22 @@
 
 "use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, ArrowDown } from 'lucide-react';
+
+import dynamic from 'next/dynamic';
+
+const Link = dynamic(() => import('next/link'), { ssr: false });
+const Image = dynamic(() => import('next/image'), { ssr: false });
+const Button = dynamic(() => import('@/components/ui/button').then(mod => mod.Button), { ssr: false });
+
+const ArrowRight = dynamic(() => import('lucide-react').then(mod => mod.ArrowRight), { ssr: false });
+const ArrowDown = dynamic(() => import('lucide-react').then(mod => mod.ArrowDown), { ssr: false });
 import { motion } from 'framer-motion';
 
 export function Hero() {
   return (
     <motion.section
       id="hero"
-      className="container pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-24 lg:pb-32 scroll-mt-20 relative"
+      className="container pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-24 lg:pb-32 scroll-mt-20 relative min-h-[600px]"
       initial={{ opacity: 0, x: -40 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -51,9 +56,11 @@ export function Hero() {
           viewport={{ once: true }}
         >
           <Image
-            src="/head.png"
+            src="/head.webp"
             alt="An abstract image of a head with circuitry, representing artificial intelligence."
             fill
+            width={900}
+            height={506}
             className="rounded-xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="AI head"

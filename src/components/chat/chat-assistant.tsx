@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
@@ -189,30 +188,24 @@ export function ChatAssistant() {
     if (!currentInput || isPending || !sessionId) return;
 
     const userMessage: Message = { sender: 'user', text: currentInput, timestamp: new Date() };
-    
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsPending(true);
-    
     try {
       const response = await fetch(RESPONSE_WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            message: currentInput,
-            session_id: sessionId,
-          }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          message: currentInput,
+          session_id: sessionId,
+        }),
       });
-      
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`[API /chat] Webhook failed with status: ${response.status} - ${errorText}`);
       }
-
       const result = await response.json();
-      
       const botOutput = Array.isArray(result) ? result[0]?.output : result.response;
-      
       if (botOutput) {
         const botMessage: Message = { sender: 'bot', text: botOutput, timestamp: new Date() };
         setMessages((prev) => [...prev, botMessage]);
@@ -220,10 +213,13 @@ export function ChatAssistant() {
         console.error("Invalid response from webhook:", result);
         throw new Error('AI assistant returned an empty or invalid response.');
       }
-
-    } catch (error: any) {
-      console.error('[Chat Widget] AI chat error:', error.message);
-      const errorMessage: Message = { sender: 'bot', text: "I’m having trouble connecting right now. Please try again later.", timestamp: new Date() };
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('[Chat Widget] AI chat error:', error.message);
+      } else {
+        console.error('[Chat Widget] Unknown AI chat error:', error);
+      }
+      const errorMessage: Message = { sender: 'bot', text: "I'm having trouble connecting right now. Please try again later.", timestamp: new Date() };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsPending(false);
@@ -304,6 +300,7 @@ export function ChatAssistant() {
           </CardFooter>
         </div>
       </motion.div>
-    </>
-  );
-}
+      </>
+    );
+  }
+

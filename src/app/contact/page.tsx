@@ -118,6 +118,7 @@ export default function ContactPage() {
                   className="w-full h-[800px] rounded-2xl border-none bg-transparent"
                   frameBorder="0"
                   scrolling="no"
+                  title="Calendly scheduling form"
                   ></iframe>
               </Card>
 

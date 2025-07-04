@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
@@ -15,7 +15,8 @@ import { useAnalytics } from "@/context/analytics-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { isToday, isThisWeek, parseISO } from "date-fns";
-import { InternalAssistant } from "./internal-assistant";
+import dynamic from "next/dynamic";
+const InternalAssistant = dynamic(() => import("./internal-assistant").then(mod => mod.InternalAssistant), { ssr: false });
 import { ScrollArea } from "../ui/scroll-area";
 
 const formatDuration = (totalSeconds: number) => {
@@ -44,7 +45,7 @@ const formatTimestamp = (timestamp: string) => {
       minute: '2-digit',
       hour12: true,
     });
-  } catch (e) {
+  } catch {
     return "Invalid Date";
   }
 };
@@ -132,6 +133,8 @@ export function AnalyticsDashboardClient() {
     </ClientOnly>
   );
 }
+
+// Ensure no trailing invisible characters or extra braces
 
 function AnalyticsDashboardClientInner() {
   const { analytics, isLoading, fetchAnalytics } = useAnalytics();
@@ -229,7 +232,7 @@ function AnalyticsDashboardClientInner() {
         if (filters.dateRange === '7d') return isThisWeek(itemDate, { weekStartsOn: 1 });
         if (filters.dateRange === 'today') return isToday(itemDate);
         return true; // for 30d
-      } catch(e) {
+      } catch {
         return true; 
       }
     };
@@ -261,8 +264,8 @@ function AnalyticsDashboardClientInner() {
     
     try {
       allDates.sort((a, b) => new Date(a + `, ${new Date().getFullYear()}`).getTime() - new Date(b + `, ${new Date().getFullYear()}`).getTime());
-    } catch (e) {
-      console.error("Could not sort chart dates:", e);
+    } catch {
+      // Could not sort chart dates
     }
     
     return allDates.map(date => {

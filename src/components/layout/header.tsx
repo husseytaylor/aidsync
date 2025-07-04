@@ -163,7 +163,7 @@ export function Header({ user }: { user: User | null }) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" size="icon" className="rounded-full">
+                  <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
                     <Avatar>
                         <AvatarImage src={user.user_metadata?.avatar_url} />
                         <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
@@ -213,7 +213,7 @@ export function Header({ user }: { user: User | null }) {
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn((isMounted && isScrolled) || isDashboard ? 'text-foreground' : 'text-white')}>
+                <Button variant="ghost" size="icon" className={cn((isMounted && isScrolled) || isDashboard ? 'text-foreground' : 'text-white')} aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>

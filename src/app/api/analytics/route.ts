@@ -12,9 +12,9 @@ const defaultState = {
 };
 
 // Helper function to process raw webhook data by normalizing it
-function processWebhookData(rawData: any, type: 'voice_analytics' | 'chat_analytics') {
+function processWebhookData(rawData: unknown, type: 'voice_analytics' | 'chat_analytics') {
   const summary = { ...defaultState[type].summary };
-  const recent_items: any[] = [];
+  const recent_items: unknown[] = [];
   
   if (!rawData) return { summary, recent_items };
 
@@ -25,7 +25,7 @@ function processWebhookData(rawData: any, type: 'voice_analytics' | 'chat_analyt
     if (typeof itemData === 'string') {
       try {
         itemData = JSON.parse(itemData);
-      } catch (e) {
+      } catch {
         console.error(`[Analytics API] Failed to parse nested JSON string from ${type} item:`, itemData);
         continue;
       }
@@ -42,7 +42,7 @@ function processWebhookData(rawData: any, type: 'voice_analytics' | 'chat_analyt
 }
 
 // Helper to parse chat dialogue from a raw string
-const parseDialogue = (dialogue: any): { sender: string; text: string }[] => {
+const parseDialogue = (dialogue: unknown): { sender: string; text: string }[] => {
   if (!dialogue || typeof dialogue !== 'string') return [];
   return dialogue.split('\n')
     .filter(line => line.trim() !== '')
@@ -62,7 +62,7 @@ const processDataForChart = (data: { started_at: string }[], valueKey: string) =
     try {
       const date = new Date(item.started_at).toISOString().split('T')[0];
       acc[date] = (acc[date] || 0) + 1;
-    } catch (e) {
+    } catch {
         console.error(`[Analytics API] Could not parse date for chart item:`, item);
     }
     return acc;
@@ -90,18 +90,55 @@ async function getAnalyticsData() {
     const { summary: voiceSummary, recent_items: rawRecentCalls } = processWebhookData(voiceRaw, 'voice_analytics');
     const { summary: chatSummary, recent_items: rawRecentSessions } = processWebhookData(chatRaw, 'chat_analytics');
 
+
+    // Define explicit types for calls and sessions
+    interface Call {
+      id?: string;
+      started_at: string;
+      duration?: number;
+      transcript?: string;
+      status?: string;
+      from_number?: string;
+      price?: number | string;
+      json?: { transcript?: string };
+      [key: string]: any;
+    }
+    interface Session {
+      id?: string;
+      started_at: string;
+      duration?: number;
+      duration_seconds?: number;
+      dialogue?: string;
+      json?: { dialogue?: string };
+      [key: string]: any;
+    }
+
     // Deduplicate, extract full transcript, and sort recent items
-    const recent_calls = Array.from(new Map(rawRecentCalls.map(call => {
-      const fullCallData = { ...call, transcript: call.json?.transcript || call.transcript };
-      return [fullCallData.id || fullCallData.started_at, fullCallData];
-    })).values())
+    const recent_calls = Array.from(
+      new Map(
+        rawRecentCalls
+          .filter((call): call is Call => typeof call === 'object' && call !== null && 'started_at' in call)
+          .map((call) => {
+            const c = call as Call;
+            const fullCallData = { ...c, transcript: c.json?.transcript || c.transcript };
+            return [fullCallData.id || fullCallData.started_at, fullCallData];
+          })
+      ).values()
+    )
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
       .slice(0, 10);
-      
-    const recent_sessions_raw = Array.from(new Map(rawRecentSessions.map(session => {
-      const fullSessionData = { ...session, dialogue: session.json?.dialogue || session.dialogue };
-      return [fullSessionData.id || fullSessionData.started_at, fullSessionData];
-    })).values())
+
+    const recent_sessions_raw = Array.from(
+      new Map(
+        rawRecentSessions
+          .filter((session): session is Session => typeof session === 'object' && session !== null && 'started_at' in session)
+          .map((session) => {
+            const s = session as Session;
+            const fullSessionData = { ...s, dialogue: s.json?.dialogue || s.dialogue };
+            return [fullSessionData.id || fullSessionData.started_at, fullSessionData];
+          })
+      ).values()
+    )
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
       .slice(0, 10);
 
@@ -144,7 +181,11 @@ async function getAnalyticsData() {
     };
 
   } catch (error) {
-    console.error("[Analytics API] Error fetching or processing analytics data:", error);
+    if (error instanceof Error) {
+      console.error("[Analytics API] Error fetching or processing analytics data:", error.message);
+    } else {
+      console.error("[Analytics API] Unknown error fetching or processing analytics data:", error);
+    }
     return defaultState;
   }
 }
@@ -154,7 +195,11 @@ export async function GET(request: Request) {
         const data = await getAnalyticsData();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('[API /analytics] Error fetching analytics data:', error);
+        if (error instanceof Error) {
+          console.error('[API /analytics] Error fetching analytics data:', error.message);
+        } else {
+          console.error('[API /analytics] Unknown error fetching analytics data:', error);
+        }
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
