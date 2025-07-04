@@ -26,7 +26,7 @@ export function AnimatedSection({ children, className, tag = "div", delay = 0, v
       variants={variants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }}
+      viewport={{ once: false, amount: 0.1 }}
       transition={{ duration: 0.8, ease: "easeOut", delay: delay / 1000 }}
       className={cn(className)}
       {...rest}
