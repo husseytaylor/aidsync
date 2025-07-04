@@ -9,11 +9,15 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-card text-card-foreground backdrop-blur-md shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-glow-accent",
+      "relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-card text-card-foreground shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-glow-accent",
       className
     )}
     {...props}
   >
+    <div
+      className="absolute inset-0 bg-[url('/rough.png')] bg-cover bg-center opacity-5 mix-blend-overlay"
+      aria-hidden="true"
+    />
     <div className="relative">
       {children}
     </div>

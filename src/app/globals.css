@@ -13,8 +13,8 @@
 
     --card: 163 69% 14%; /* #0B3D2E - Dark Green */
     --card-foreground: 0 0% 98%; /* Almost White */
-    --card-start: 163 69% 14%; /* #0B3D2E */
-    --card-end: 163 69% 16%; /* Slightly lighter #0B3D2E */
+    --card-start: 163 80% 8%; /* Darker green for more contrast */
+    --card-end: 170 50% 20%; /* Lighter, slightly bluer green */
 
     --popover: 178 62% 20%; /* Dark Mint */
     --popover-foreground: 0 0% 98%; /* Almost White */
