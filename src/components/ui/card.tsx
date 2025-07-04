@@ -18,7 +18,7 @@ const Card = React.forwardRef<
       className="absolute inset-0 bg-[url('/rough.png')] bg-cover bg-center opacity-5 mix-blend-overlay"
       aria-hidden="true"
     />
-    <div className="relative">
+    <div className="relative flex flex-col h-full">
       {children}
     </div>
   </div>
