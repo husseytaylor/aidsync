@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign, CheckCircle } from 'lucide-react';
+import { Phone, MessageSquare, Bot, User, RefreshCw, Download, Info, Clock, DollarSign } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -283,7 +283,7 @@ function AnalyticsDashboardClientInner() {
     if (!analytics) return [];
     return [
       { name: 'Voice Calls', value: voice_analytics.summary.total_calls, fill: 'hsl(var(--primary))' },
-      { name: 'Chat Sessions', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
+      { name: 'Chats', value: chat_analytics.summary.total_sessions, fill: 'hsl(var(--accent))' },
     ].filter(d => d.value > 0);
   }, [analytics, voice_analytics.summary.total_calls, chat_analytics.summary.total_sessions]);
 
@@ -394,12 +394,12 @@ function AnalyticsDashboardClientInner() {
 
   const combinedChartConfig = {
     calls: { label: "Calls", color: "hsl(var(--primary))" },
-    sessions: { label: "Sessions", color: "hsl(var(--accent))" },
+    sessions: { label: "Chats", color: "hsl(var(--accent))" },
   } satisfies ChartConfig;
 
   const pieChartConfig = {
     calls: { label: 'Voice Calls', color: 'hsl(var(--primary))' },
-    chats: { label: 'Chat Sessions', color: 'hsl(var(--accent))' },
+    chats: { label: 'Chats', color: 'hsl(var(--accent))' },
   } satisfies ChartConfig;
 
 
@@ -474,7 +474,7 @@ function AnalyticsDashboardClientInner() {
               <TooltipTrigger asChild>
                 <MotionCard>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Chats</CardTitle>
                     <MessageSquare className="h-5 w-5 text-accent" />
                   </CardHeader>
                   <CardContent>
@@ -518,7 +518,7 @@ function AnalyticsDashboardClientInner() {
                         <ChartTooltip cursor={{ stroke: "hsl(var(--accent))", strokeDasharray: "3 3" }} content={<ChartTooltipContent indicator="dot" />} />
                         <Legend />
                         {filters.interactionType !== 'chat' && <Line dataKey="calls" name="Voice Calls" type="monotone" stroke="var(--color-calls)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-calls)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-calls)' }} />}
-                        {filters.interactionType !== 'voice' && <Line dataKey="sessions" name="Chat Sessions" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />}
+                        {filters.interactionType !== 'voice' && <Line dataKey="sessions" name="Chats" type="monotone" stroke="var(--color-sessions)" strokeWidth={2} dot={{ r: 2, fill: 'var(--color-sessions)' }} activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--background))', stroke: 'var(--color-sessions)' }} />}
                       </LineChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -585,7 +585,7 @@ function AnalyticsDashboardClientInner() {
                                     <AccordionTrigger>
                                         <div className="flex justify-between items-center w-full">
                                             <div className="flex items-center gap-3">
-                                                <CheckCircle className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
+                                                <Phone className="w-4 h-4 text-primary group-data-[state=open]:text-accent-foreground flex-shrink-0" />
                                                 <div>
                                                     <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(call.started_at)}</div>
                                                     <div className="text-xs text-muted-foreground group-data-[state=open]:text-accent-foreground/80 capitalize">{call.from_number} - {call.status}</div>
@@ -632,7 +632,7 @@ function AnalyticsDashboardClientInner() {
               {filters.interactionType !== 'voice' && <MotionCard variants={cardVariants}>
                   <CardHeader className="flex flex-row items-center justify-between">
                       <div>
-                        <CardTitle>Recent Chat Sessions</CardTitle>
+                        <CardTitle>Recent Chats</CardTitle>
                         <CardDescription>Review dialogues from the latest sessions.</CardDescription>
                       </div>
                       <Button onClick={handleExportChats} variant="outline" size="sm" className="bg-black/20 border-white/20 hover:bg-white/30">
@@ -649,7 +649,10 @@ function AnalyticsDashboardClientInner() {
                               <AccordionItem value={`session-${index}`} ref={el => { chatItemRefs.current[index] = el; }}>
                                   <AccordionTrigger>
                                       <div className="flex justify-between items-center w-full">
-                                          <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
+                                          <div className="flex items-center gap-3">
+                                              <MessageSquare className="w-4 h-4 text-accent group-data-[state=open]:text-accent-foreground flex-shrink-0" />
+                                              <div className="text-sm text-foreground group-data-[state=open]:text-accent-foreground">{formatTimestamp(session.started_at)}</div>
+                                          </div>
                                           <div className="flex items-center gap-2 text-foreground/80 group-data-[state=open]:text-accent-foreground/80 text-xs bg-black/20 px-2 py-1 rounded-full">
                                               <Clock className="w-3 h-3" />
                                               <span>{formatDuration(session.duration)}</span>
@@ -688,3 +691,5 @@ function AnalyticsDashboardClientInner() {
     </TooltipProvider>
   );
 }
+
+    
