@@ -43,6 +43,11 @@ export function Header({ user }: { user: User | null }) {
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -126,6 +131,124 @@ export function Header({ user }: { user: User | null }) {
 
   const navLinksToRender = isDashboard ? dashboardNavLinks : publicNavLinks;
 
+  const renderAuthControls = () => {
+    if (!isMounted) {
+      return null; // Render nothing on the server and initial client render to prevent hydration mismatch
+    }
+
+    if (user) {
+      if (isDashboard) {
+        return (
+          <form action={logout}>
+            <Button size="sm" className="rounded-full font-bold">
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </form>
+        );
+      }
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
+              <Avatar>
+                  <AvatarImage src={user.user_metadata?.avatar_url} />
+                  <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+              </Avatar>
+              <span className="sr-only">Toggle user menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/analytics"><LayoutDashboard />Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+            <DropdownMenuItem disabled>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <form action={logout}>
+              <DropdownMenuItem asChild>
+                  <button type="submit" className="w-full text-left"><LogOut />Logout</button>
+              </DropdownMenuItem>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    } else {
+      return (
+        <>
+          <Button asChild size="sm" className="rounded-full font-bold">
+            <Link href="tel:6624986621">
+              <Phone />
+              <span>Call Agent</span>
+            </Link>
+          </Button>
+          <Button asChild size="sm" className="rounded-full font-bold">
+              <Link href="/contact#calendly">
+                  <Calendar />
+                  <span>Discovery Call</span>
+              </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline" className="rounded-full font-bold">
+            <Link href="/auth/login">Log In</Link>
+          </Button>
+        </>
+      );
+    }
+  };
+
+  const renderMobileAuthControls = () => {
+    if (!isMounted) {
+      return null;
+    }
+
+    if (user) {
+      if (isDashboard) {
+        return (
+          <form action={logout} className="w-full">
+            <Button className="w-full justify-center">
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </form>
+        );
+      }
+      return (
+        <>
+          <Button asChild className="w-full justify-center">
+            <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
+          </Button>
+          <form action={logout} className="w-full">
+            <Button className="w-full justify-center" variant="outline">Logout</Button>
+          </form>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button asChild className="w-full justify-center">
+            <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
+                <Phone />
+                <span>Call Voice Agent</span>
+            </Link>
+          </Button>
+            <Button asChild className="w-full justify-center">
+              <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
+                  <Calendar />
+                  <span>Discovery Call</span>
+              </Link>
+          </Button>
+          <Button asChild className="w-full justify-center" variant="outline">
+            <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
+              Log In
+            </Link>
+          </Button>
+        </>
+      );
+    }
+  };
+
   return (
     <motion.header 
       id="site-header"
@@ -153,61 +276,7 @@ export function Header({ user }: { user: User | null }) {
         
         <div className="flex flex-1 items-center justify-end">
           <div className="hidden md:flex items-center space-x-2">
-            {user ? (
-              isDashboard ? (
-                <form action={logout}>
-                  <Button size="sm" className="rounded-full font-bold">
-                    <LogOut />
-                    <span>Logout</span>
-                  </Button>
-                </form>
-              ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" size="icon" className="rounded-full" aria-label="Open user menu">
-                      <Avatar>
-                          <AvatarImage src={user.user_metadata?.avatar_url} />
-                          <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
-                      </Avatar>
-                      <span className="sr-only">Toggle user menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/analytics"><LayoutDashboard />Dashboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>Settings</DropdownMenuItem>
-                    <DropdownMenuItem disabled>Support</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <form action={logout}>
-                      <DropdownMenuItem asChild>
-                          <button type="submit" className="w-full text-left"><LogOut />Logout</button>
-                      </DropdownMenuItem>
-                    </form>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )
-            ) : (
-              <>
-                <Button asChild size="sm" className="rounded-full font-bold">
-                  <Link href="tel:6624986621">
-                    <Phone />
-                    <span>Call Agent</span>
-                  </Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full font-bold">
-                    <Link href="/contact#calendly">
-                        <Calendar />
-                        <span>Discovery Call</span>
-                    </Link>
-                </Button>
-                <Button asChild size="sm" variant="outline" className="rounded-full font-bold">
-                  <Link href="/auth/login">Log In</Link>
-                </Button>
-              </>
-            )}
+            {renderAuthControls()}
           </div>
 
           <div className="md:hidden">
@@ -228,45 +297,7 @@ export function Header({ user }: { user: User | null }) {
                     {navLinksToRender.map((link) => renderNavLink(link, true))}
                   </div>
                   <div className="flex flex-col space-y-3 border-t pt-6">
-                   {user ? (
-                      isDashboard ? (
-                        <form action={logout} className="w-full">
-                           <Button className="w-full justify-center">
-                              <LogOut />
-                              <span>Logout</span>
-                           </Button>
-                        </form>
-                      ) : (
-                        <>
-                          <Button asChild className="w-full justify-center">
-                            <Link href="/dashboard/analytics" onClick={() => setIsSheetOpen(false)}>Dashboard</Link>
-                          </Button>
-                          <form action={logout} className="w-full">
-                            <Button className="w-full justify-center" variant="outline">Logout</Button>
-                          </form>
-                        </>
-                      )
-                    ) : (
-                      <>
-                        <Button asChild className="w-full justify-center">
-                          <Link href="tel:6624986621" onClick={() => setIsSheetOpen(false)}>
-                              <Phone />
-                              <span>Call Voice Agent</span>
-                          </Link>
-                        </Button>
-                         <Button asChild className="w-full justify-center">
-                            <Link href="/contact#calendly" onClick={() => setIsSheetOpen(false)}>
-                                <Calendar />
-                                <span>Discovery Call</span>
-                            </Link>
-                        </Button>
-                        <Button asChild className="w-full justify-center" variant="outline">
-                          <Link href="/auth/login" onClick={() => setIsSheetOpen(false)}>
-                            Log In
-                          </Link>
-                        </Button>
-                      </>
-                    )}
+                    {renderMobileAuthControls()}
                   </div>
                 </div>
               </SheetContent>
