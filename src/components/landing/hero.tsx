@@ -59,8 +59,6 @@ export function Hero() {
             src="/head.webp"
             alt="An abstract image of a head with circuitry, representing artificial intelligence."
             fill
-            width={900}
-            height={506}
             className="rounded-xl shadow-glow-accent object-cover transition-all duration-700 ease-in-out hover:scale-[1.02]"
             style={{ backgroundColor: '#0c0c0c' }}
             data-ai-hint="AI head"
