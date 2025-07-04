@@ -5,10 +5,12 @@ import { Pricing } from "@/components/landing/pricing";
 import { Faq } from "@/components/landing/faq";
 import { ClientOnly } from "@/components/client-only";
 import { LandingDynamic } from "@/components/landing/landing-dynamic";
+import { ScrollHandler } from "@/components/scroll-handler";
 
 export default function Home() {
   return (
     <>
+      <ScrollHandler />
       <Hero />
       <ClientOnly>
         <LandingDynamic />

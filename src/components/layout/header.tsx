@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import type { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
@@ -36,6 +36,7 @@ const dashboardNavLinks = [
 
 export function Header({ user }: { user: User | null }) {
   const pathname = usePathname();
+  const router = useRouter();
   const isLandingPage = pathname === '/';
   const isDashboard = pathname.startsWith('/dashboard');
   
@@ -94,25 +95,26 @@ export function Header({ user }: { user: User | null }) {
 
   const renderNavLink = (link: { href: string; label: string }, isMobile = false) => {
     const isAnchor = link.href.startsWith('#');
-    
-    // FIX: To prevent hydration errors, we generate a consistent href on both server and client.
-    // Anchor links are always prefixed with `/` so they work from any page.
-    // The click handler will manage smooth scrolling on the landing page.
     const finalHref = isAnchor ? `/${link.href}` : link.href;
     
     const clickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (isMobile) {
             setIsSheetOpen(false);
         }
-        // Use `isLandingPage` (which is reliable here in an event handler) to decide on smooth scroll.
-        if (isAnchor && isLandingPage) {
+        
+        if (isAnchor) {
             e.preventDefault();
             const targetId = link.href.substring(1);
-            const targetElement = document.getElementById(targetId);
-            if(targetElement) {
-                const yOffset = -70;
-                const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({top: y, behavior: 'smooth'});
+
+            if (isLandingPage) {
+                const targetElement = document.getElementById(targetId);
+                if(targetElement) {
+                    const yOffset = -70;
+                    const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
+            } else {
+                router.push(`/?scrollTo=${targetId}`);
             }
         }
     };
