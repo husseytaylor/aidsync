@@ -49,56 +49,58 @@ export default function ContactPage() {
             </div>
         </AnimatedSection>
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
-            <AnimatedSection tag="div" delay={100} className="h-full">
-                 <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <MessageSquare className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Chat with AI</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Get answers from our AI assistant, available 24/7 for your questions.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                        <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-            <AnimatedSection tag="div" delay={200} className="h-full">
-                <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <Phone className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Call Voice Agent</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Speak with our 24/7 AI voice agent for immediate, hands-free support.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                        <Button asChild className="w-full"><a href="tel:6624986621">Call Now</a></Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-            <AnimatedSection tag="div" delay={300} className="h-full">
-                 <Card className="h-full flex flex-col text-center">
-                    <CardHeader className="items-center">
-                         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
-                            <Mail className="w-6 h-6 text-accent" />
-                        </div>
-                        <CardTitle className="font-headline text-2xl font-bold text-foreground">Email Support</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground">Send us an email for formal inquiries or detailed account-specific issues.</p>
-                    </CardContent>
-                    <div className="p-6 pt-0">
-                         <Button asChild className="w-full"><a href="mailto:support@aidsyncai.com">Email Us</a></Button>
-                    </div>
-                </Card>
-            </AnimatedSection>
-        </div>
+        <ClientOnly>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
+              <AnimatedSection tag="div" delay={100} className="h-full">
+                   <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <MessageSquare className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Chat with AI</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Get answers from our AI assistant, available 24/7 for your questions.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                          <Button onClick={handleStartChat} className="w-full">Start Chat</Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+              <AnimatedSection tag="div" delay={200} className="h-full">
+                  <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <Phone className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Call Voice Agent</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Speak with our 24/7 AI voice agent for immediate, hands-free support.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                          <Button asChild className="w-full"><a href="tel:6624986621">Call Now</a></Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+              <AnimatedSection tag="div" delay={300} className="h-full">
+                   <Card className="h-full flex flex-col text-center">
+                      <CardHeader className="items-center">
+                           <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                              <Mail className="w-6 h-6 text-accent" />
+                          </div>
+                          <CardTitle className="font-headline text-2xl font-bold text-foreground">Email Support</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                          <p className="text-muted-foreground">Send us an email for formal inquiries or detailed account-specific issues.</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                           <Button asChild className="w-full"><a href="mailto:support@aidsyncai.com">Email Us</a></Button>
+                      </div>
+                  </Card>
+              </AnimatedSection>
+          </div>
+        </ClientOnly>
 
         <ClientOnly>
           <AnimatedSection delay={400} id="calendly" className="scroll-mt-20">
