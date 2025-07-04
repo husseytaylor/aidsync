@@ -126,6 +126,12 @@ export default function ContactPage() {
 
               <div className="max-w-3xl mx-auto mt-16">
                 <Card className="p-6 sm:p-8 md:p-10">
+                  <div className="text-center mb-8">
+                    <h3 className="font-headline text-2xl font-bold text-foreground">
+                      About Your Discovery Call
+                    </h3>
+                    <MotionDivider />
+                  </div>
                   <Accordion type="single" collapsible className="w-full space-y-4">
                     {callFaqs.map((faq, index) => (
                       <AccordionItem
