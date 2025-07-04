@@ -125,24 +125,26 @@ export default function ContactPage() {
               </Card>
 
               <div className="max-w-3xl mx-auto mt-16">
-                <Accordion type="single" collapsible className="w-full space-y-4">
-                  {callFaqs.map((faq, index) => (
-                    <AccordionItem
-                      key={index}
-                      value={`item-${index}`}
-                    >
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-4 text-left">
-                          {faq.icon}
-                          <span>{faq.question}</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                <Card className="p-6 sm:p-8 md:p-10">
+                  <Accordion type="single" collapsible className="w-full space-y-4">
+                    {callFaqs.map((faq, index) => (
+                      <AccordionItem
+                        key={index}
+                        value={`item-${index}`}
+                      >
+                        <AccordionTrigger>
+                          <div className="flex items-center gap-4 text-left">
+                            {faq.icon}
+                            <span>{faq.question}</span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </Card>
               </div>
           </AnimatedSection>
         </ClientOnly>
